@@ -1,0 +1,13 @@
+.map {
+  width: auto;
+  height: 610px;
+  margin-top: 15px;
+  border: 1px solid;
+  border-radius: 10px;
+}
+
+.map-area {
+  border-radius: 15px;
+  box-shadow: 2px 2px 2px 2px rgba(200, 200, 200, 0.8);
+  background-color: rgb(255, 255, 255, 0.6);
+}
