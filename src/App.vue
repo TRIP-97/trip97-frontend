@@ -8,6 +8,7 @@ import VFooter from "./components/layout/VFooter.vue";
 <template>
   <div>
     <VHeadingNavbar />
+    <div style="height:200px"></div>
     <div>
       <RouterView />
     </div>
@@ -15,4 +16,7 @@ import VFooter from "./components/layout/VFooter.vue";
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+@import "@/assets/css/style.css";
+
+</style>

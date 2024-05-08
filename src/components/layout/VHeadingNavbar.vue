@@ -52,18 +52,90 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <h1>헤더입니다!</h1>
-    <RouterLink v-if="!isLoggedIn" :to="{ name: 'login' }">로그인</RouterLink>
-    <br />
-    <RouterLink :to="{ name: 'profile' }" v-if="isLoggedIn">프로필</RouterLink>
-    <button @click="logout" v-if="isLoggedIn" class="logout-btn">로그아웃</button>
-    <div v-if="isLoggedIn">{{ nickname }} 님 환영합니다!!!</div>
-    <hr />
+    <header class="navbar navbar-expand-md shadow bg-light navbar-light fixed-top">
+      <div class="container-fluid">
+        <RouterLink class="navbar-brand logo text-primary fw-bold ms-5" :to="{ name: 'main' }">
+          Trip 97
+        </RouterLink>
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+          <ul class="navbar-nav guest-menu me-auto ms-5">
+            <li class="nav-item">
+              <a class="nav-link" style="cursor: pointer" id="">관광지 찾기</a>
+            </li>
+            <template v-if="isLoggedIn">
+              <li class="nav-item">
+                <a class="nav-link" style="cursor: pointer" id="">여행 모임</a>
+              </li>
+            </template>
+            <li class="nav-item">
+              <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'hotPlace' }"
+                >HOTPLACE</RouterLink
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" style="cursor: pointer" id="">여행 TIP 공유</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav guest-menu ms-auto me-5">
+            <template v-if="!isLoggedIn">
+              <li class="nav-item">
+                <RouterLink
+                  class="nav-link"
+                  style="cursor: pointer"
+                  v-if="!isLoggedIn"
+                  :to="{ name: 'login' }"
+                  >로그인</RouterLink
+                >
+              </li>
+            </template>
+            <template v-if="isLoggedIn">
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="navbarDropdownMenuLink"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <img
+                    src="@/assets/images/profile.png"
+                    alt="프로필 이미지"
+                    class="profile-image"
+                    style="height: 30px; margin-right: 5px"
+                  />
+                  {{ nickname }}
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                  <li class="dropdown-item">
+                    <RouterLink class="header-dropdown" :to="{ name: 'profile' }" v-if="isLoggedIn"
+                      >마이페이지</RouterLink
+                    >
+                  </li>
+                  <li>
+                    <a class="header-dropdown dropdown-item" @click="logout" v-if="isLoggedIn"
+                      >로그아웃</a
+                    >
+                  </li>
+                </ul>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </div>
+    </header>
   </div>
 </template>
 
 <style scoped>
-.logout-btn {
-  margin-left: 10px;
+.header-dropdown {
+  color: gray;
+  text-decoration: none; /* 밑줄 제거 */
+  cursor: pointer; /* 마우스를 올렸을 때 포인터 모양으로 변경 */
+}
+
+.header-dropdown:hover {
+  color: gray;
+  text-decoration: none; /* 호버 시에도 밑줄 제거 */
 }
 </style>
