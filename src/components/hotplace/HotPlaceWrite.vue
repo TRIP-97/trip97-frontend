@@ -1,8 +1,17 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, toRefs } from "vue";
+import { useRouter } from "vue-router";
 import axios from "axios";
 
+const router = useRouter();
 const nickname = ref("");
+const title = ref("");
+const content = ref("");
+const placeName = ref("");
+const visitedDate = ref("");
+const location = ref("");
+const latitude = ref(null);
+const longitude = ref(null);
 
 // 사용자 정보 가져오기
 const fetchProfile = async () => {
@@ -24,18 +33,46 @@ const fetchProfile = async () => {
   }
 };
 
+const writeHotPlace = async () => {
+  const hotPlaceData = {
+    title: title.value,
+    content: content.value,
+    placeName: placeName.value,
+    visitedDate: visitedDate.value,
+    location: location.value,
+    latitude: latitude.value,
+    longitude: longitude.value,
+  };
+
+  try {
+    const token = localStorage.getItem("accessToken");
+    const response = await axios.post("http://localhost:8080/hotplace", hotPlaceData, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 201) {
+      router.replace({ name: 'hotPlaceList' });
+    }
+  } catch (error) {
+    console.error("핫플레이스 게시글 등록 실패:", error);
+  }
+};
+
 onMounted(() => {
   fetchProfile();
 });
 
 // KAKAO MAP API 시작
-const map = ref(null);
+const map = toRefs(null);
 
 const initMap = () => {
   const container = document.getElementById("map");
   const options = {
-    center: new kakao.maps.LatLng(33.450701, 126.570667),
-    level: 5,
+    center: new kakao.maps.LatLng(36.35659864, 127.30901502),
+    level: 6,
   };
 
     map.value = new kakao.maps.Map(container, options);
@@ -43,15 +80,9 @@ const initMap = () => {
     // map 객체가 초기화된 이후에 이벤트 리스너를 추가
     kakao.maps.event.addListener(map.value, "click", function (mouseEvent) {
     var latlng = mouseEvent.latLng;
-    let lat = latlng.getLat();
-    let lng = latlng.getLng();
-    let latlngInput = `
-        <input type="hidden" name="latitude" value="${lat}">
-        <input type="hidden" name="longitude" value="${lng}">
-    `;
-    console.log(latlngInput);
+    latitude.value = latlng.getLat();
+    longitude.value = latlng.getLng();
 
-    document.getElementById("latlng").innerHTML = latlngInput;
     addMarkerAndRemovePrevious(latlng);
     });
 };
@@ -75,7 +106,7 @@ onMounted(() => {
     const script = document.createElement("script");
     script.type = "text/javascript";
     script.src =
-      "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=f866a7adcb3307f7c3c406e2ec39d7d0";
+      "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=f866a7adcb3307f7c3c406e2ec39d7d0&libraries=services,clusterer,drawing";
     script.addEventListener("load", () => {
       kakao.maps.load(() => {
         // 카카오맵 API가 로딩이 완료된 후 지도의 기본적인 세팅을 시작해야 한다.
@@ -100,17 +131,11 @@ onMounted(() => {
             <div class="row-md-5 map" id="map"></div>
           </div>
           <div class="col-lg-6">
-            <form method="post" action="${pageContext.request.contextPath}/hotplace">
-              <input type="hidden" name="action" value="regist" />
-              <input type="hidden" name="userId" value="${user.id}" />
-              <input type="hidden" name="writer" value="${user.nickname}" />
-              <input type="hidden" id="pageType" value="form" />
-              <input type="hidden" id="msg" value="${msg}" />
-              <div id="latlng"></div>
+            <form>
 
               <div class="form-group">
                 <label for="title">제목</label>
-                <input type="text" class="form-control" id="title" name="title" required />
+                <input type="text" class="form-control" id="title" name="title" v-model="title" required />
               </div>
               <div class="form-group">
                 <label for="writer">작성자</label>
@@ -125,38 +150,29 @@ onMounted(() => {
               </div>
               <div class="form-group">
                 <label for="placeName">핫플 이름</label>
-                <input type="text" class="form-control" id="placeName" name="placeName" required />
+                <input type="text" class="form-control" id="placeName" name="placeName" v-model="placeName" required />
               </div>
               <div class="form-group">
                 <label for="date">방문 날짜</label>
-                <input type="date" class="form-control" id="date" name="date" required />
+                <input type="date" class="form-control" id="visitedDate" name="visitedDate" v-model="visitedDate" required />
               </div>
               <div class="form-group">
-                <label for="location">장소 유형</label>
-                <select class="form-control" id="location" name="location" required>
-                  <option value="">선택하세요</option>
-                  <option value="관광지">관광지</option>
-                  <option value="문화시설">문화시설</option>
-                  <option value="레포츠">레포츠</option>
-                  <option value="숙박">숙박</option>
-                  <option value="쇼핑">쇼핑</option>
-                  <option value="음식점">음식점</option>
-                  <option value="카페">카페</option>
-                  <!-- 기타 장소 유형 추가 -->
-                </select>
+                <label for="placeName">위치</label>
+                <input type="text" class="form-control" id="location" name="location" v-model="location" required />
               </div>
               <div class="form-group">
-                <label for="description">상세 설명</label>
+                <label for="content">상세 설명</label>
                 <textarea
                   class="form-control"
-                  id="description"
-                  name="description"
+                  id="content"
+                  name="content"
                   rows="5"
+                  v-model="content"
                   required
                 ></textarea>
               </div>
 
-              <button type="submit" class="btn btn-primary btn-block write-btn">작성</button>
+              <button @click.prevent="writeHotPlace" class="btn btn-primary btn-block write-btn">등록</button>
             </form>
           </div>
         </div>
@@ -166,7 +182,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-@import "@/assets/css/hotplacewrite.css";
+@import "@/assets/css/hotplace/hotplacewrite.css";
 
 .write-btn {
   margin-top: 10px;

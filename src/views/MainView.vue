@@ -1,9 +1,5 @@
 <script setup>
-import { onMounted } from "vue";
 
-onMounted(() => {
-  console.log("test");
-});
 </script>
 
 <template>
