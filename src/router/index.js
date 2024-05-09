@@ -4,6 +4,7 @@ import LoginView from "@/views/LoginView.vue";
 import ProfileView from "@/views/ProfileView.vue";
 import NaverCallBack from "@/components/callback/NaverCallBack.vue";
 import HotPlaceView from "@/views/HotPlaceView.vue";
+import BoardView from "@/views/BoardView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -53,6 +54,34 @@ const router = createRouter({
           path: "modify/:id",
           name: "hotPlaceModify",
           component: () => import("../components/hotplace/HotPlaceModify.vue"),
+        },
+      ],
+    },
+    {
+      path: "/board",
+      name: "board",
+      component: BoardView,
+      redirect: { name: "boardList" },
+      children: [
+        {
+          path: "/",
+          name: "boardList",
+          component: () => import("../components/board/BoardList.vue"),
+        },
+        {
+          path: "/:id",
+          name: "boardDetail",
+          component: () => import("../components/board/BoardDetail.vue"),
+        },
+        {
+          path: "/",
+          name: "boardwrite",
+          component: () => import("../components/board/BoardWrite.vue"),
+        },
+        {
+          path: "/:id",
+          name: "boardModify",
+          component: () => import("../components/board/BoardModify.vue"),
         },
       ],
     },

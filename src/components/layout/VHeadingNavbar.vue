@@ -65,9 +65,14 @@ onUnmounted(() => {
               </li>
             </template>
             <li class="nav-item">
-              <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'hotPlace' }"
-                >HOTPLACE</RouterLink
-              >
+              <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'hotPlace' }">
+                HOTPLACE
+              </RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'board' }">
+                자유게시판
+              </RouterLink>
             </li>
             <li class="nav-item">
               <a class="nav-link" style="cursor: pointer" id="">여행 TIP 공유</a>
