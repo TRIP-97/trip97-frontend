@@ -1,29 +1,33 @@
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import axios from "axios";
+import { naverLogin } from "@/api/member";
 
 onMounted(() => {
   const router = useRouter();
   const queryParams = new URLSearchParams(window.location.search);
-  const authorizationCode = queryParams.get("code");
-  const state = queryParams.get("state");
-  console.log(authorizationCode);
+  const query = ref({
+    authorizationCode: queryParams.get("code"),
+    state: queryParams.get("state"),
+  });
+  console.log(query.value.authorizationCode);
 
-  if (authorizationCode && state) {
-    axios
-      .post("http://localhost:8080/member/login/naver", { authorizationCode, state })
-      .then((response) => {
+  if (query.value.authorizationCode && query.value.state) {
+    naverLogin(
+      query.value,
+      (response) => {
+        console.log(response);
         localStorage.setItem("accessToken", response.data.accessToken);
         console.log("로그인 성공:", response.data);
-        router.push({ name: "main" });
+        router.replace({ name: "main" });
         document.dispatchEvent(new CustomEvent("login-event"));
-      })
-      .catch((error) => {
+      },
+      (error) => {
         console.error("로그인 실패:", error);
         // 에러 처리
         router.push({ name: "main" });
-      });
+      }
+    );
   }
 });
 </script>

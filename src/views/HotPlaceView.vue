@@ -4,7 +4,6 @@ import { RouterView } from "vue-router";
 
 <template>
   <div>
-    <h1>HOTPLACE 게시판</h1>
     <RouterView />
   </div>
 </template>

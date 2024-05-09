@@ -1,6 +1,6 @@
 .map {
   width: auto;
-  height: 480px;
+  height: 540px;
   margin-top: 15px;
   border: 1px solid;
   border-radius: 10px;
@@ -13,9 +13,9 @@
 }
 
 .post-content {
-	min-height: 330px;
-	border-bottom: 3px solid gray;
-	background-color: rgba(255, 255, 255, 0.5);
-	border-radius: 5px;
-	margin-bottom: 10px;
+  min-height: 330px;
+  border-bottom: 3px solid gray;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
+  margin-bottom: 10px;
 }

@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { listHotPlace } from "@/api/hotplace.js";
+
 import axios from "axios";
 import HotPlaceListItem from "./item/HotPlaceListItem.vue";
 
@@ -9,21 +11,21 @@ const router = useRouter();
 
 // 핫플레이스 목록 조회
 async function getHotPlaceList() {
-  axios
-    .get("http://localhost:8080/hotplace")
-    .then((response) => {
+  listHotPlace(
+    (response) => {
       hotPlaces.value = response.data;
-    })
-    .catch((error) => {
+    },
+    (error) => {
       console.log("HotPlaceList 불러오는 중 에러 발생!");
       console.dir(error);
-    });
+    }
+  );
 }
 
 function goWriteForm() {
   router.push({
-    name: 'hotPlaceWrite',
-  })
+    name: "hotPlaceWrite",
+  });
 }
 
 onMounted(() => {
@@ -33,6 +35,7 @@ onMounted(() => {
 
 <template>
   <div>
+    <h1 style="text-align: center; margin-bottom: 100px">HOTPLACE</h1>
     <table class="table table-hover">
       <thead>
         <tr class="text-center">

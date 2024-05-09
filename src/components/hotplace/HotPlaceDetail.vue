@@ -1,27 +1,29 @@
 <script setup>
 import { ref, onMounted, toRefs } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { detailHotPlace } from "@/api/hotplace";
+
 import axios from "axios";
 
 const route = useRoute();
 const router = useRouter();
 
 const hotPlaceId = ref(route.params.id);
-const hotPlace = ref('');
+const hotPlace = ref("");
 
 // 핫플레이스 게시글 조회
 async function getHotPlace() {
-  console.log("test");
-  axios
-    .get(`http://localhost:8080/hotplace/${hotPlaceId.value}`)
-    .then((response) => {
+  detailHotPlace(
+    hotPlaceId.value,
+    (response) => {
       hotPlace.value = response.data;
       console.log(hotPlace.value);
-    })
-    .catch((error) => {
+    },
+    (error) => {
       console.log("HotPlace 게시글 불러오는 중 에러 발생!");
       console.dir(error);
-    });
+    }
+  );
 }
 
 function goHotPlaceList() {
@@ -32,16 +34,17 @@ function goHotPlaceList() {
 const map = toRefs(null);
 
 var marker;
+
 function addMarker() {
   let latitude = hotPlace.value.latitude;
-  let longitude =hotPlace.value.longitude;
+  let longitude = hotPlace.value.longitude;
   let position = new kakao.maps.LatLng(latitude, longitude);
   console.log(latitude, longitude);
   marker = new kakao.maps.Marker({
     position: position,
-    map: map.value
+    map: map.value,
   });
-  
+
   map.value.setCenter(position);
 }
 
@@ -53,14 +56,25 @@ const initMap = () => {
   };
 
   map.value = new kakao.maps.Map(container, options);
-  
+  // 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
+  let mapTypeControl;
+  mapTypeControl = new kakao.maps.MapTypeControl();
+  // 지도에 컨트롤을 추가해야 지도위에 표시됩니다
+  // kakao.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOPRIGHT는 오른쪽 위를 의미합니다
+  map.value.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+
+  // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
+  let zoomControl = new kakao.maps.ZoomControl();
+  map.value.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+
+  // 마커를 추가합니다.
   addMarker();
 };
 
 onMounted(() => {
   /* global kakao */
   getHotPlace();
-  if (window.kakao && window.kakao.maps && hotPlace.value !== '') {
+  if (window.kakao && window.kakao.maps && hotPlace.value !== "") {
     initMap();
   } else {
     const script = document.createElement("script");
@@ -80,12 +94,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="container mt-5">
+  <div class="container">
     <main>
-      <div style="height:50px"></div>
+      <h1 style="text-align: center; margin-bottom: 50px">HOTPLACE 소개하기</h1>
       <div class="container mt-5">
-        <h2 class="text-center mb-4 font-weight-bold">핫플 소개하기</h2>
-
         <div class="row mt-5">
           <div class="post-info">
             <div class="row justify-content-center pt-5">
@@ -94,22 +106,25 @@ onMounted(() => {
                   <div class="card-header" id="titleHeader">
                     <span class="card-text">{{ hotPlace.title }}</span>
                   </div>
-                  <div class="card-body my-1 py-1 d-flex justify-content-between align-items-center" id="postInfoCardBody">
-                      <span class="card-text" id="postAuthor">{{ hotPlace.writerNickname }}</span>
-                      <div>
-                          <span class="mr-2">
-                              <span class="viewText">조회수</span>
-                              <span class="viewText mr-1">{{ hotPlace.viewCount }}</span>
-                          </span>
-                          <span class="mr-2">
-                              <span class="viewText">좋아요</span>
-                              <span class="viewText mr-1">{{ hotPlace.likeCount }}</span>
-                          </span>
-                          <span class="mr-2">
-                              <span class="createdDateText">작성일</span>
-                              <span class="createdDateText mr-1">{{ hotPlace.createdAt }}</span>
-                          </span>
-                      </div>
+                  <div
+                    class="card-body my-1 py-1 d-flex justify-content-between align-items-center"
+                    id="postInfoCardBody"
+                  >
+                    <span class="card-text" id="postAuthor">{{ hotPlace.writerNickname }}</span>
+                    <div>
+                      <span class="mr-2">
+                        <span class="viewText">조회수</span>
+                        <span class="viewText mr-1">{{ hotPlace.viewCount }}</span>
+                      </span>
+                      <span class="mr-2">
+                        <span class="viewText">좋아요</span>
+                        <span class="viewText mr-1">{{ hotPlace.likeCount }}</span>
+                      </span>
+                      <span class="mr-2">
+                        <span class="createdDateText">작성일</span>
+                        <span class="createdDateText mr-1">{{ hotPlace.createdAt }}</span>
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -122,20 +137,41 @@ onMounted(() => {
             <form>
               <div class="form-group">
                 <label for="placeName">핫플 이름</label>
-                <input type="text" class="form-control" id="placeName" name="placeName" :value="hotPlace.placeName" disabled>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="placeName"
+                  name="placeName"
+                  :value="hotPlace.placeName"
+                  disabled
+                />
               </div>
               <div class="form-group">
                 <label for="date">방문 날짜</label>
-                <input type="text" class="form-control" id="date" name="date" :value="hotPlace.visitedDate" disabled>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="date"
+                  name="date"
+                  :value="hotPlace.visitedDate"
+                  disabled
+                />
               </div>
               <div class="form-group">
                 <label for="location">위치</label>
-                <input type="text" class="form-control" id="location" name="location" :value="hotPlace.location" disabled>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="location"
+                  name="location"
+                  :value="hotPlace.location"
+                  disabled
+                />
               </div>
               <div class="row px-3 justify-content-center">
                 <div class="col-sm-12 pt-3 post-content">
                   {{ hotPlace.content }}
-                </div>  
+                </div>
               </div>
               <div class="row px-3">
                 <div class="col-sm-2 mt-2">
@@ -156,5 +192,4 @@ onMounted(() => {
 
 <style scoped>
 @import "@/assets/css/hotplace/hotplacedetail.css";
-
 </style>

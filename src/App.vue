@@ -2,13 +2,12 @@
 import { RouterView } from "vue-router";
 import VHeadingNavbar from "./components/layout/VHeadingNavbar.vue";
 import VFooter from "./components/layout/VFooter.vue";
-
 </script>
 
 <template>
   <div>
     <VHeadingNavbar />
-    <div style="height:100px"></div>
+    <div style="height: 150px"></div>
     <div>
       <RouterView />
     </div>
@@ -18,5 +17,4 @@ import VFooter from "./components/layout/VFooter.vue";
 
 <style scoped>
 @import "@/assets/css/style.css";
-
 </style>

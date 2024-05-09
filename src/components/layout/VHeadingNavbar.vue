@@ -2,7 +2,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import { RouterLink, useRouter } from "vue-router";
-import axios from "axios";
+import { getMemberProfile } from "@/api/member";
 
 const router = useRouter();
 const isLoggedIn = ref(false);
@@ -20,11 +20,8 @@ const fetchProfile = async () => {
   const token = localStorage.getItem("accessToken");
   if (token) {
     try {
-      const response = await axios.get("http://localhost:8080/member/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await getMemberProfile(token);
+
       if (response.data) {
         isLoggedIn.value = true;
         nickname.value = response.data.nickname;
@@ -41,7 +38,7 @@ const handleRouteChange = () => {
 };
 
 onMounted(() => {
-  fetchProfile();
+  // fetchProfile();
   document.addEventListener("route-changed", handleRouteChange);
 });
 
