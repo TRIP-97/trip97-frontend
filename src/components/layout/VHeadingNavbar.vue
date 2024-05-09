@@ -127,12 +127,12 @@ onUnmounted(() => {
 <style scoped>
 .header-dropdown {
   color: gray;
-  text-decoration: none; /* 밑줄 제거 */
-  cursor: pointer; /* 마우스를 올렸을 때 포인터 모양으로 변경 */
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .header-dropdown:hover {
   color: gray;
-  text-decoration: none; /* 호버 시에도 밑줄 제거 */
+  text-decoration: none;
 }
 </style>

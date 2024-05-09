@@ -31,4 +31,31 @@ function deleteHotPlace(hotPlaceId, success, fail) {
   local.delete(`/hotplace/${hotPlaceId}`).then(success).catch(fail);
 }
 
-export { listHotPlace, detailHotPlace, registHotPlace, modifyHotPlace, deleteHotPlace };
+// 핫플레이스 게시글의 댓글을 조회하는 함수
+function listHotPlaceComment(hotPlaceId, success, fail) {
+  local.get(`/hotplace/${hotPlaceId}/comment`).then(success).catch(fail);
+}
+
+// 핫플레이스 게시글의 댓글을 등록하는 함수
+function registHotPlaceComment(comment, success, fail) {
+  local
+    .post(`/hotplace/${comment.boardId}/comment`, JSON.stringify(comment))
+    .then(success)
+    .catch(fail);
+}
+
+// 핫플레이스 게시글의 댓글을 삭제하는 함수
+function deleteHotPlaceComment(hotPlaceId, commentId, success, fail) {
+  local.delete(`/hotplace/${hotPlaceId}/comment/${commentId}`).then(success).catch(fail);
+}
+
+export {
+  listHotPlace,
+  detailHotPlace,
+  registHotPlace,
+  modifyHotPlace,
+  deleteHotPlace,
+  listHotPlaceComment,
+  registHotPlaceComment,
+  deleteHotPlaceComment,
+};

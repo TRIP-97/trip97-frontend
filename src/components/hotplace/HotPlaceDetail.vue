@@ -1,13 +1,24 @@
 <script setup>
 import { ref, onMounted, toRefs } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { detailHotPlace, deleteHotPlace } from "@/api/hotplace";
+import {
+  detailHotPlace,
+  deleteHotPlace,
+  listHotPlaceComment,
+  registHotPlaceComment,
+} from "@/api/hotplace";
+import { getMemberProfile } from "@/api/member";
+import HotPlaceCommentItem from "./item/HotPlaceCommentItem.vue";
 
 const route = useRoute();
 const router = useRouter();
 
 const hotPlaceId = ref(route.params.id);
 const hotPlace = ref("");
+const token = ref("");
+const memberId = ref("");
+const comments = ref([]);
+const commentContent = ref("");
 
 // 핫플레이스 게시글 조회
 async function getHotPlace() {
@@ -15,7 +26,7 @@ async function getHotPlace() {
     hotPlaceId.value,
     (response) => {
       hotPlace.value = response.data;
-      console.log(hotPlace.value);
+      getComments();
     },
     (error) => {
       console.log("HotPlace 게시글 불러오는 중 에러 발생!");
@@ -23,6 +34,55 @@ async function getHotPlace() {
     }
   );
 }
+
+// 사용자 정보 가져오기
+const fetchProfile = async () => {
+  token.value = localStorage.getItem("accessToken");
+  if (token) {
+    try {
+      const response = await getMemberProfile(token.value);
+
+      if (response.data) {
+        memberId.value = response.data.id;
+      }
+    } catch (error) {
+      console.error("프로필 정보 조회 실패:", error);
+    }
+  }
+};
+
+// 댓글 목록 조회하기
+const getComments = () => {
+  listHotPlaceComment(
+    hotPlace.value.id,
+    (response) => {
+      comments.value = response.data;
+    },
+    (error) => {
+      console.error("댓글 조회 실패!", error);
+    }
+  );
+};
+
+// 댓글 작성하기
+const registComment = () => {
+  const comment = ref({
+    writerId: memberId.value,
+    boardId: hotPlaceId.value,
+    content: commentContent.value,
+  });
+  console.log(comment.value);
+  registHotPlaceComment(
+    comment.value,
+    () => {
+      getComments();
+      commentContent.value = "";
+    },
+    (error) => {
+      console.error("댓글 작성 실패!", error);
+    }
+  );
+};
 
 // 핫플레이스 목록으로 이동하는 함수
 function goHotPlaceList() {
@@ -98,6 +158,8 @@ const initMap = () => {
 onMounted(() => {
   /* global kakao */
   getHotPlace();
+  fetchProfile();
+
   if (window.kakao && window.kakao.maps && hotPlace.value !== "") {
     initMap();
   } else {
@@ -209,6 +271,55 @@ onMounted(() => {
             </form>
           </div>
         </div>
+        <!--/* 댓글 작성 */-->
+        <template v-if="memberId !== ''">
+          <div class="row mt-5">
+            <div class="cm_write">
+              <div class="card mb-2">
+                <div class="card-header bg-light">
+                  <i class="bi bi-pencil-square"></i>
+                  <span class="ml-2">댓글 쓰기</span>
+                </div>
+                <div class="card-body" id="writeCommentCardBody">
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                      <fieldset>
+                        <div class="cm_input">
+                          <p>
+                            <textarea
+                              class="form-control"
+                              id="commentContent"
+                              name="commentContent"
+                              v-model="commentContent"
+                              rows="3"
+                            ></textarea>
+                          </p>
+                          <div class="d-flex justify-content-end">
+                            <button
+                              type="button"
+                              class="btn btn-dark"
+                              id="registCommentBtn"
+                              @click.prevent="registComment"
+                            >
+                              작성
+                            </button>
+                          </div>
+                        </div>
+                      </fieldset>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+        <HotPlaceCommentItem
+          v-for="comment in comments"
+          :key="comment.id"
+          :comment="comment"
+          :hot-place-id="hotPlaceId"
+          @reload-comment-list="getComments"
+        />
       </div>
     </main>
   </div>
