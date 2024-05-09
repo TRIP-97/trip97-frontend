@@ -37,24 +37,24 @@ const router = createRouter({
         {
           path: "list",
           name: "hotPlaceList",
-          component: () => import('../components/hotplace/HotPlaceList.vue'),
+          component: () => import("../components/hotplace/HotPlaceList.vue"),
         },
         {
           path: "detail/:id",
           name: "hotPlaceDetail",
-          component: () => import('../components/hotplace/HotPlaceDetail.vue'),
+          component: () => import("../components/hotplace/HotPlaceDetail.vue"),
         },
         {
           path: "write",
           name: "hotPlaceWrite",
-          component: () => import('../components/hotplace/HotPlaceWrite.vue'),
+          component: () => import("../components/hotplace/HotPlaceWrite.vue"),
         },
         {
-          path: "modify",
+          path: "modify/:id",
           name: "hotPlaceModify",
-          component: () => import('../components/hotplace/HotPlaceModify.vue'),
+          component: () => import("../components/hotplace/HotPlaceModify.vue"),
         },
-      ]
+      ],
     },
   ],
 });

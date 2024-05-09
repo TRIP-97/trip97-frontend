@@ -21,4 +21,14 @@ function registHotPlace(token, hotPlace) {
   });
 }
 
-export { listHotPlace, detailHotPlace, registHotPlace };
+// 핫플레이스 게시글을 수정하는 함수
+function modifyHotPlace(hotPlace, success, fail) {
+  local.put(`/hotplace/${hotPlace.id}`, JSON.stringify(hotPlace)).then(success).catch(fail);
+}
+
+// 핫플레이스 게시글을 삭제하는 함수
+function deleteHotPlace(hotPlaceId, success, fail) {
+  local.delete(`/hotplace/${hotPlaceId}`).then(success).catch(fail);
+}
+
+export { listHotPlace, detailHotPlace, registHotPlace, modifyHotPlace, deleteHotPlace };

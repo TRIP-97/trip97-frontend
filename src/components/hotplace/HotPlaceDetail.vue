@@ -1,9 +1,7 @@
 <script setup>
 import { ref, onMounted, toRefs } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { detailHotPlace } from "@/api/hotplace";
-
-import axios from "axios";
+import { detailHotPlace, deleteHotPlace } from "@/api/hotplace";
 
 const route = useRoute();
 const router = useRouter();
@@ -26,8 +24,33 @@ async function getHotPlace() {
   );
 }
 
+// 핫플레이스 목록으로 이동하는 함수
 function goHotPlaceList() {
   router.push({ name: "hotPlaceList" });
+}
+
+// 핫플레이스 수정 화면으로 이동하는 함수
+function goHotPlaceModify() {
+  router.push({
+    name: "hotPlaceModify",
+    params: { id: hotPlace.value.id },
+  });
+}
+
+// 핫플레이스 삭제하는 함수
+function removeHotPlace() {
+  deleteHotPlace(
+    hotPlaceId.value,
+    () => {
+      router.replace({
+        name: "hotPlaceList",
+      });
+    },
+    (error) => {
+      console.log("HotPlace 게시글 삭제하는 중 에러 발생!");
+      console.dir(error);
+    }
+  );
 }
 
 // KAKAO MAP API 시작
@@ -35,11 +58,12 @@ const map = toRefs(null);
 
 var marker;
 
+// 맵 생성시 마커를 추가하는 함수
 function addMarker() {
   let latitude = hotPlace.value.latitude;
   let longitude = hotPlace.value.longitude;
   let position = new kakao.maps.LatLng(latitude, longitude);
-  console.log(latitude, longitude);
+
   marker = new kakao.maps.Marker({
     position: position,
     map: map.value,
@@ -178,8 +202,8 @@ onMounted(() => {
                   <a class="btn btn-primary" @click="goHotPlaceList">목록</a>
                 </div>
                 <div class="col-sm-10 mt-2 text-right">
-                  <a class="btn btn-warning">수정</a>
-                  <a class="btn btn-danger">삭제</a>
+                  <a class="btn btn-warning" @click="goHotPlaceModify">수정</a>
+                  <a class="btn btn-danger" @click="removeHotPlace">삭제</a>
                 </div>
               </div>
             </form>

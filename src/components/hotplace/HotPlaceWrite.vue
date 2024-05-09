@@ -3,7 +3,6 @@ import { ref, onMounted, toRefs } from "vue";
 import { useRouter } from "vue-router";
 import { getMemberProfile } from "@/api/member";
 import { registHotPlace } from "@/api/hotplace";
-import axios from "axios";
 
 const router = useRouter();
 const nickname = ref("");
@@ -33,6 +32,7 @@ const fetchProfile = async () => {
   }
 };
 
+// 핫플레이스 게시글을 작성하는 함수
 const writeHotPlace = async () => {
   const hotPlaceData = {
     title: title.value,
@@ -49,7 +49,10 @@ const writeHotPlace = async () => {
     const response = await registHotPlace(token.value, hotPlaceData);
     console.log(response);
     if (response.status === 201) {
-      router.replace({ name: "hotPlaceList" });
+      router.replace({
+        name: "hotPlaceDetail",
+        params: { id: response.data.id },
+      });
     }
   } catch (error) {
     console.error("핫플레이스 게시글 등록 실패:", error);
@@ -94,6 +97,7 @@ const initMap = () => {
 };
 
 var marker;
+// 마커를 추가하는 함수 (마커가 있다면 지운 뒤 추가)
 function addMarkerAndRemovePrevious(position) {
   if (marker != null) {
     marker.setMap(null);
