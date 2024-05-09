@@ -1,9 +1,17 @@
+
+
 <template>
-  <div>
-    <editor v-model="content" />
+  <div class="writeContent">
+    <div>
+      <h2>제목</h2>
+      <input class="title" type="text"></input>
+      <h2>내용</h2>
+      <editor v-model="content" />
     <button @click="saveHandler">글쓰기</button>
+    </div>
   </div>
 </template>
+
 
 <script>
 import Editor from "./item/BoardWriteEditor.vue";
@@ -35,6 +43,16 @@ export default {
 
 <style lang="scss">
 /* Basic editor styles */
+
+.title {
+  width:640px;
+}
+
+.writeContent{
+  display : flex;
+  justify-content: center;
+}
+
 .tiptap {
   > * + * {
     margin-top: 0.75em;
@@ -48,6 +66,7 @@ export default {
 
 .content {
   padding: 1rem 0 0;
+  
 
   h3 {
     margin: 1rem 0 0.5rem;

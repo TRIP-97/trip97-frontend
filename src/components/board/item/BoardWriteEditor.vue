@@ -1,6 +1,6 @@
 <template>
   <div v-if="editor">
-    <editor-content :editor="editor" />
+    <editor-content :editor="editor" class="editorContent"/>
     <input
       ref="image"
       @change="addImage()"
@@ -70,6 +70,7 @@ export default {
       onUpdate: () => {
         this.$emit("update:modelValue", this.editor.getHTML());
       },
+
     });
   },
 
@@ -81,13 +82,22 @@ export default {
 
 <style lang="scss">
 /* Basic editor styles */
+.editorContent {
+  width : 700px;
+  height : 500px;
+  overflow : scroll;
+  border : solid 1px black;
+  padding : 15px;
+}
+
 .tiptap {
   > * + * {
     margin-top: 0.75em;
   }
 
+
   img {
-    max-width: 100%;
+    max-width: 500px;
     height: auto;
 
     &.ProseMirror-selectednode {

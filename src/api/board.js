@@ -30,3 +30,5 @@ function deleteBoard(boardId, success, fail) {
 function modifyBoard(board, succes, fail) {
   local.put(`/board/${board.id}`, JSON.stringify(board).then(success).catch(fail));
 }
+
+export { listBoard, detailBoard, registBoard, deleteBoard, modifyBoard};
