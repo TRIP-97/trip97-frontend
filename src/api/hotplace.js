@@ -44,6 +44,14 @@ function registHotPlaceComment(comment, success, fail) {
     .catch(fail);
 }
 
+// 핫플레이스 게시글의 댓글을 수정하는 함수
+function editHotPlaceComment(comment, success, fail) {
+  local
+    .put(`hotplace/${comment.boardId}/comment/${comment.id}`, JSON.stringify(comment))
+    .then(success)
+    .catch(fail);
+}
+
 // 핫플레이스 게시글의 댓글을 삭제하는 함수
 function deleteHotPlaceComment(hotPlaceId, commentId, success, fail) {
   local.delete(`/hotplace/${hotPlaceId}/comment/${commentId}`).then(success).catch(fail);
@@ -58,4 +66,5 @@ export {
   listHotPlaceComment,
   registHotPlaceComment,
   deleteHotPlaceComment,
+  editHotPlaceComment,
 };

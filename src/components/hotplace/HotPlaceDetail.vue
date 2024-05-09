@@ -316,7 +316,7 @@ onMounted(() => {
         <HotPlaceCommentItem
           v-for="comment in comments"
           :key="comment.id"
-          :comment="comment"
+          :comment-item="comment"
           :hot-place-id="hotPlaceId"
           @reload-comment-list="getComments"
         />
