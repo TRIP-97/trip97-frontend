@@ -3,7 +3,7 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { listHotPlace } from "@/api/hotplace.js";
 
-import axios from "axios";
+import HotPlaceTableItem from "./item/HotPlaceTableItem.vue";
 import HotPlaceListItem from "./item/HotPlaceListItem.vue";
 
 const hotPlaces = ref([]);
@@ -35,27 +35,37 @@ onMounted(() => {
 
 <template>
   <div>
-    <h1 style="text-align: center; margin-bottom: 100px">HOTPLACE</h1>
-    <table class="table table-hover">
-      <thead>
-        <tr class="text-center">
-          <th scope="col">글번호</th>
-          <th scope="col">제목</th>
-          <th scope="col">작성자</th>
-          <th scope="col">작성일</th>
-          <th scope="col">조회수</th>
-          <th scope="col">좋아요</th>
-        </tr>
-      </thead>
-      <tbody>
-        <HotPlaceListItem
-          v-for="hotPlace in hotPlaces"
-          :key="hotPlace.id"
-          :hotPlace="hotPlace"
-        ></HotPlaceListItem>
-      </tbody>
-    </table>
-    <button class="btn btn-primary write-btn" @click="goWriteForm">글 작성</button>
+    <div class="container">
+      <h1 style="text-align: center; margin-bottom: 100px">HOTPLACE</h1>
+      <div class="row">
+        <div class="col-md-3" v-for="hotPlace in hotPlaces" :key="hotPlace.id">
+          <HotPlaceListItem :hot-place-item="hotPlace" />
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <table class="table table-hover">
+        <thead>
+          <tr class="text-center">
+            <th scope="col">글번호</th>
+            <th scope="col">제목</th>
+            <th scope="col">작성자</th>
+            <th scope="col">작성일</th>
+            <th scope="col">조회수</th>
+            <th scope="col">좋아요</th>
+          </tr>
+        </thead>
+        <tbody>
+          <HotPlaceTableItem
+            v-for="hotPlace in hotPlaces"
+            :key="hotPlace.id"
+            :hotPlace="hotPlace"
+          ></HotPlaceTableItem>
+        </tbody>
+      </table>
+      <button class="btn btn-primary write-btn" @click="goWriteForm">글 작성</button>
+    </div>
   </div>
 </template>
 
