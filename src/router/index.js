@@ -5,6 +5,7 @@ import ProfileView from "@/views/ProfileView.vue";
 import NaverCallBack from "@/components/callback/NaverCallBack.vue";
 import HotPlaceView from "@/views/HotPlaceView.vue";
 import BoardView from "@/views/BoardView.vue";
+import AttractionView from "@/views/AttractionView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -82,6 +83,19 @@ const router = createRouter({
           path: "/:id",
           name: "boardModify",
           component: () => import("../components/board/BoardModify.vue"),
+        },
+      ],
+    },
+    {
+      path: "/attraction",
+      name: "attraction",
+      component: AttractionView,
+      redirect: { name: "attractionList" },
+      children: [
+        {
+          path: "/",
+          name: "attractionList",
+          component: () => import("../components/attraction/AttractionList.vue"),
         },
       ],
     },

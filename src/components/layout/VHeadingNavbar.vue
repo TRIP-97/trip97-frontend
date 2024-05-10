@@ -57,7 +57,9 @@ onUnmounted(() => {
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
           <ul class="navbar-nav guest-menu me-auto ms-5">
             <li class="nav-item">
-              <a class="nav-link" style="cursor: pointer" id="">관광지 찾기</a>
+              <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'attraction' }">
+                관광지 찾기
+              </RouterLink>
             </li>
             <template v-if="isLoggedIn">
               <li class="nav-item">
