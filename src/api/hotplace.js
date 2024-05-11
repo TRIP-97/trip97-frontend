@@ -3,8 +3,8 @@ import { localAxios } from "@/util/http-commons";
 const local = localAxios();
 
 // 핫플레이스 목록을 불러오는 함수
-function listHotPlace(success, fail) {
-  local.get(`/hotplace`).then(success).catch(fail);
+function listHotPlace(param, success, fail) {
+  local.get(`/hotplace`, { params: param }).then(success).catch(fail);
 }
 
 // 핫플레이스 상세내용을 불러오는 함수
@@ -57,6 +57,16 @@ function deleteHotPlaceComment(hotPlaceId, commentId, success, fail) {
   local.delete(`/hotplace/${hotPlaceId}/comment/${commentId}`).then(success).catch(fail);
 }
 
+// 핫플레이스 게시글의 좋아요 여부를 확인하는 함수
+function checkHotPlaceLiked(param, success, fail) {
+  local.get(`/hotplace/api/like`, {params: param}).then(success).catch(fail);
+}
+
+// 핫플레이스 게시글을 좋아요하는 함수
+function updateLike(param, success, fail) {
+  local.put(`/hotplace/api/like`, param).then(success).catch(fail);
+}
+
 export {
   listHotPlace,
   detailHotPlace,
@@ -67,4 +77,6 @@ export {
   registHotPlaceComment,
   deleteHotPlaceComment,
   editHotPlaceComment,
+  checkHotPlaceLiked,
+  updateLike,
 };

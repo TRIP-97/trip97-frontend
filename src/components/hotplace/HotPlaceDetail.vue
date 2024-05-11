@@ -6,6 +6,8 @@ import {
   deleteHotPlace,
   listHotPlaceComment,
   registHotPlaceComment,
+  checkHotPlaceLiked,
+  updateLike
 } from "@/api/hotplace";
 import { getMemberProfile } from "@/api/member";
 import HotPlaceCommentItem from "./item/HotPlaceCommentItem.vue";
@@ -20,7 +22,7 @@ const memberId = ref("");
 const comments = ref([]);
 const commentContent = ref("");
 const isWriter = ref(false);
-
+const isLiked = ref(false);
 
 // 게시글 작성자인지 확인하는 함수
 const checkIsWriter = () => {
@@ -29,13 +31,12 @@ const checkIsWriter = () => {
   }
 }
 
-// 핫플레이스 게시글 조회
+// 핫플레이스 게시글 조회하는 함수
 async function getHotPlace() {
   detailHotPlace(
     hotPlaceId.value,
     (response) => {
       hotPlace.value = response.data;
-      getComments();
     },
     (error) => {
       console.log("HotPlace 게시글 불러오는 중 에러 발생!");
@@ -44,7 +45,44 @@ async function getHotPlace() {
   );
 }
 
-// 사용자 정보 가져오기
+// 핫플레이스 좋아요 여부 확인하는 함수
+function checkLike() {
+  checkHotPlaceLiked({
+      memberId: memberId.value,
+      hotPlaceId: hotPlaceId.value,
+    },
+    (response) => {
+      isLiked.value = response.data;
+    },
+    (error) => {
+      console.log("HotPlace 좋아요 여부 불러오는 중 에러 발생!");
+      console.dir(error);
+    }
+  )
+}
+
+// 핫플레이스 좋아요하는 함수
+function addLike() {
+  if (isLiked.value) {
+    window.alert("이미 좋아요한 게시물입니다!");
+  } else {
+    console.log("좋아요추가 체크");
+    updateLike({
+      memberId: memberId.value,
+      hotPlaceId: hotPlaceId.value,
+    },
+    () => {
+      isLiked.value = true;
+      getHotPlace();
+    },
+    (error) => {
+      console.log("HotPlace 좋아요하는 중 에러 발생!");
+      console.dir(error);
+    })
+  }
+}
+
+// 사용자 정보 가져오는 함수
 const fetchProfile = async () => {
   token.value = localStorage.getItem("accessToken");
   if (token.value) {
@@ -54,6 +92,8 @@ const fetchProfile = async () => {
       if (response.data) {
         memberId.value = response.data.id;
         checkIsWriter();
+        checkLike();
+        getComments();
       }
     } catch (error) {
       console.error("프로필 정보 조회 실패:", error);
@@ -61,7 +101,7 @@ const fetchProfile = async () => {
   }
 };
 
-// 댓글 목록 조회하기
+// 댓글 목록 조회하는 함수
 const getComments = () => {
   listHotPlaceComment(
     hotPlace.value.id,
@@ -74,7 +114,7 @@ const getComments = () => {
   );
 };
 
-// 댓글 작성하기
+// 댓글 작성하는 함수
 const registComment = () => {
   const comment = ref({
     writerId: memberId.value,
@@ -229,9 +269,16 @@ onMounted(() => {
               <p class="content-label mt-5 mb-4">여행 소개</p>
               <strong class="content">{{ hotPlace.content }}</strong>
             </div>
+
+            <div class="like-button-section">
+              <button class="btn like-button" @click="addLike">
+                <i :class="{'fa-solid': isLiked, 'fa-regular': !isLiked}" class="fa-heart"></i>
+              </button>
+            </div>
+
             <div class="list-button-section mt-5">
-              <button class="btn btn-primary list-btn" @click="goHotPlaceList">목록으로</button>
               <hr class="mt-3"> 
+              <button class="btn btn-primary list-btn" @click="goHotPlaceList">목록으로</button>
             </div>
 
             <template v-if="memberId !== ''">
@@ -353,6 +400,30 @@ onMounted(() => {
   border-radius: 10px; /* Rounded corners for the box */
   box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
 }
+
+.like-button-section {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.btn.like-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  border: 1px solid lightpink;
+  background-color: rgb(255, 255, 255);
+  color: rgba(222, 70, 70, 0.868);
+  font-size: 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn.like-button:hover {
+  background-color: #ffebeb;
+}
+
 
 .list-button-section {
   display: flex;

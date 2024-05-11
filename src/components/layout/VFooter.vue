@@ -4,6 +4,7 @@
   <div>
     <footer class="container-fluid py-4">
       <div style="height:100px"></div>
+      <hr class="footer-line"> 
       <div class="container">
         <div class="row justify-content-between align-items-center" style="height: 3vh;"> 
           <div class="col-md-6 ">
@@ -18,4 +19,8 @@
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.footer-line {
+  margin-bottom: 50px;
+}
+</style>
