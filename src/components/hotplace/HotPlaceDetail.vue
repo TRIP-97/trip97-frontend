@@ -19,6 +19,15 @@ const token = ref("");
 const memberId = ref("");
 const comments = ref([]);
 const commentContent = ref("");
+const isWriter = ref(false);
+
+
+// 게시글 작성자인지 확인하는 함수
+const checkIsWriter = () => {
+  if (hotPlace.value.writerId === memberId.value) {
+    isWriter.value = true;
+  }
+}
 
 // 핫플레이스 게시글 조회
 async function getHotPlace() {
@@ -38,12 +47,13 @@ async function getHotPlace() {
 // 사용자 정보 가져오기
 const fetchProfile = async () => {
   token.value = localStorage.getItem("accessToken");
-  if (token) {
+  if (token.value) {
     try {
       const response = await getMemberProfile(token.value);
 
       if (response.data) {
         memberId.value = response.data.id;
+        checkIsWriter();
       }
     } catch (error) {
       console.error("프로필 정보 조회 실패:", error);
@@ -136,7 +146,7 @@ const initMap = () => {
   const container = document.getElementById("map");
   const options = {
     center: new kakao.maps.LatLng(36.35659864, 127.30901502),
-    level: 6,
+    level: 7,
   };
 
   map.value = new kakao.maps.Map(container, options);
@@ -181,150 +191,264 @@ onMounted(() => {
 
 <template>
   <div class="container">
-    <main>
-      <h1 style="text-align: center; margin-bottom: 50px">HOTPLACE 소개하기</h1>
-      <div class="container mt-5">
-        <div class="row mt-5">
-          <div class="post-info">
-            <div class="row justify-content-center pt-5">
-              <div class="col-sm-12 mb-5">
-                <div class="card bg-light py-0">
-                  <div class="card-header" id="titleHeader">
-                    <span class="card-text">{{ hotPlace.title }}</span>
-                  </div>
-                  <div
-                    class="card-body my-1 py-1 d-flex justify-content-between align-items-center"
-                    id="postInfoCardBody"
-                  >
-                    <span class="card-text" id="postAuthor">{{ hotPlace.writerNickname }}</span>
-                    <div>
-                      <span class="mr-2">
-                        <span class="viewText">조회수</span>
-                        <span class="viewText mr-1">{{ hotPlace.viewCount }}</span>
-                      </span>
-                      <span class="mr-2">
-                        <span class="viewText">좋아요</span>
-                        <span class="viewText mr-1">{{ hotPlace.likeCount }}</span>
-                      </span>
-                      <span class="mr-2">
-                        <span class="createdDateText">작성일</span>
-                        <span class="createdDateText mr-1">{{ hotPlace.createdAt }}</span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
+    <div class="row justify-content-center">
+      <div class="col-sm-11">
+        
+        <div class="img-area my-3">
+          <img class="main-image" src="@/assets/images/fubao.jpg" alt="">
+        </div>
+        
+        <div class="row">
+          <div class="col-lg-8 mt-4">
+            <h3 class="title">{{ hotPlace.title }}</h3>
+            <div class="d-flex justify-content-between mt-3 my-2 info-text">
+              <div>
+                <span class="stat-text">조회수 {{ hotPlace.viewCount }}</span>
+                <div class="custom-vr mx-3"></div>
+                <span class="stat-text ml-2">좋아요 {{ hotPlace.likeCount }}</span>
+              </div>
+              <span class="date-text">작성일: {{ hotPlace.createdAt }}</span>
+            </div>
+            <div class="d-flex justify-content-end mt-3 my-2" v-if="isWriter">
+              <div class="edit-actions">
+                <span class="action-text " @click="goHotPlaceModify">수정</span>
+                <div class="custom-vr mx-2"></div>
+                <span class="action-text" @click="removeHotPlace">삭제</span>
               </div>
             </div>
+
+           <p class="schedule-label mt-5 mb-2">여행 일정</p>
+           <div class="schedule-box my-3">
+              <strong> <i class="travel-date-icon fa-solid fa-calendar"></i></strong>
+               {{ hotPlace.startDate }} - {{ hotPlace.endDate }}
+              <br>
+              <br>
+              <strong><i class="fa-solid fa-location-dot"></i></strong> {{ hotPlace.location }}
+            </div>
+            <div class="my-2">
+              <p class="content-label mt-5 mb-4">여행 소개</p>
+              <strong class="content">{{ hotPlace.content }}</strong>
+            </div>
+            <div class="list-button-section mt-5">
+              <button class="btn btn-primary list-btn" @click="goHotPlaceList">목록으로</button>
+              <hr class="mt-3"> 
+            </div>
+
+            <template v-if="memberId !== ''">
+              <div class="comment-section">
+                <p class="comment-label mb-3">댓글</p>
+                <div class="input-group mb-3">
+                  <input type="text" 
+                  v-model="commentContent" 
+                  class="form-control" 
+                  id="commentContent"
+                  placeholder="댓글을 입력하세요...">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-primary text-primary comment-write-btn" 
+                    @click="registComment">작성</button>
+                  </div>
+                </div>
+              </div>
+            </template>
+
+            <HotPlaceCommentItem
+              v-for="comment in comments"
+              :key="comment.id"
+              :comment-item="comment"
+              :member-id="memberId"
+              :hot-place-id="hotPlaceId"
+              @reload-comment-list="getComments"
+            />
           </div>
-          <div class="col-lg-6 map-area border border-secondary">
-            <div class="row-md-5 map" id="map"></div>
-          </div>
-          <div class="col-lg-6">
-            <form>
-              <div class="form-group">
-                <label for="placeName">핫플 이름</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="placeName"
-                  name="placeName"
-                  :value="hotPlace.placeName"
-                  disabled
-                />
+          <!-- Sidebar for Author Information -->
+          <div class="col-lg-3 offset-lg-1">
+            <h5 class="traveler-info-label mt-5 mb-2">여행자</h5>
+            <div class="author-info-box my-3">
+              <div class="d-flex align-items-center mb-1">
+                <img v-if="hotPlace.writerProfileImage === null" src="@/assets/images/profile.png" alt="Author" class="img-fluid rounded-circle mr-3" style="width: 40px; height: 40px;">
+                <p class="writer-nickname">{{ hotPlace.writerNickname }}</p>
               </div>
-              <div class="form-group">
-                <label for="date">방문 날짜</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="date"
-                  name="date"
-                  :value="hotPlace.visitedDate"
-                  disabled
-                />
+              <p v-if="hotPlace.writerIntroduction === null" class="writer-introduction">{{ "자기소개를 아직 작성하지 않았어요." }}</p>
+            </div>
+            <h5 class="location-info-label mt-5 mb-2">여행 장소</h5>
+            <div class="location-info-box my-3">
+              <div >
+                <p class="visited-places">{{ hotPlace.placeName}}</p>
+                <hr> <!-- Horizontal line with margin -->
+                <p class="city-name">{{ hotPlace.location }}</p>
               </div>
-              <div class="form-group">
-                <label for="location">위치</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="location"
-                  name="location"
-                  :value="hotPlace.location"
-                  disabled
-                />
-              </div>
-              <div class="row px-3 justify-content-center">
-                <div class="col-sm-12 pt-3 post-content">
-                  {{ hotPlace.content }}
-                </div>
-              </div>
-              <div class="row px-3">
-                <div class="col-sm-2 mt-2">
-                  <a class="btn btn-primary" @click="goHotPlaceList">목록</a>
-                </div>
-                <div class="col-sm-10 mt-2 text-right">
-                  <a class="btn btn-warning" @click="goHotPlaceModify">수정</a>
-                  <a class="btn btn-danger" @click="removeHotPlace">삭제</a>
-                </div>
-              </div>
-            </form>
+              <div id="map" class="border border-white rounded" style="height: 250px;"></div>
+            </div>
           </div>
         </div>
-        <!--/* 댓글 작성 */-->
-        <template v-if="memberId !== ''">
-          <div class="row mt-5">
-            <div class="cm_write">
-              <div class="card mb-2">
-                <div class="card-header bg-light">
-                  <i class="bi bi-pencil-square"></i>
-                  <span class="ml-2">댓글 쓰기</span>
-                </div>
-                <div class="card-body" id="writeCommentCardBody">
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                      <fieldset>
-                        <div class="cm_input">
-                          <p>
-                            <textarea
-                              class="form-control"
-                              id="commentContent"
-                              name="commentContent"
-                              v-model="commentContent"
-                              rows="3"
-                            ></textarea>
-                          </p>
-                          <div class="d-flex justify-content-end">
-                            <button
-                              type="button"
-                              class="btn btn-dark"
-                              id="registCommentBtn"
-                              @click.prevent="registComment"
-                            >
-                              작성
-                            </button>
-                          </div>
-                        </div>
-                      </fieldset>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </template>
-        <HotPlaceCommentItem
-          v-for="comment in comments"
-          :key="comment.id"
-          :comment-item="comment"
-          :hot-place-id="hotPlaceId"
-          @reload-comment-list="getComments"
-        />
       </div>
-    </main>
+    </div>
   </div>
 </template>
 
 <style scoped>
 @import "@/assets/css/hotplace/hotplacedetail.css";
+
+.container {
+  max-width: 1200px; /* Adjust the max width of the container */
+}
+
+.img-area {
+  height: 300px;
+  overflow: hidden;
+  background-color: antiquewhite;
+  border-radius: 20px;
+}
+
+.main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensure the image covers the area */
+}
+
+.title, .schedule-label, .content-label, .comment-label {
+  font-family: NanumSquareRoundExtraBold;
+}
+
+.schedule-label, .content-label, .comment-label {
+  font-size: 20px;
+}
+
+.content {
+  color: #3e4143;
+}
+
+.info-text {
+  font-size: 0.9rem; /* Smaller font size for stats and date */
+  color: #6c757d; /* Grey color */
+}
+
+.custom-vr {
+  display: inline;
+  border-left: 1px solid lightgray;
+  align-self: center;
+}
+
+.stat-text {
+  margin-right: 5px; /* Space between statistics */
+}
+
+.date-text {
+  text-align: right; /* Right align for the date */
+}
+
+.edit-actions {
+  color: #6c757d; /* Grey color for actions */
+  font-size: 0.8rem; /* Smaller font size for edit/delete actions */
+}
+
+.action-text {
+  cursor: pointer;
+}
+
+.schedule-box {
+  color: gray;
+  background-color: #f8f9fa; /* Light grey background */
+  padding: 10px;
+  border-radius: 10px; /* Rounded corners for the box */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+}
+
+.list-button-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Aligns the button and line to the right */
+}
+
+.list-button-section .btn-primary {
+  background-color: #689beb; /* Sky blue color */
+  border-color: #689beb; /* Border color to match the background */
+  color: white; /* White text color */
+}
+
+hr {
+  width: 100%; /* Full width line */
+  border: 0;
+  height: 1px;
+  background-color: #575555; /* Light grey line */
+  margin-top: 5px; /* Space above the line */
+}
+
+.input-group .form-control {
+  border-right: 0; /* Remove the right border */
+  font-size: 13px;
+}
+
+.input-group .input-group-append .btn {
+  background-color: transparent; /* Transparent background */
+  color: #00BFFF; /* Sky blue color for the text */
+  border: 0; /* Remove the left border */
+}
+
+.input-group {
+  border: 1px solid #ccc; /* Border around the input group */
+  border-radius: 5px; /* Rounded corners for the input group */
+}
+
+.comment-write-btn {
+  font-size: 15px;
+}
+
+.traveler-info-label {
+  font-family: NanumSquareRoundExtraBold;
+  font-size: 19px;
+  color: #333;
+}
+
+.author-info-box {
+  background-color: #f1f1f1; /* Light grey background */
+  padding: 1px 15px 1px 15px;
+  border-radius: 10px; /* Rounded corners for the box */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+}
+
+img.rounded-circle {
+  margin-right: 15px; /* Space between image and text */
+}
+
+.writer-nickname {
+  font-family: NanumSquareRound;
+  margin-top: 13px;
+  font-size: 16px;
+}
+
+.writer-introduction {
+  font-family: NanumSquareRound;
+  font-size: 13px;
+  color: gray;
+}
+
+.location-info-label {
+  font-family: NanumSquareRoundExtraBold;
+  font-size: 19px;
+}
+
+.location-info-box {
+  background-image: linear-gradient(to bottom, #fafafa, #cfcfcf, #e0e0e0);
+  padding: 15px;
+  border-radius: 10px; /* Rounded corners for the box */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+}
+
+.visited-places {
+  font-size: 16px;
+  color: #333;
+}
+
+.city-name {
+  font-size: 14px;
+  color: #777777;
+}
+
+#map {
+  width: 100%; /* Full width of the container */
+  border: 2px solid white; /* White border around the map */
+  border-radius: 8px; /* Rounded corners for the map */
+}
 </style>
+

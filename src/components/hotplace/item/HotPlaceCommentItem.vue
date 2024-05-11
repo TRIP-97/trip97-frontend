@@ -1,16 +1,27 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { editHotPlaceComment, deleteHotPlaceComment } from "@/api/hotplace";
 
 const props = defineProps({
   hotPlaceId: String,
   commentItem: Object,
+  memberId: Number
 });
 
 const emit = defineEmits(["reloadCommentList"]);
 
 const isEditing = ref(false);
 const comment = ref(props.commentItem);
+const editedComment = ref(comment.value.content);
+const isWriter = ref(false);
+
+
+// 댓글 작성자인지 확인하는 함수
+const checkIsWriter = () => {
+  if (comment.value.writerId === props.memberId) {
+    isWriter.value = true;
+  }
+}
 
 // 댓글의 수정 상태 여부를 바꾸는 함수
 const changeEditStatus = () => {
@@ -19,6 +30,7 @@ const changeEditStatus = () => {
 
 // 댓글을 수정하는 함수
 const editComment = () => {
+  comment.value.content = editedComment.value;
   editHotPlaceComment(
     comment.value,
     () => {
@@ -43,40 +55,58 @@ const deleteComment = () => {
     }
   );
 };
+
+onMounted(() => {
+  checkIsWriter();
+})
 </script>
 
 <template>
-  <div class="card py-0 mt-3" v-if="!isEditing">
-    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-      <div class="comment-author-info pt-1">
-        <img
-          class="img-fluid float-left mr-1 profile-img"
-          src="@/assets/images/profile.png"
-          width="30"
-          height="30"
-        />
-        <span class="comment-writer"
-          ><span class="card-text">{{ comment.writerNickname }}</span></span
-        >
+  <div class="comment-card">
+    <template v-if="!isEditing">
+      <div class="comment-header">
+        <img src="@/assets/images/profile.png" alt="Profile" class="profile-img">
+        <div class="comment-metadata">
+          <span class="comment-writer">{{ comment.writerNickname }}</span>
+          <span class="comment-date">{{ comment.createdAt }}</span>
+        </div>
+        <div class="comment-actions" v-if="checkIsWriter">
+          <button @click="changeEditStatus" class="action-btn">
+            <i class="fa fa-pencil"></i>
+          </button>
+          <button @click="deleteComment" class="action-btn">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
       </div>
-      <div class="comment-info">
-        <span class="date" id="commentDate">{{ comment.createdAt }}</span>
-        <a class="comment-edit ml-2"
-          ><i class="fa fa-pencil"></i><span class="card-text ml-1" @click="changeEditStatus">수정</span></a
-        >
-        <a class="comment-delete ml-2" id="commentDeleteBtn">
-          <i class="fa-solid fa-trash-can"></i>
-          <span class="card-text ml-1" @click="deleteComment">삭제</span>
-        </a>
+      <div class="comment-body">
+        {{ comment.content }}
       </div>
-    </div>
-    <div class="card-body">
-      <span class="comment-content"
-        ><span class="card-text">{{ comment.content }}</span></span
-      >
-    </div>
+    </template>
+    <template v-else>
+      <div class="comment-header">
+        <img src="@/assets/images/profile.png" alt="Profile" class="profile-img">
+        <div class="comment-metadata">
+          <span class="comment-writer">{{ comment.writerNickname }}</span>
+          <span class="comment-date">{{ comment.createdAt }}</span>
+        </div>
+        <div class="comment-actions" v-if="checkIsWriter">
+          <button @click="editComment" class="action-btn">
+            <i class="fa fa-check"></i>
+          </button>
+          <button @click="changeEditStatus" class="action-btn">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+      </div>
+      <div class="comment-body">
+        <input type="text" v-model="editedComment" class="form-control edit-input">
+      </div>
+    </template>
   </div>
-  <div class="card mt-3"  v-if="isEditing">
+
+
+  <div class="card mt-3"  v-if="isEditing == null">
     <div class="card-header bg-light">
       <i class="bi bi-pencil-square"></i>
       <span class="ml-2">댓글 수정</span>
@@ -122,8 +152,73 @@ const deleteComment = () => {
 </template>
 
 <style scoped>
-.comment-delete,
-.comment-edit {
+.comment-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.profile-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.comment-metadata {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.comment-writer {
+  font-weight: bold;
+  color: #333;
+}
+
+.comment-date {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.comment-actions {
+  display: flex;
+  align-items: center;
+}
+
+.action-btn {
+  background: none;
+  border: none;
   cursor: pointer;
+  color: #689beb; 
+  font-size: 1rem;
+  padding: 5px;
+  margin-right: 15px; 
+}
+
+.comment-body {
+  font-size: 0.9rem;
+  color: #444;
+  margin-top: 5px;
+}
+
+.fa-pencil, .fa-trash-can, .fa-check, .fa-times {
+  width: 1px;
+}
+
+.edit-input {
+  flex-grow: 1;
+  margin-right: 10px;
+  border: none;
+  border-bottom: 1px solid #ccc; /* Subtle underline */
 }
 </style>

@@ -7,7 +7,7 @@ import VFooter from "./components/layout/VFooter.vue";
 <template>
   <div>
     <VHeadingNavbar />
-    <div style="height: 150px"></div>
+    <div style="height: 100px"></div>
     <div>
       <RouterView />
     </div>

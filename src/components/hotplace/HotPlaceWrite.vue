@@ -9,7 +9,8 @@ const nickname = ref("");
 const title = ref("");
 const content = ref("");
 const placeName = ref("");
-const visitedDate = ref("");
+const startDate = ref("");
+const endDate = ref("");
 const location = ref("");
 const latitude = ref(null);
 const longitude = ref(null);
@@ -37,7 +38,8 @@ const writeHotPlace = async () => {
     title: title.value,
     content: content.value,
     placeName: placeName.value,
-    visitedDate: visitedDate.value,
+    startDate: startDate.value,
+    endDate: endDate.value,
     location: location.value,
     latitude: latitude.value,
     longitude: longitude.value,
@@ -177,9 +179,17 @@ onMounted(() => {
                 <input
                   type="date"
                   class="form-control"
-                  id="visitedDate"
-                  name="visitedDate"
-                  v-model="visitedDate"
+                  id="startDate"
+                  name="startDate"
+                  v-model="startDate"
+                  required
+                />
+                <input
+                  type="date"
+                  class="form-control"
+                  id="endDate"
+                  name="endDate"
+                  v-model="endDate"
                   required
                 />
               </div>

@@ -1,6 +1,8 @@
 <script setup>
 import { ref, defineProps } from "vue";
-import { RouterLink } from "vue-router";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const props = defineProps({
   hotPlaceItem: Object,
@@ -8,7 +10,8 @@ const props = defineProps({
 
 const hotPlace = ref("");
 hotPlace.value = props.hotPlaceItem;
-hotPlace.value.visitedDate = formatVisitedDate(hotPlace.value.visitedDate);
+hotPlace.value.startDate = formatVisitedDate(hotPlace.value.startDate);
+hotPlace.value.endDate = formatVisitedDate(hotPlace.value.endDate);
 
 // 날짜 포맷 변경 함수
 function formatVisitedDate(dateString) {
@@ -18,10 +21,17 @@ function formatVisitedDate(dateString) {
   const day = date.getDate();
   return `${year}/${month.toString().padStart(2, "0")}/${day.toString().padStart(2, "0")}`;
 }
+
+function goHotPlaceDetail() {
+  router.push({
+    name: 'hotPlaceDetail',
+    params: { id: hotPlace.value.id }
+  });
+}
 </script>
 
 <template>
-  <div class="card" style="width: 18rem">
+  <div class="card" @click="goHotPlaceDetail" style="width: 18rem">
     <div class="card-header bg-transparent d-flex align-items-center">
       <div class="d-flex align-items-center">
         <img src="@/assets/images/profile.png" style="width: 30px" />
@@ -33,15 +43,13 @@ function formatVisitedDate(dateString) {
           <i class="travel-date-icon fa-solid fa-calendar"></i>
           <p class="travel-date-label mb-0">여행 기간</p>
         </div>
-        <p class="travel-date">{{ hotPlace.visitedDate }} ~ {{ hotPlace.visitedDate }}</p>
+        <p class="travel-date">{{ hotPlace.startDate }} ~ {{ hotPlace.endDate }}</p>
       </div>
     </div>
-    <div class="position-relative">
-      <img src="@/assets/images/fubao.jpg" class="card-img-top" alt="HotPlace Image" />
-      <div
-        class="hotplace-location position-absolute bg-white p-2 rounded-start rounded-end"
-        style="top: 10px; left: 10px; height: 30px"
-      >
+    <div class="position-relative hotplace-image-area">
+      <img src="@/assets/images/fubao.jpg" class="card-img-top hotplace-image" alt="HotPlace Image" />
+      <div class="hotplace-location position-absolute">
+        <i class="fa-solid fa-location-dot"></i>
         {{ hotPlace.location }}
       </div>
     </div>
@@ -67,13 +75,32 @@ function formatVisitedDate(dateString) {
   border-radius: 10px;
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
   margin: 10px;
+  overflow: hidden; /* 카드 범위 밖 내용 숨기기 */
+  cursor: pointer;
 }
+.card:hover .hotplace-location {
+  color: white; /* 호버 시 글자 색 변경 */
+  background-color: #00a1fc; /* 호버 시 배경 색 변경 */
+}
+.card:hover .hotplace-image {
+  transform: scale(1.15); /* 이미지 확대 */
+  transition: transform 0.3s ease; /* 이미지 확대 트랜지션 효과 추가 */
+}
+
 .card-header {
   height: 50px;
   font-size: 11px;
+  border-bottom: none; /* 하단 테두리 제거 */
 }
 .card-title {
-  font-size: 18px;
+  font-size: 17px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1; /* 1줄로 제한 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  height: 1.5em; /* 높이 조절을 통해 텍스트 라인의 개수와 높이를 일치시킴 */
 }
 .custom-vr {
   border-left: 1px solid lightgray;
@@ -96,6 +123,27 @@ function formatVisitedDate(dateString) {
 .hotplace-info {
   color: gray;
   font-size: 16px;
+}
+.hotplace-image-area {
+  height: 160px;
+  overflow: hidden;
+  border-radius: 10px;
+}
+.hotplace-image {
+  border-radius: 10px;
+  transition: transform 0.3s ease; /* 이미지 트랜지션 효과 추가 */
+}
+.hotplace-location {
+  top: 10px;
+  left: 10px;
+  height: 25px;
+  padding-top: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: #00a1fc;
+  background-color: white;
+  border-radius: 10px;
+  font-size: 14px;
 }
 .view-count,
 .like-count {

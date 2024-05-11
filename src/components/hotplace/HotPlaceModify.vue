@@ -15,7 +15,7 @@ function getHotPlace() {
     hotPlaceId.value,
     (response) => {
       hotPlace.value = response.data;
-      hotPlace.value.visitedDate = formatVisitedDate(hotPlace.value.visitedDate);
+      hotPlace.value.startDate = formatVisitedDate(hotPlace.value.startDate);
       console.log(hotPlace.value);
     },
     (error) => {
@@ -183,9 +183,17 @@ onMounted(() => {
               <input
                 type="date"
                 class="form-control"
-                id="visitedDate"
-                name="visitedDate"
-                v-model="hotPlace.visitedDate"
+                id="startDate"
+                name="startDate"
+                v-model="hotPlace.startDate"
+                required
+              />
+              <input
+                type="date"
+                class="form-control"
+                id="endDate"
+                name="endDate"
+                v-model="hotPlace.endDate"
                 required
               />
             </div>
