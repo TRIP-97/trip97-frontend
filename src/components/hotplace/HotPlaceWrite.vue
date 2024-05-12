@@ -5,6 +5,7 @@ import { getMemberProfile } from "@/api/member";
 import { registHotPlace } from "@/api/hotplace";
 
 const router = useRouter();
+const writerId = ref("");
 const nickname = ref("");
 const title = ref("");
 const content = ref("");
@@ -14,6 +15,7 @@ const endDate = ref("");
 const location = ref("");
 const latitude = ref(null);
 const longitude = ref(null);
+const files = ref([]);
 
 const token = ref("");
 // 사용자 정보 가져오기
@@ -24,6 +26,7 @@ const fetchProfile = async () => {
       const response = await getMemberProfile(token.value);
 
       if (response.data) {
+        writerId.value = response.data.id;
         nickname.value = response.data.nickname;
       }
     } catch (error) {
@@ -32,23 +35,37 @@ const fetchProfile = async () => {
   }
 };
 
+const handleFiles = (event) => {
+  files.value = event.target.files;
+}
+
 // 핫플레이스 게시글을 작성하는 함수
 const writeHotPlace = async () => {
-  const hotPlaceData = {
+  const hotPlaceData = new FormData();
+  const hotPlace = {
     title: title.value,
     content: content.value,
+    writerId: writerId.value,
     placeName: placeName.value,
     startDate: startDate.value,
     endDate: endDate.value,
     location: location.value,
     latitude: latitude.value,
-    longitude: longitude.value,
+    longitude: longitude.value
   };
 
+  const hotPlaceDto = new Blob([JSON.stringify(hotPlace)], {
+    type: 'application/json'
+  })
+  
+  hotPlaceData.append('hotPlace', hotPlaceDto);
+
+  for (let i = 0; i < files.value.length; i++) {
+    hotPlaceData.append('upfile', files.value[i]);
+  }
+  console.log(hotPlaceData);
   try {
-    console.log("try token", token.value);
     const response = await registHotPlace(token.value, hotPlaceData);
-    console.log(response);
     if (response.status === 201) {
       router.replace({
         name: "hotPlaceDetail",
@@ -215,6 +232,7 @@ onMounted(() => {
                   required
                 ></textarea>
               </div>
+              <input type="file" multiple @change="handleFiles">
 
               <button @click.prevent="writeHotPlace" class="btn btn-primary btn-block write-btn">
                 등록

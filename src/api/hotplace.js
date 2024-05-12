@@ -1,6 +1,7 @@
-import { localAxios } from "@/util/http-commons";
+import { localAxios, localAxiosWithFile } from "@/util/http-commons";
 
 const local = localAxios();
+const localWithFile = localAxiosWithFile();
 
 // 핫플레이스 목록을 불러오는 함수
 function listHotPlace(param, success, fail) {
@@ -14,7 +15,7 @@ function detailHotPlace(hotPlaceId, success, fail) {
 
 // 핫플레이스 게시글을 등록하는 함수
 function registHotPlace(token, hotPlace) {
-  return local.post(`/hotplace`, JSON.stringify(hotPlace), {
+  return localWithFile.post(`/hotplace`, hotPlace, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
