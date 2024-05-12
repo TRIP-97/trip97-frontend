@@ -280,8 +280,8 @@ onMounted(() => {
               <strong class="content">{{ hotPlace.content }}</strong>
             </div>
 
-            <div class="col-lg-6 mx-auto image-list" v-if="hotPlace.fileInfos">
-              <v-carousel>
+            <div class="col-lg-8 mx-auto image-list" v-if="hotPlace.fileInfos">
+              <v-carousel style="height: auto">
                 <v-carousel-item
                 v-for="fileInfo in hotPlace.fileInfos"
                 :key="fileInfo.id"
@@ -358,19 +358,6 @@ onMounted(() => {
 
 .container {
   max-width: 1200px; /* Adjust the max width of the container */
-}
-
-.img-area {
-  height: 300px;
-  overflow: hidden;
-  background-color: antiquewhite;
-  border-radius: 20px;
-}
-
-.main-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Ensure the image covers the area */
 }
 
 .title, .schedule-label, .content-label, .comment-label {

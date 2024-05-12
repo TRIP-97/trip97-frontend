@@ -12,6 +12,7 @@ const hotPlace = ref("");
 hotPlace.value = props.hotPlaceItem;
 hotPlace.value.startDate = formatVisitedDate(hotPlace.value.startDate);
 hotPlace.value.endDate = formatVisitedDate(hotPlace.value.endDate);
+console.log(props.hotPlaceItem);
 
 // 날짜 포맷 변경 함수
 function formatVisitedDate(dateString) {
@@ -47,7 +48,12 @@ function goHotPlaceDetail() {
       </div>
     </div>
     <div class="position-relative hotplace-image-area">
-      <img src="@/assets/images/fubao.jpg" class="card-img-top hotplace-image" alt="HotPlace Image" />
+      <template v-if="hotPlace.fileInfos === null">
+        <img src="@/assets/images/fubao.jpg" class="card-img-top hotplace-image" alt="HotPlace Image" />
+      </template>
+      <template v-else>
+        <img :src="hotPlace.fileInfos[0].url" style="width: 300px" />
+      </template>
       <div class="hotplace-location position-absolute">
         <i class="fa-solid fa-location-dot"></i>
         {{ hotPlace.location }}
