@@ -37,6 +37,7 @@ async function getHotPlace() {
     hotPlaceId.value,
     (response) => {
       hotPlace.value = response.data;
+      console.log("핫플레이스 게시글 로딩 성공!", hotPlace.value);
     },
     (error) => {
       console.log("HotPlace 게시글 불러오는 중 에러 발생!");
@@ -268,6 +269,10 @@ onMounted(() => {
             <div class="my-2">
               <p class="content-label mt-5 mb-4">여행 소개</p>
               <strong class="content">{{ hotPlace.content }}</strong>
+            </div>
+
+            <div v-if="hotPlace.fileInfos">
+              <img v-for="fileInfo in hotPlace.fileInfos" :src="fileInfo.url" :alt="fileInfo.originalFile" :key="fileInfo.id">
             </div>
 
             <div class="like-button-section">
