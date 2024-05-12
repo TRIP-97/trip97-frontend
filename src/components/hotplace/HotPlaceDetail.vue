@@ -38,12 +38,25 @@ async function getHotPlace() {
     (response) => {
       hotPlace.value = response.data;
       console.log("핫플레이스 게시글 로딩 성공!", hotPlace.value);
+
+      hotPlace.value.startDate = formatVisitedDate(hotPlace.value.startDate);
+      hotPlace.value.endDate = formatVisitedDate(hotPlace.value.endDate);
+
     },
     (error) => {
       console.log("HotPlace 게시글 불러오는 중 에러 발생!");
       console.dir(error);
     }
   );
+}
+
+// 날짜 포맷 변경 함수
+function formatVisitedDate(dateString) {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
 }
 
 // 핫플레이스 좋아요 여부 확인하는 함수
@@ -235,10 +248,6 @@ onMounted(() => {
     <div class="row justify-content-center">
       <div class="col-sm-11">
         
-        <div class="img-area my-3">
-          <img class="main-image" src="@/assets/images/fubao.jpg" alt="">
-        </div>
-        
         <div class="row">
           <div class="col-lg-8 mt-4">
             <h3 class="title">{{ hotPlace.title }}</h3>
@@ -258,23 +267,29 @@ onMounted(() => {
               </div>
             </div>
 
-           <p class="schedule-label mt-5 mb-2">여행 일정</p>
+           <p class="schedule-label mb-2">여행 일정</p>
            <div class="schedule-box my-3">
               <strong> <i class="travel-date-icon fa-solid fa-calendar"></i></strong>
-               {{ hotPlace.startDate }} - {{ hotPlace.endDate }}
+               {{ hotPlace.startDate }} ~ {{ hotPlace.endDate }}
               <br>
               <br>
               <strong><i class="fa-solid fa-location-dot"></i></strong> {{ hotPlace.location }}
             </div>
             <div class="my-2">
-              <p class="content-label mt-5 mb-4">여행 소개</p>
+              <p class="content-label mb-4">여행 소개</p>
               <strong class="content">{{ hotPlace.content }}</strong>
             </div>
 
-            <div v-if="hotPlace.fileInfos">
-              <img v-for="fileInfo in hotPlace.fileInfos" :src="fileInfo.url" :alt="fileInfo.originalFile" :key="fileInfo.id">
+            <div class="col-lg-6 mx-auto image-list" v-if="hotPlace.fileInfos">
+              <v-carousel>
+                <v-carousel-item
+                v-for="fileInfo in hotPlace.fileInfos"
+                :key="fileInfo.id"
+                :src="fileInfo.url"
+                />
+              </v-carousel>
             </div>
-
+        
             <div class="like-button-section">
               <button class="btn like-button" @click="addLike">
                 <i :class="{'fa-solid': isLiked, 'fa-regular': !isLiked}" class="fa-heart"></i>
@@ -314,7 +329,7 @@ onMounted(() => {
           </div>
           <!-- Sidebar for Author Information -->
           <div class="col-lg-3 offset-lg-1">
-            <h5 class="traveler-info-label mt-5 mb-2">여행자</h5>
+            <h5 class="traveler-info-label mb-2">여행자</h5>
             <div class="author-info-box my-3">
               <div class="d-flex align-items-center mb-1">
                 <img v-if="hotPlace.writerProfileImage === null" src="@/assets/images/profile.png" alt="Author" class="img-fluid rounded-circle mr-3" style="width: 40px; height: 40px;">
@@ -322,7 +337,7 @@ onMounted(() => {
               </div>
               <p v-if="hotPlace.writerIntroduction === null" class="writer-introduction">{{ "자기소개를 아직 작성하지 않았어요." }}</p>
             </div>
-            <h5 class="location-info-label mt-5 mb-2">여행 장소</h5>
+            <h5 class="location-info-label mb-2">여행 장소</h5>
             <div class="location-info-box my-3">
               <div >
                 <p class="visited-places">{{ hotPlace.placeName}}</p>
@@ -362,8 +377,14 @@ onMounted(() => {
   font-family: NanumSquareRoundExtraBold;
 }
 
-.schedule-label, .content-label, .comment-label {
+.schedule-label, .content-label {
   font-size: 20px;
+  margin-top: 50px;
+}
+
+.comment-label {
+  font-size: 20px;
+  margin-top: 30px;
 }
 
 .content {
@@ -406,6 +427,11 @@ onMounted(() => {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
 }
 
+.image-list {
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
 .like-button-section {
   display: flex;
   justify-content: center;
@@ -428,7 +454,6 @@ onMounted(() => {
 .btn.like-button:hover {
   background-color: #ffebeb;
 }
-
 
 .list-button-section {
   display: flex;
@@ -474,6 +499,7 @@ hr {
   font-family: NanumSquareRoundExtraBold;
   font-size: 19px;
   color: #333;
+  margin-top: 50px;
 }
 
 .author-info-box {
@@ -502,6 +528,7 @@ img.rounded-circle {
 .location-info-label {
   font-family: NanumSquareRoundExtraBold;
   font-size: 19px;
+  margin-top: 50px;
 }
 
 .location-info-box {

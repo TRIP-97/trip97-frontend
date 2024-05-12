@@ -150,13 +150,12 @@ onMounted(() => {
 <template>
   <div>
     <main>
-      <h1 style="text-align: center; margin-bottom: 100px">HOTPLACE 등록</h1>
       <div class="container">
-        <div class="row mt-5">
-          <div class="col-lg-6 map-area border border-secondary">
+        <div class="row mt-5 justify-content-center">
+          <div class="col-lg-5 map-area border border-secondary">
             <div class="row-md-5 map" id="map"></div>
           </div>
-          <div class="col-lg-6">
+          <div class="col-lg-5">
             <form>
               <div class="form-group">
                 <label for="title">제목</label>
@@ -192,23 +191,29 @@ onMounted(() => {
                 />
               </div>
               <div class="form-group">
-                <label for="date">방문 날짜</label>
-                <input
-                  type="date"
-                  class="form-control"
-                  id="startDate"
-                  name="startDate"
-                  v-model="startDate"
-                  required
-                />
-                <input
-                  type="date"
-                  class="form-control"
-                  id="endDate"
-                  name="endDate"
-                  v-model="endDate"
-                  required
-                />
+                <label class="form-heading">방문 날짜</label>
+                <div class="date-field">
+                    <label for="startDate">시작일</label>
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="startDate"
+                      name="startDate"
+                      v-model="startDate"
+                      required
+                    />
+                </div>
+                <div class="date-field">
+                    <label for="endDate">종료일</label>
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="endDate"
+                      name="endDate"
+                      v-model="endDate"
+                      required
+                    />
+                </div>
               </div>
               <div class="form-group">
                 <label for="placeName">위치</label>
@@ -232,11 +237,13 @@ onMounted(() => {
                   required
                 ></textarea>
               </div>
-              <input type="file" multiple @change="handleFiles">
-
-              <button @click.prevent="writeHotPlace" class="btn btn-primary btn-block write-btn">
-                등록
-              </button>
+              <input class="file-upload-btn" type="file" multiple @change="handleFiles">
+              
+              <div class="text-right">
+                <button @click.prevent="writeHotPlace" class="btn btn-primary btn-block write-btn">
+                  등록
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -246,7 +253,53 @@ onMounted(() => {
 </template>
 
 <style scoped>
-@import "@/assets/css/hotplace/hotplacewrite.css";
+.map-area {
+  margin-right: 30px; /* 맵과 폼 사이의 간격을 조절 */
+}
+
+.map {
+  width: auto;
+  height: 790px;
+  margin-top: 15px;
+  border: 1px solid;
+  border-radius: 10px;
+}
+
+.map-area {
+  border-radius: 15px;
+  box-shadow: 2px 2px 2px 2px rgba(200, 200, 200, 0.8);
+  background-color: rgb(255, 255, 255, 0.6);
+}
+
+.form-heading,
+label {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: #f8f9fa; /* 라벨 배경색 */
+  padding: 5px 10px; /* 라벨 내부 여백 */
+  border-radius: 5px; /* 모서리 둥글게 처리 */
+}
+
+.date-field {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.date-field label {
+  margin-right: 10px; /* 라벨과 입력 필드 사이의 간격 */
+  white-space: nowrap; /* 라벨을 한 줄로 유지 */
+}
+
+.form-control {
+  flex-grow: 1; /* 입력 필드가 가능한 공간을 모두 차지하도록 확장 */
+}
+
+.file-upload-btn {
+  margin-top: 10px;
+}
 
 .write-btn {
   margin-top: 10px;

@@ -73,7 +73,6 @@ onMounted(() => {
 <template>
   <div>
     <div class="container">
-      <h1 style="text-align: center; margin-bottom: 100px">HOTPLACE</h1>
       <div class="filter-search-container d-flex justify-content-between mb-3">
         <div class="filters">
           <div
