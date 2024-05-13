@@ -73,9 +73,7 @@ onMounted(() => {
   <div class="list-container d-flex">
     <div class="margin-div"></div>
 
-    <GroupSideBar />
-
-    <div class="main-content">
+    <div class="main-content ml-5">
       <div class="search-container d-flex justify-content-end mb-3">
         <form class="search-form d-flex" @submit.prevent="getGroupList">
           <VSelect :selectOption="selectOption" @onKeySelect="changeKey" />

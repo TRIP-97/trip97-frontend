@@ -1,5 +1,6 @@
 <script setup>
 import { RouterView } from "vue-router";
+import GroupSideBar from "@/components/group/item/GroupSideBar.vue";
 </script>
 
 <template>
@@ -10,8 +11,18 @@ import { RouterView } from "vue-router";
         <h1>여행 계획</h1>
       </div>
     </div>
-    <div class="container">
-      <RouterView />
+    <div class="container justify-content-center">
+      <div class="row">
+        <!-- 사이드바 섹션 -->
+        <div class="col-md-2">
+          <GroupSideBar />
+        </div>
+
+        <!-- 주 콘텐츠 섹션 -->
+        <div class="col-md-10">
+          <RouterView />
+        </div>
+      </div>
     </div>
   </div>
 </template>
