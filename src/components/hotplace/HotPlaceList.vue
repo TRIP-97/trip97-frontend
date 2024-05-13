@@ -24,6 +24,8 @@ const param = ref({
 const selectOption = ref([
   { text: "검색조건", value: "" },
   { text: "제목", value: "title" },
+  { text: "내용", value: "content" },
+  { text: "위치", value: "location" },
   { text: "닉네임", value: "member_nickname" },
 ]);
 
@@ -76,20 +78,26 @@ onMounted(() => {
       <div class="filter-search-container d-flex justify-content-between mb-3">
         <div class="filters">
           <div
-            :class="{'filter-selected': param.filter === 'createdDate'}"
+            :class="{ 'filter-selected': param.filter === 'createdDate' }"
             class="filter-option"
             @click="setFilter('createdDate')"
-          >최신 순</div>
+          >
+            최신 순
+          </div>
           <div
-            :class="{'filter-selected': param.filter === 'viewCount'}"
+            :class="{ 'filter-selected': param.filter === 'viewCount' }"
             class="filter-option"
             @click="setFilter('viewCount')"
-          >조회수 순</div>
+          >
+            조회수 순
+          </div>
           <div
-            :class="{'filter-selected': param.filter === 'likeCount'}"
+            :class="{ 'filter-selected': param.filter === 'likeCount' }"
             class="filter-option"
             @click="setFilter('likeCount')"
-          >좋아요 순</div>
+          >
+            좋아요 순
+          </div>
         </div>
         <form class="search-form d-flex">
           <VSelect :selectOption="selectOption" @onKeySelect="changeKey" />
@@ -110,7 +118,8 @@ onMounted(() => {
           <HotPlaceListItem :hot-place-item="hotPlace" />
         </div>
       </div>
-      <div class="row mt-3 justify-content-end"> <!-- 상단 마진과 오른쪽 정렬 추가 -->
+      <div class="row mt-3 justify-content-end">
+        <!-- 상단 마진과 오른쪽 정렬 추가 -->
         <button class="btn btn-primary write-btn" @click="goWriteForm">글 작성</button>
       </div>
       <PageNavigation

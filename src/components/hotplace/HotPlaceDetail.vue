@@ -7,7 +7,7 @@ import {
   listHotPlaceComment,
   registHotPlaceComment,
   checkHotPlaceLiked,
-  updateLike
+  updateLike,
 } from "@/api/hotplace";
 import { getMemberProfile } from "@/api/member";
 import HotPlaceCommentItem from "./item/HotPlaceCommentItem.vue";
@@ -29,7 +29,7 @@ const checkIsWriter = () => {
   if (hotPlace.value.writerId === memberId.value) {
     isWriter.value = true;
   }
-}
+};
 
 // 핫플레이스 게시글 조회하는 함수
 async function getHotPlace() {
@@ -41,7 +41,6 @@ async function getHotPlace() {
 
       hotPlace.value.startDate = formatVisitedDate(hotPlace.value.startDate);
       hotPlace.value.endDate = formatVisitedDate(hotPlace.value.endDate);
-
     },
     (error) => {
       console.log("HotPlace 게시글 불러오는 중 에러 발생!");
@@ -61,7 +60,8 @@ function formatVisitedDate(dateString) {
 
 // 핫플레이스 좋아요 여부 확인하는 함수
 function checkLike() {
-  checkHotPlaceLiked({
+  checkHotPlaceLiked(
+    {
       memberId: memberId.value,
       hotPlaceId: hotPlaceId.value,
     },
@@ -72,7 +72,7 @@ function checkLike() {
       console.log("HotPlace 좋아요 여부 불러오는 중 에러 발생!");
       console.dir(error);
     }
-  )
+  );
 }
 
 // 핫플레이스 좋아요하는 함수
@@ -81,18 +81,20 @@ function addLike() {
     window.alert("이미 좋아요한 게시물입니다!");
   } else {
     console.log("좋아요추가 체크");
-    updateLike({
-      memberId: memberId.value,
-      hotPlaceId: hotPlaceId.value,
-    },
-    () => {
-      isLiked.value = true;
-      getHotPlace();
-    },
-    (error) => {
-      console.log("HotPlace 좋아요하는 중 에러 발생!");
-      console.dir(error);
-    })
+    updateLike(
+      {
+        memberId: memberId.value,
+        hotPlaceId: hotPlaceId.value,
+      },
+      () => {
+        isLiked.value = true;
+        getHotPlace();
+      },
+      (error) => {
+        console.log("HotPlace 좋아요하는 중 에러 발생!");
+        console.dir(error);
+      }
+    );
   }
 }
 
@@ -247,7 +249,6 @@ onMounted(() => {
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-sm-11">
-        
         <div class="row">
           <div class="col-lg-8 mt-4">
             <h3 class="title">{{ hotPlace.title }}</h3>
@@ -261,18 +262,18 @@ onMounted(() => {
             </div>
             <div class="d-flex justify-content-end mt-3 my-2" v-if="isWriter">
               <div class="edit-actions">
-                <span class="action-text " @click="goHotPlaceModify">수정</span>
+                <span class="action-text" @click="goHotPlaceModify">수정</span>
                 <div class="custom-vr mx-2"></div>
                 <span class="action-text" @click="removeHotPlace">삭제</span>
               </div>
             </div>
 
-           <p class="schedule-label mb-2">여행 일정</p>
-           <div class="schedule-box my-3">
+            <p class="schedule-label mb-2">여행 일정</p>
+            <div class="schedule-box my-3">
               <strong> <i class="travel-date-icon fa-solid fa-calendar"></i></strong>
-               {{ hotPlace.startDate }} ~ {{ hotPlace.endDate }}
-              <br>
-              <br>
+              {{ hotPlace.startDate }} ~ {{ hotPlace.endDate }}
+              <br />
+              <br />
               <strong><i class="fa-solid fa-location-dot"></i></strong> {{ hotPlace.location }}
             </div>
             <div class="my-2">
@@ -281,23 +282,23 @@ onMounted(() => {
             </div>
 
             <div class="col-lg-8 mx-auto image-list" v-if="hotPlace.fileInfos">
-              <v-carousel style="height: auto">
+              <v-carousel style="height: 300px">
                 <v-carousel-item
-                v-for="fileInfo in hotPlace.fileInfos"
-                :key="fileInfo.id"
-                :src="fileInfo.url"
+                  v-for="fileInfo in hotPlace.fileInfos"
+                  :key="fileInfo.id"
+                  :src="fileInfo.url"
                 />
               </v-carousel>
             </div>
-        
+
             <div class="like-button-section">
               <button class="btn like-button" @click="addLike">
-                <i :class="{'fa-solid': isLiked, 'fa-regular': !isLiked}" class="fa-heart"></i>
+                <i :class="{ 'fa-solid': isLiked, 'fa-regular': !isLiked }" class="fa-heart"></i>
               </button>
             </div>
 
             <div class="list-button-section mt-5">
-              <hr class="mt-3"> 
+              <hr class="mt-3" />
               <button class="btn btn-primary list-btn" @click="goHotPlaceList">목록으로</button>
             </div>
 
@@ -305,14 +306,20 @@ onMounted(() => {
               <div class="comment-section">
                 <p class="comment-label mb-3">댓글</p>
                 <div class="input-group mb-3">
-                  <input type="text" 
-                  v-model="commentContent" 
-                  class="form-control" 
-                  id="commentContent"
-                  placeholder="댓글을 입력하세요...">
+                  <input
+                    type="text"
+                    v-model="commentContent"
+                    class="form-control"
+                    id="commentContent"
+                    placeholder="댓글을 입력하세요..."
+                  />
                   <div class="input-group-append">
-                    <button class="btn btn-outline-primary text-primary comment-write-btn" 
-                    @click="registComment">작성</button>
+                    <button
+                      class="btn btn-outline-primary text-primary comment-write-btn"
+                      @click="registComment"
+                    >
+                      작성
+                    </button>
                   </div>
                 </div>
               </div>
@@ -332,19 +339,28 @@ onMounted(() => {
             <h5 class="traveler-info-label mb-2">여행자</h5>
             <div class="author-info-box my-3">
               <div class="d-flex align-items-center mb-1">
-                <img v-if="hotPlace.writerProfileImage === null" src="@/assets/images/profile.png" alt="Author" class="img-fluid rounded-circle mr-3" style="width: 40px; height: 40px;">
+                <img
+                  v-if="hotPlace.writerProfileImage === null"
+                  src="@/assets/images/profile.png"
+                  alt="Author"
+                  class="img-fluid rounded-circle mr-3"
+                  style="width: 40px; height: 40px"
+                />
                 <p class="writer-nickname">{{ hotPlace.writerNickname }}</p>
               </div>
-              <p v-if="hotPlace.writerIntroduction === null" class="writer-introduction">{{ "자기소개를 아직 작성하지 않았어요." }}</p>
+              <p v-if="hotPlace.writerIntroduction === null" class="writer-introduction">
+                {{ "자기소개를 아직 작성하지 않았어요." }}
+              </p>
             </div>
             <h5 class="location-info-label mb-2">여행 장소</h5>
             <div class="location-info-box my-3">
-              <div >
-                <p class="visited-places">{{ hotPlace.placeName}}</p>
-                <hr> <!-- Horizontal line with margin -->
+              <div>
+                <p class="visited-places">{{ hotPlace.placeName }}</p>
+                <hr />
+                <!-- Horizontal line with margin -->
                 <p class="city-name">{{ hotPlace.location }}</p>
               </div>
-              <div id="map" class="border border-white rounded" style="height: 250px;"></div>
+              <div id="map" class="border border-white rounded" style="height: 250px"></div>
             </div>
           </div>
         </div>
@@ -360,11 +376,15 @@ onMounted(() => {
   max-width: 1200px; /* Adjust the max width of the container */
 }
 
-.title, .schedule-label, .content-label, .comment-label {
+.title,
+.schedule-label,
+.content-label,
+.comment-label {
   font-family: NanumSquareRoundExtraBold;
 }
 
-.schedule-label, .content-label {
+.schedule-label,
+.content-label {
   font-size: 20px;
   margin-top: 50px;
 }
@@ -411,7 +431,7 @@ onMounted(() => {
   background-color: #f8f9fa; /* Light grey background */
   padding: 10px;
   border-radius: 10px; /* Rounded corners for the box */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 .image-list {
@@ -435,7 +455,7 @@ onMounted(() => {
   font-size: 24px;
   border-radius: 10px;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .btn.like-button:hover {
@@ -469,7 +489,7 @@ hr {
 
 .input-group .input-group-append .btn {
   background-color: transparent; /* Transparent background */
-  color: #00BFFF; /* Sky blue color for the text */
+  color: #00bfff; /* Sky blue color for the text */
   border: 0; /* Remove the left border */
 }
 
@@ -493,7 +513,7 @@ hr {
   background-color: #f1f1f1; /* Light grey background */
   padding: 1px 15px 1px 15px;
   border-radius: 10px; /* Rounded corners for the box */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 img.rounded-circle {
@@ -522,7 +542,7 @@ img.rounded-circle {
   background-image: linear-gradient(to bottom, #fafafa, #cfcfcf, #e0e0e0);
   padding: 15px;
   border-radius: 10px; /* Rounded corners for the box */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 .visited-places {
@@ -541,4 +561,3 @@ img.rounded-circle {
   border-radius: 8px; /* Rounded corners for the map */
 }
 </style>
-
