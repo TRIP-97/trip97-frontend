@@ -1,25 +1,25 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { listHotPlace } from "@/api/hotplace.js";
+import { listGroup } from "@/api/group.js";
 
-import HotPlaceListItem from "./item/HotPlaceListItem.vue";
+import GroupSideBar from "./item/GroupSideBar.vue";
+import GroupListItem from "./item/GroupListItem.vue";
 import PageNavigation from "../common/PageNavigation.vue";
 import VSelect from "../common/VSelect.vue";
 
 const router = useRouter();
 
-const hotPlaces = ref([]);
+const groups = ref([]);
 const currentPage = ref(1);
 const totalPage = ref(0);
-const { VITE_HOTPLACE_LIST_SIZE } = import.meta.env;
+const { VITE_GROUP_LIST_SIZE } = import.meta.env;
 
 const param = ref({
   pgno: currentPage.value,
-  spp: VITE_HOTPLACE_LIST_SIZE,
+  spp: VITE_GROUP_LIST_SIZE,
   key: "",
   word: "",
-  filter: "createdDate",
 });
 
 const selectOption = ref([
@@ -31,26 +31,21 @@ const selectOption = ref([
 ]);
 
 const changeKey = (val) => {
-  console.log("HotPlaceList에서 선택한 조건 : " + val);
+  console.log("Group에서 선택한 조건 : " + val);
   param.value.key = val;
 };
 
-const setFilter = (filter) => {
-  param.value.filter = filter;
-  getHotPlaceList();
-};
-
-// 핫플레이스 목록 조회
-async function getHotPlaceList() {
-  listHotPlace(
+// 그룹 목록 조회
+async function getGroupList() {
+  listGroup(
     param.value,
     ({ data }) => {
-      hotPlaces.value = data.hotPlaces;
+      groups.value = data.groups;
       currentPage.value = data.currentPage;
       totalPage.value = data.totalPageCount;
     },
     (error) => {
-      console.log("HotPlaceList 불러오는 중 에러 발생!");
+      console.log("GroupList 불러오는 중 에러 발생!");
       console.dir(error);
     }
   );
@@ -59,47 +54,29 @@ async function getHotPlaceList() {
 const onPageChange = (val) => {
   currentPage.value = val;
   param.value.pgno = val;
-  getHotPlaceList();
+  getGroupList();
 };
 
 function goWriteForm() {
   router.push({
-    name: "hotPlaceWrite",
+    name: "groupWrite",
   });
 }
 
 onMounted(() => {
-  getHotPlaceList();
+  console.log("check");
+  getGroupList();
 });
 </script>
 
 <template>
-  <div>
-    <div class="container">
-      <div class="filter-search-container d-flex justify-content-between mb-3">
-        <div class="filters">
-          <div
-            :class="{ 'filter-selected': param.filter === 'createdDate' }"
-            class="filter-option"
-            @click="setFilter('createdDate')"
-          >
-            최신 순
-          </div>
-          <div
-            :class="{ 'filter-selected': param.filter === 'viewCount' }"
-            class="filter-option"
-            @click="setFilter('viewCount')"
-          >
-            조회수 순
-          </div>
-          <div
-            :class="{ 'filter-selected': param.filter === 'likeCount' }"
-            class="filter-option"
-            @click="setFilter('likeCount')"
-          >
-            좋아요 순
-          </div>
-        </div>
+  <div class="list-container d-flex">
+    <div class="margin-div"></div>
+
+    <GroupSideBar />
+
+    <div class="main-content flex-grow-1">
+      <div class="search-container d-flex justify-content-end mb-3">
         <form class="search-form d-flex">
           <VSelect :selectOption="selectOption" @onKeySelect="changeKey" />
           <div class="input-group input-group-sm">
@@ -109,31 +86,45 @@ onMounted(() => {
               v-model="param.word"
               placeholder="검색어를 입력해주세요."
             />
-            <button class="btn btn-dark" type="button" @click="getHotPlaceList">검색</button>
+            <button class="btn btn-dark" type="button" @click="getGroupList">검색</button>
           </div>
         </form>
       </div>
 
-      <div class="row">
-        <div class="col-md-3" v-for="hotPlace in hotPlaces" :key="hotPlace.id">
-          <HotPlaceListItem :hot-place-item="hotPlace" />
+      <div class="row content">
+        <div class="col-md-3" v-for="group in groups" :key="group.id">
+          <GroupListItem :group-item="group" />
         </div>
+        <div class="row mt-3 justify-content-end">
+          <button class="btn btn-primary write-btn" @click="goWriteForm">글 작성</button>
+        </div>
+        <PageNavigation
+          :current-page="currentPage"
+          :total-page="totalPage"
+          @pageChange="onPageChange"
+        ></PageNavigation>
       </div>
-      <div class="row mt-3 justify-content-end">
-        <!-- 상단 마진과 오른쪽 정렬 추가 -->
-        <button class="btn btn-primary write-btn" @click="goWriteForm">글 작성</button>
-      </div>
-      <PageNavigation
-        :current-page="currentPage"
-        :total-page="totalPage"
-        @pageChange="onPageChange"
-      ></PageNavigation>
     </div>
   </div>
 </template>
 
 <style scoped>
-.filter-search-container {
+.margin-div {
+  height: 30px;
+}
+
+.list-container {
+  display: flex;
+  height: 100%;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 20px; /* 메인 콘텐트에 패딩 추가 */
+  overflow: auto; /* 필요한 경우 스크롤바 자동 추가 */
+}
+
+.search-container {
   display: flex;
   justify-content: space-between;
 }
@@ -172,12 +163,5 @@ onMounted(() => {
 
 .search-form button:hover {
   background-color: #91c7e1; /* 마우스 오버 시 좀 더 진한 하늘색으로 변경 */
-}
-
-.write-btn {
-  width: fit-content;
-  margin-top: 20px;
-  margin-bottom: 30px;
-  margin-right: 30px;
 }
 </style>
