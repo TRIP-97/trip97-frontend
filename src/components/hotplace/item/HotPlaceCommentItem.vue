@@ -219,6 +219,6 @@ onMounted(() => {
   flex-grow: 1;
   margin-right: 10px;
   border: none;
-  border-bottom: 1px solid #ccc; /* Subtle underline */
+  border-bottom: 1px solid #ccc; 
 }
 </style>

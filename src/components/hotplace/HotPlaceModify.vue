@@ -243,7 +243,10 @@ onMounted(() => {
 
 <style scoped>
 .map-area {
-  margin-right: 30px; /* 맵과 폼 사이의 간격을 조절 */
+  margin-right: 30px;
+  border-radius: 15px;
+  box-shadow: 2px 2px 2px 2px rgba(200, 200, 200, 0.8);
+  background-color: rgb(255, 255, 255, 0.6); 
 }
 
 .map {
@@ -254,21 +257,15 @@ onMounted(() => {
   border-radius: 10px;
 }
 
-.map-area {
-  border-radius: 15px;
-  box-shadow: 2px 2px 2px 2px rgba(200, 200, 200, 0.8);
-  background-color: rgb(255, 255, 255, 0.6);
-}
-
 .form-heading,
 label {
   font-size: 16px;
   font-weight: bold;
   margin-top: 10px;
   margin-bottom: 10px;
-  background-color: #f8f9fa; /* 라벨 배경색 */
-  padding: 5px 10px; /* 라벨 내부 여백 */
-  border-radius: 5px; /* 모서리 둥글게 처리 */
+  background-color: #f8f9fa; 
+  padding: 5px 10px; 
+  border-radius: 5px; 
 }
 
 .date-field {
@@ -278,12 +275,12 @@ label {
 }
 
 .date-field label {
-  margin-right: 10px; /* 라벨과 입력 필드 사이의 간격 */
-  white-space: nowrap; /* 라벨을 한 줄로 유지 */
+  margin-right: 10px;
+  white-space: nowrap;
 }
 
 .form-control {
-  flex-grow: 1; /* 입력 필드가 가능한 공간을 모두 차지하도록 확장 */
+  flex-grow: 1; 
 }
 
 .file-upload-btn {
