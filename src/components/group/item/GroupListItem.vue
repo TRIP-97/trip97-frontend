@@ -42,7 +42,7 @@ function goGroupDetail() {
       <div class="header-date mt-3">
         <div class="d-flex">
           <i class="travel-date-icon fa-solid fa-calendar"></i>
-          <p class="travel-date-label mb-0">여행 기간</p>
+          <p class="travel-date-label mb-0">모임 기간</p>
         </div>
         <p class="travel-date">{{ group.startDate }} ~ {{ group.endDate }}</p>
       </div>
@@ -52,7 +52,7 @@ function goGroupDetail() {
         <img src="@/assets/images/fubao.jpg" class="card-img-top group-image" alt="Group Image" />
       </template>
       <template v-else>
-        <img :src="group.fileInfos[0].url" style="width: 300px" />
+        <img :src="group.fileInfos[0].url" class="group-image" style="width: 300px" />
       </template>
       <div class="group-location position-absolute">
         <i class="fa-solid fa-location-dot"></i>
@@ -60,7 +60,7 @@ function goGroupDetail() {
       </div>
     </div>
     <div class="card-body">
-      <h5 class="card-title">{{ group.title }}</h5>
+      <h5 class="card-title">{{ group.name }}</h5>
     </div>
   </div>
 </template>

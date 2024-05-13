@@ -334,7 +334,7 @@ onMounted(() => {
               @reload-comment-list="getComments"
             />
           </div>
-          <!-- Sidebar for Author Information -->
+
           <div class="col-lg-3 offset-lg-1">
             <h5 class="traveler-info-label mb-2">여행자</h5>
             <div class="author-info-box my-3">
@@ -360,7 +360,7 @@ onMounted(() => {
                 <!-- Horizontal line with margin -->
                 <p class="city-name">{{ hotPlace.location }}</p>
               </div>
-              <div id="map" class="border border-white rounded" style="height: 250px"></div>
+              <div id="map" class="side-map border border-white rounded" style="height: 250px"></div>
             </div>
           </div>
         </div>
@@ -370,10 +370,22 @@ onMounted(() => {
 </template>
 
 <style scoped>
-@import "@/assets/css/hotplace/hotplacedetail.css";
+.map {
+  width: auto;
+  height: 540px;
+  margin-top: 15px;
+  border: 1px solid;
+  border-radius: 10px;
+}
+
+.map-area {
+  border-radius: 15px;
+  box-shadow: 2px 2px 2px 2px rgba(200, 200, 200, 0.8);
+  background-color: rgb(255, 255, 255, 0.6);
+}
 
 .container {
-  max-width: 1200px; /* Adjust the max width of the container */
+  max-width: 1200px;
 }
 
 .title,
@@ -399,8 +411,8 @@ onMounted(() => {
 }
 
 .info-text {
-  font-size: 0.9rem; /* Smaller font size for stats and date */
-  color: #6c757d; /* Grey color */
+  font-size: 0.9rem; 
+  color: #6c757d; 
 }
 
 .custom-vr {
@@ -410,16 +422,16 @@ onMounted(() => {
 }
 
 .stat-text {
-  margin-right: 5px; /* Space between statistics */
+  margin-right: 5px; 
 }
 
 .date-text {
-  text-align: right; /* Right align for the date */
+  text-align: right; 
 }
 
 .edit-actions {
-  color: #6c757d; /* Grey color for actions */
-  font-size: 0.8rem; /* Smaller font size for edit/delete actions */
+  color: #6c757d;
+  font-size: 0.8rem; 
 }
 
 .action-text {
@@ -428,10 +440,10 @@ onMounted(() => {
 
 .schedule-box {
   color: gray;
-  background-color: #f8f9fa; /* Light grey background */
+  background-color: #f8f9fa; 
   padding: 10px;
-  border-radius: 10px; /* Rounded corners for the box */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 }
 
 .image-list {
@@ -465,37 +477,37 @@ onMounted(() => {
 .list-button-section {
   display: flex;
   flex-direction: column;
-  align-items: flex-end; /* Aligns the button and line to the right */
+  align-items: flex-end;
 }
 
 .list-button-section .btn-primary {
-  background-color: #689beb; /* Sky blue color */
-  border-color: #689beb; /* Border color to match the background */
-  color: white; /* White text color */
+  background-color: #689beb; 
+  border-color: #689beb; 
+  color: white;
 }
 
 hr {
-  width: 100%; /* Full width line */
+  width: 100%;
   border: 0;
   height: 1px;
-  background-color: #575555; /* Light grey line */
-  margin-top: 5px; /* Space above the line */
+  background-color: #575555; 
+  margin-top: 5px;
 }
 
 .input-group .form-control {
-  border-right: 0; /* Remove the right border */
+  border-right: 0;
   font-size: 13px;
 }
 
 .input-group .input-group-append .btn {
-  background-color: transparent; /* Transparent background */
-  color: #00bfff; /* Sky blue color for the text */
-  border: 0; /* Remove the left border */
+  background-color: transparent;
+  color: #00bfff; 
+  border: 0;
 }
 
 .input-group {
-  border: 1px solid #ccc; /* Border around the input group */
-  border-radius: 5px; /* Rounded corners for the input group */
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .comment-write-btn {
@@ -510,14 +522,14 @@ hr {
 }
 
 .author-info-box {
-  background-color: #f1f1f1; /* Light grey background */
+  background-color: #f1f1f1; 
   padding: 1px 15px 1px 15px;
-  border-radius: 10px; /* Rounded corners for the box */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 img.rounded-circle {
-  margin-right: 15px; /* Space between image and text */
+  margin-right: 15px;
 }
 
 .writer-nickname {
@@ -541,8 +553,8 @@ img.rounded-circle {
 .location-info-box {
   background-image: linear-gradient(to bottom, #fafafa, #cfcfcf, #e0e0e0);
   padding: 15px;
-  border-radius: 10px; /* Rounded corners for the box */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  border-radius: 10px; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .visited-places {
@@ -555,9 +567,9 @@ img.rounded-circle {
   color: #777777;
 }
 
-#map {
-  width: 100%; /* Full width of the container */
-  border: 2px solid white; /* White border around the map */
-  border-radius: 8px; /* Rounded corners for the map */
+.side-map {
+  width: 100%; 
+  border: 2px solid white; 
+  border-radius: 8px;
 }
 </style>

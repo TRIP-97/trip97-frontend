@@ -36,3 +36,12 @@ function modifyGroup(group, success, fail) {
 function deleteGroup(groupId, success, fail) {
   local.delete(`/group/${groupId}`).then(success).catch(fail);
 }
+
+export {
+  listGroup,
+  listMyGroup,
+  detailGroup,
+  registGroup,
+  modifyGroup,
+  deleteGroup,
+};

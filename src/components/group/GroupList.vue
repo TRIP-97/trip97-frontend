@@ -24,8 +24,8 @@ const param = ref({
 
 const selectOption = ref([
   { text: "검색조건", value: "" },
-  { text: "제목", value: "title" },
-  { text: "내용", value: "content" },
+  { text: "제목", value: "name" },
+  { text: "내용", value: "overview" },
   { text: "위치", value: "location" },
   { text: "닉네임", value: "member_nickname" },
 ]);
@@ -75,9 +75,9 @@ onMounted(() => {
 
     <GroupSideBar />
 
-    <div class="main-content flex-grow-1">
+    <div class="main-content">
       <div class="search-container d-flex justify-content-end mb-3">
-        <form class="search-form d-flex">
+        <form class="search-form d-flex" @submit.prevent="getGroupList">
           <VSelect :selectOption="selectOption" @onKeySelect="changeKey" />
           <div class="input-group input-group-sm">
             <input
@@ -91,8 +91,8 @@ onMounted(() => {
         </form>
       </div>
 
-      <div class="row content">
-        <div class="col-md-3" v-for="group in groups" :key="group.id">
+      <div class="row">
+        <div class="col-lg-4 group-item" v-for="group in groups" :key="group.id">
           <GroupListItem :group-item="group" />
         </div>
         <div class="row mt-3 justify-content-end">
@@ -120,34 +120,13 @@ onMounted(() => {
 
 .main-content {
   flex-grow: 1;
-  padding: 20px; /* 메인 콘텐트에 패딩 추가 */
-  overflow: auto; /* 필요한 경우 스크롤바 자동 추가 */
+  padding: 20px;
+  gap: 16px;
 }
 
 .search-container {
   display: flex;
   justify-content: space-between;
-}
-
-.filters {
-  display: flex;
-  gap: 10px;
-}
-
-.filter-option {
-  font-size: 14px;
-  font-family: NanumSquareRound;
-  padding: 8px 16px;
-  background-color: #ebebeb;
-  color: rgb(4, 4, 4);
-  border-radius: 8px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  cursor: pointer;
-}
-
-.filter-selected {
-  background-color: black;
-  color: white;
 }
 
 .search-form {
@@ -156,12 +135,19 @@ onMounted(() => {
 }
 
 .search-form button {
-  background-color: #a3d8f4; /* 파스텔톤 하늘색 */
-  color: white; /* 버튼 글씨 색상을 흰색으로 설정 */
-  border: none; /* 테두리 제거 */
+  background-color: #a3d8f4;
+  color: white;
+  border: none; 
 }
 
 .search-form button:hover {
-  background-color: #91c7e1; /* 마우스 오버 시 좀 더 진한 하늘색으로 변경 */
+  background-color: #91c7e1;
+}
+
+.write-btn {
+  width: fit-content;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  margin-right: 30px;
 }
 </style>

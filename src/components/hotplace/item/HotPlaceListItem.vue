@@ -52,7 +52,7 @@ function goHotPlaceDetail() {
         <img src="@/assets/images/fubao.jpg" class="card-img-top hotplace-image" alt="HotPlace Image" />
       </template>
       <template v-else>
-        <img :src="hotPlace.fileInfos[0].url" style="width: 300px" />
+        <img :src="hotPlace.fileInfos[0].url" class="hotplace-image" style="width: 300px" />
       </template>
       <div class="hotplace-location position-absolute">
         <i class="fa-solid fa-location-dot"></i>
@@ -81,32 +81,32 @@ function goHotPlaceDetail() {
   border-radius: 10px;
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
   margin: 10px;
-  overflow: hidden; /* 카드 범위 밖 내용 숨기기 */
+  overflow: hidden; 
   cursor: pointer;
 }
 .card:hover .hotplace-location {
-  color: white; /* 호버 시 글자 색 변경 */
-  background-color: #00a1fc; /* 호버 시 배경 색 변경 */
+  color: white;
+  background-color: #00a1fc; 
 }
 .card:hover .hotplace-image {
-  transform: scale(1.15); /* 이미지 확대 */
-  transition: transform 0.3s ease; /* 이미지 확대 트랜지션 효과 추가 */
+  transform: scale(1.15); 
+  transition: transform 0.3s ease; 
 }
 
 .card-header {
   height: 50px;
   font-size: 11px;
-  border-bottom: none; /* 하단 테두리 제거 */
+  border-bottom: none;
 }
 .card-title {
   font-size: 17px;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1; /* 1줄로 제한 */
+  -webkit-line-clamp: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
-  height: 1.5em; /* 높이 조절을 통해 텍스트 라인의 개수와 높이를 일치시킴 */
+  height: 1.5em;
 }
 .custom-vr {
   border-left: 1px solid lightgray;
@@ -137,7 +137,7 @@ function goHotPlaceDetail() {
 }
 .hotplace-image {
   border-radius: 10px;
-  transition: transform 0.3s ease; /* 이미지 트랜지션 효과 추가 */
+  transition: transform 0.3s ease; 
 }
 .hotplace-location {
   top: 10px;
