@@ -13,17 +13,33 @@ const sidos = ref([]); // 드롭다운 메뉴
 const contents = ref([]); // 드롭다운 메뉴 2
 const guguns = ref([]); // 드롭다운 메뉴 3
 
-const content = ref("0");
-const sido = ref("0");
-const gugun = ref("0");
+const map = toRefs(null); // 카카오 맵
+
+// 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
+var infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
+
+const content = ref({
+  code: 0,
+  name: "",
+});
+
+const sido = ref({
+  code: 0,
+  name: "",
+});
+
+const gugun = ref({
+  code: 0,
+  name: "",
+});
 
 // 관광지를 받아오는 함수
 async function getAttractionList() {
   var bound = map.value.getBounds();
   getAttractions(
-    content.value,
-    sido.value,
-    gugun.value,
+    content.value.code,
+    sido.value.code,
+    gugun.value.code,
     bound.ha,
     bound.qa,
     bound.oa,
@@ -33,7 +49,6 @@ async function getAttractionList() {
       //   for (var attraction of attractions.value) {
       //     console.log(attraction.latitude);
       //   }
-      console.log(attractions.value);
       addMarkerAndRemovePrevious();
     },
     (error) => {
@@ -63,7 +78,7 @@ async function getDropdownCS() {
 async function getDropdownG() {
   console.log(sido.value);
   getDropdownGugun(
-    sido.value,
+    sido.value.code,
     (response) => {
       guguns.value = response.data;
       console.log(guguns);
@@ -76,11 +91,33 @@ async function getDropdownG() {
 }
 
 watch(sido, (newValue, oldValue) => {
-  console.log("시도바뀜?");
+  // 키워드로 장소를 검색합니다
+  // 장소 검색 객체를 생성합니다
+  var ps = new kakao.maps.services.Places();
+  ps.keywordSearch(sido.value.name, placesSearchCB);
   getDropdownG();
 });
 
-const map = toRefs(null);
+watch(gugun, (newValue, oldValue) => {
+  var ps = new kakao.maps.services.Places();
+  ps.keywordSearch(sido.value.name + gugun.value.name, placesSearchCB);
+});
+
+// 키워드 검색 완료 시 호출되는 콜백함수 입니다
+function placesSearchCB(data, status, pagination) {
+  if (status === kakao.maps.services.Status.OK) {
+    // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+    // LatLngBounds 객체에 좌표를 추가합니다
+    var bounds = new kakao.maps.LatLngBounds();
+
+    for (var i = 0; i < data.length; i++) {
+      bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
+    }
+
+    // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+    map.value.setBounds(bounds);
+  }
+}
 
 const initMap = () => {
   const container = document.getElementById("map");
@@ -121,12 +158,11 @@ function addMarkerAndRemovePrevious() {
       attractions.value[i].latitude,
       attractions.value[i].longitude
     );
-    console.log(attractions.value[i].longitude);
-    console.log(attractions.value[i].latitude);
     var marker = addMarker(placePosition, i);
   }
 }
 
+// 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
 function addMarker(position, idx, title) {
   var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png"; // 마커 이미지 url, 스프라이트 이미지를 씁니다
   var imageSize = new kakao.maps.Size(24, 35); // 마커 이미지의 크기
@@ -167,13 +203,13 @@ onMounted(() => {
 <template>
   <div class="drop">
     <select v-model="content">
-      <option v-for="con in contents" :value="con.code">{{ con.name }}</option>
+      <option v-for="con in contents" :value="con">{{ con.name }}</option>
     </select>
     <select v-model="sido">
-      <option v-for="si in sidos" :value="si.code">{{ si.name }}</option>
+      <option v-for="si in sidos" :value="si">{{ si.name }}</option>
     </select>
     <select v-model="gugun">
-      <option v-for="gu in guguns" :value="gu.code">{{ gu.name }}</option>
+      <option v-for="gu in guguns" :value="gu">{{ gu.name }}</option>
     </select>
   </div>
   <button @click="getAttractionList">검색</button>
