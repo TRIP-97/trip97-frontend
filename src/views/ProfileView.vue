@@ -34,6 +34,7 @@ const goMainView = () => {
 
 <template>
   <div>
+    <div style="height: 50px;"></div>
     <h1>프로필 화면입니다!!!</h1>
     <div>
       <p>닉네임: {{ memberInfo.nickname }}</p>

@@ -51,21 +51,34 @@ onUnmounted(() => {
   <div>
     <header class="navbar navbar-expand-md shadow bg-light navbar-light fixed-top">
       <div class="container-fluid">
-        <RouterLink class="navbar-brand logo text-primary fw-bold ms-5" :to="{ name: 'main' }">
+        <RouterLink class="navbar-brand logo text-primary fw-bold" :to="{ name: 'main' }">
           Trip 97
         </RouterLink>
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
+<<<<<<< HEAD
           <ul class="navbar-nav guest-menu me-auto ms-5">
             <li class="nav-item">
               <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'attraction' }">
                 관광지 찾기
               </RouterLink>
+=======
+          <ul class="navbar-nav content-menu me-auto ms-5">
+            <li class="nav-item menu-item">
+              <a class="nav-link" style="cursor: pointer" id="">
+                <i class="fa-solid fa-earth-asia"></i>
+                여행 지도
+              </a>
+>>>>>>> origin
             </li>
             <template v-if="isLoggedIn">
-              <li class="nav-item">
-                <a class="nav-link" style="cursor: pointer" id="">여행 모임</a>
+              <li class="nav-item menu-item">
+                <a class="nav-link" style="cursor: pointer" id="">
+                  <i class="fa-solid fa-paper-plane"></i>
+                  여행 계획
+                </a>
               </li>
             </template>
+<<<<<<< HEAD
             <li class="nav-item">
               <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'hotPlace' }">
                 HOTPLACE
@@ -75,12 +88,22 @@ onUnmounted(() => {
               <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'board' }">
                 자유게시판
               </RouterLink>
+=======
+            <li class="nav-item menu-item">
+              <a class="nav-link" style="cursor: pointer" id="">
+                <i class="fa-solid fa-user-group"></i>
+                여행 커뮤니티
+              </a>
+>>>>>>> origin
             </li>
-            <li class="nav-item">
-              <a class="nav-link" style="cursor: pointer" id="">여행 TIP 공유</a>
+            <li class="nav-item menu-item">
+              <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'hotPlace' }">
+                <i class="fa-solid fa-martini-glass-citrus"></i>
+                HOTPLACE
+              </RouterLink>
             </li>
           </ul>
-          <ul class="navbar-nav guest-menu ms-auto me-5">
+          <ul class="navbar-nav member-menu ms-auto">
             <template v-if="!isLoggedIn">
               <li class="nav-item">
                 <RouterLink
@@ -132,14 +155,29 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+
+.nav-item.menu-item .nav-link {
+  color: #00A1FC;
+}
+
 .header-dropdown {
   color: gray;
-  text-decoration: none; /* 밑줄 제거 */
-  cursor: pointer; /* 마우스를 올렸을 때 포인터 모양으로 변경 */
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .header-dropdown:hover {
   color: gray;
-  text-decoration: none; /* 호버 시에도 밑줄 제거 */
+  text-decoration: none;
 }
+
+.logo {
+  font-family: NanumSquareRound;
+  margin-left: 120px;
+}
+
+.navbar-nav {
+  margin-right: 120px; 
+}
+
 </style>
