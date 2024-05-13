@@ -4,6 +4,7 @@ import LoginView from "@/views/LoginView.vue";
 import ProfileView from "@/views/ProfileView.vue";
 import NaverCallBack from "@/components/callback/NaverCallBack.vue";
 import HotPlaceView from "@/views/HotPlaceView.vue";
+import GroupView from "@/views/GroupView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -53,6 +54,34 @@ const router = createRouter({
           path: "modify/:id",
           name: "hotPlaceModify",
           component: () => import("../components/hotplace/HotPlaceModify.vue"),
+        },
+      ],
+    },
+    {
+      path: "/group",
+      name: "group",
+      component: GroupView,
+      redirect: { name: "groupList" },
+      children: [
+        {
+          path: "list",
+          name: "groupList",
+          component: () => import("../components/group/GroupList.vue"),
+        },
+        {
+          path: "detail/:id",
+          name: "groupDetail",
+          component: () => import("../components/group/GroupDetail.vue"),
+        },
+        {
+          path: "write",
+          name: "groupWrite",
+          component: () => import("../components/group/GroupWrite.vue"),
+        },
+        {
+          path: "modify/:id",
+          name: "groupModify",
+          component: () => import("../components/group/GroupModify.vue"),
         },
       ],
     },

@@ -64,10 +64,10 @@ onUnmounted(() => {
             </li>
             <template v-if="isLoggedIn">
               <li class="nav-item menu-item">
-                <a class="nav-link" style="cursor: pointer" id="">
+                <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'group' }">
                   <i class="fa-solid fa-paper-plane"></i>
                   여행 계획
-                </a>
+                </RouterLink>
               </li>
             </template>
             <li class="nav-item menu-item">
@@ -135,9 +135,8 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-
 .nav-item.menu-item .nav-link {
-  color: #00A1FC;
+  color: #00a1fc;
 }
 
 .header-dropdown {
@@ -157,7 +156,6 @@ onUnmounted(() => {
 }
 
 .navbar-nav {
-  margin-right: 120px; 
+  margin-right: 120px;
 }
-
 </style>
