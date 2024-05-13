@@ -187,7 +187,7 @@ onMounted(() => {
 }
 
 .side-image {
-    width: 130%;
+    width: 150%;
     height: auto;
     object-fit: cover;
 }

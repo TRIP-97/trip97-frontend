@@ -111,7 +111,7 @@ onMounted(() => {
           <div class="col-lg-8 mt-4">
             <h3 class="title">{{ group.name }}</h3>
             <div class="d-flex justify-content-end mt-3 my-2 info-text">
-              <span class="date-text">작성일: {{ group.createdDate }}</span>
+              <span class="date-text">작성일: {{ group.created }}</span>
             </div>
             <div class="d-flex justify-content-end mt-3 my-2" v-if="isWriter">
               <div class="edit-actions">
