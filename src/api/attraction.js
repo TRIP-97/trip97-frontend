@@ -7,14 +7,16 @@ function getDropdownContentSido(success, fail) {
 }
 
 function getDropdownGugun(sidoCode, success, fail) {
-  local.get(`/attraction/${sidoCode}`).then(success).catch(fail);
+  local.get(`/attraction/type/${sidoCode}`).then(success).catch(fail);
 }
 
-function getAttractions(content, sido, gugun, success, fail) {
-  local.get(`/attraction`).then(success).catch(fail);
+function getAttractions(content, sido, gugun, ha, qa, oa, pa, success, fail) {
+  const url = `/attraction?contentType=${content}&sidoCode=${sido}&gugunCode=${gugun}
+  &ha=${ha}&qa=${qa}&oa=${oa}&pa=${pa}`;
+  local.get(url).then(success).catch(fail);
 }
 
-function getAttractionId(attractionId, succes, fail) {
+function getAttractionId(attractionId, success, fail) {
   local.get(`/attraction/${attractionId}`).then(success).catch(fail);
 }
 

@@ -13,6 +13,7 @@ async function getBoardList() {
   listBoard(
     (response) => {
       boards.value = response.data;
+      console.log(boards.value);
     },
     (error) => {
       console.log("BoardList 불러오는 중 에러 발생");
@@ -34,7 +35,7 @@ function goWrite() {
   });
 }
 
-onMounted(()=>{
+onMounted(() => {
   getBoardList();
 });
 </script>
@@ -43,32 +44,32 @@ onMounted(()=>{
   <div>
     <h1>게시판 목록</h1>
     <table class="table table-hover">
-    <thead>
-      <tr class="text-center">
-        <th scope="col">글번호</th>
-        <th scope="col">제목</th>
-        <th scope="col">작성자</th>
-        <th scope="col">작성일</th>
-        <th scope="col">조회수</th>
-        <th scope="col">좋아요</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr class="text-center" v-for="board in boards" :key="board.id">
-        <td>{{ board.id }}</td>
-        <td @click="goDetail(board.id)">
-          <!-- <RouterLink :to="'detail?no=' + board.no">{{ board.title }}</RouterLink> -->
-          <!-- <RouterLink :to="'/board/' + board.no">{{ board.title }}</RouterLink> -->
-          <!-- <RouterLink :to="{ name: 'boarddetail', params: { id: board.no } }">{{board.title}}</RouterLink> -->
-          <!-- <RouterLink :to="{ name: 'boarddetail', query: { id: board.no } }">{{board.title}}</RouterLink> -->
-          {{ board.title }}
-        </td>
-        <td>{{ board.writer }}</td>
-        <td>{{ board.createdAt }}</td>
-        <td>{{ board.viewCount }}</td>
-        <td>{{ board.likeCount }}</td>
-      </tr>
-    </tbody>
+      <thead>
+        <tr class="text-center">
+          <th scope="col">글번호</th>
+          <th scope="col">제목</th>
+          <th scope="col">작성자</th>
+          <th scope="col">작성일</th>
+          <th scope="col">조회수</th>
+          <th scope="col">좋아요</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="text-center" v-for="board in boards" :key="board.id">
+          <td>{{ board.id }}</td>
+          <td @click="goDetail(board.id)">
+            <!-- <RouterLink :to="'detail?no=' + board.no">{{ board.title }}</RouterLink> -->
+            <!-- <RouterLink :to="'/board/' + board.no">{{ board.title }}</RouterLink> -->
+            <!-- <RouterLink :to="{ name: 'boarddetail', params: { id: board.no } }">{{board.title}}</RouterLink> -->
+            <!-- <RouterLink :to="{ name: 'boarddetail', query: { id: board.no } }">{{board.title}}</RouterLink> -->
+            {{ board.title }}
+          </td>
+          <td>{{ board.writerNickname }}</td>
+          <td>{{ board.createdAt }}</td>
+          <td>{{ board.viewCount }}</td>
+          <td>{{ board.likeCount }}</td>
+        </tr>
+      </tbody>
     </table>
     <button @click="goWrite">글작성</button>
   </div>

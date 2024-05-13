@@ -5,3 +5,8 @@
   border: 1px solid;
   border-radius: 10px;
 }
+
+.drop{
+  display: flex;
+  margin-bottom: 30px;
+}
