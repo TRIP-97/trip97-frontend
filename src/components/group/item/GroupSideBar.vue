@@ -7,14 +7,15 @@
   const isActiveGroupList = computed(
     () => route.name === "groupList" || route.name === "groupDetail"
   );
-  const isActiveMyGroupList = computed(() => route.name === "myGroupList");
+  const isActiveMyGroupList = computed(() => route.name === "myGroupList" || route.name === "myGroupDetail"
+    || route.name === "groupWrite" || route.name === "groupModify");
   const isActiveMyGroupRequest = computed(() => route.name === "myGroupRequest");
 </script>
 
 <template>
   <div
     class="d-flex flex-column flex-shrink-0 p-3 bg-light"
-    style="width: 200px; height: 250px; text-align: center"
+    style="width: 200px; height: 230px; text-align: center"
   >
     <span class="fs-4">여행 모임</span>
     <hr />

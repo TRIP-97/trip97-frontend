@@ -5,7 +5,7 @@
   import { useMemberStore } from "@/stores/member";
   import { storeToRefs } from "pinia";
 
-  import GroupListItem from "./item/GroupListItem.vue";
+  import MyGroupListItem from "./item/MyGroupListItem.vue";
   import PageNavigation from "../common/PageNavigation.vue";
   import VSelect from "../common/VSelect.vue";
 
@@ -62,12 +62,6 @@
     getGroupList();
   };
 
-  function goWriteForm() {
-    router.push({
-      name: "groupWrite",
-    });
-  }
-
   onMounted(() => {
     if (userInfo.value !== null) {
       param.value.memberId = userInfo.value.id;
@@ -98,15 +92,13 @@
 
       <div class="row">
         <div class="col-lg-4 group-item" v-for="group in groups" :key="group.id">
-          <GroupListItem :group-item="group" />
-        </div>
-        <div class="row mt-3 justify-content-end">
-          <button class="btn btn-primary write-btn" @click="goWriteForm">글 작성</button>
+          <MyGroupListItem :group-item="group" />
         </div>
         <PageNavigation
           :current-page="currentPage"
           :total-page="totalPage"
           @pageChange="onPageChange"
+          class="page-navigation"
         ></PageNavigation>
       </div>
     </div>
@@ -154,5 +146,9 @@
     margin-top: 20px;
     margin-bottom: 30px;
     margin-right: 30px;
+  }
+
+  .page-navigation {
+    margin-top: 30px;
   }
 </style>

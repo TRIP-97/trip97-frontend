@@ -6,7 +6,7 @@
 <template>
   <div>
     <div class="header-image">
-      <img src="@/assets/images/HotPlacePageLogo.jpg" alt="HotPlace Page Logo" />
+      <img src="@/assets/images/GroupPageLogo.jpg" alt="HotPlace Page Logo" />
       <div class="overlay">
         <h1>여행 계획</h1>
       </div>
@@ -15,10 +15,10 @@
       <div class="row">
         <!-- 사이드바 섹션 -->
         <div class="col-md-2">
-          <GroupSideBar />
+          <GroupSideBar class="side-bar"/>
         </div>
         <!-- 주 콘텐츠 섹션 -->
-        <div class="col-md-9 ml-5">
+        <div class="col-md-10">
           <RouterView />
         </div>
       </div>
@@ -54,5 +54,10 @@
     justify-content: center;
     color: white;
     font-size: 2rem;
+  }
+
+  .side-bar {
+    border-radius: 15px;
+    box-shadow: 5px 5px 5px #ebebeb;
   }
 </style>

@@ -92,7 +92,7 @@
           <GroupListItem :group-item="group" />
         </div>
         <div class="row mt-3 justify-content-end">
-          <button class="btn btn-primary write-btn" @click="goWriteForm">글 작성</button>
+          <button class="btn btn-primary write-btn" @click="goWriteForm">모임 만들기</button>
         </div>
         <PageNavigation
           :current-page="currentPage"
