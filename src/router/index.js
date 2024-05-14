@@ -124,6 +124,16 @@ const router = createRouter({
             },
           ],
         },
+        {
+          path: "myList",
+          name: "myGroupList",
+          component: () => import("../components/group/MyGroupList.vue"),
+        },
+        {
+          path: "myRequest",
+          name: "myGroupRequest",
+          component: () => import("../components/group/MyGroupRequest.vue"),
+        },
       ],
     },
   ],

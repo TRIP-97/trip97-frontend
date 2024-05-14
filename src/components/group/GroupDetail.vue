@@ -1,7 +1,7 @@
 <script setup>
   import { ref, onMounted } from "vue";
   import { useRoute, useRouter } from "vue-router";
-  import { detailGroup, deleteGroup } from "@/api/group";
+  import { detailGroup, deleteGroup, checkGroupMember, requestGroupMember } from "@/api/group";
   import { useMemberStore } from "@/stores/member";
   import { storeToRefs } from "pinia";
 
@@ -15,15 +15,36 @@
   const group = ref("");
   const memberId = ref("");
   const isWriter = ref(false);
+  const isGroupMember = ref(false);
 
-  // 게시글 작성자인지 확인하는 함수
+  // 모임 게시글 작성자인지 확인하는 함수
   const checkIsWriter = () => {
     if (group.value.creatorId === memberId.value) {
       isWriter.value = true;
     }
   };
 
-  // rmfnq 게시글 조회하는 함수
+  // 모임 참가자거나 신청자인지 확인하는 함수
+  const checkIsGroupMemberOrApplicant = () => {
+    const param = {
+      memberId: userInfo.value.id,
+      groupId: groupId.value,
+    };
+    checkGroupMember(
+      param,
+      ({ data }) => {
+        if (data == 1) {
+          isGroupMember.value = true;
+        }
+      },
+      (error) => {
+        console.log("Group 참가/신청자 여부 확인 중 에러 발생!");
+        console.dir(error);
+      }
+    );
+  };
+
+  // 모임 게시글 조회하는 함수
   async function getGroup() {
     detailGroup(
       groupId.value,
@@ -35,6 +56,7 @@
         group.value.endDate = formatVisitedDate(group.value.endDate);
 
         checkIsWriter();
+        checkIsGroupMemberOrApplicant();
       },
       (error) => {
         console.log("HotPlace 게시글 불러오는 중 에러 발생!");
@@ -52,12 +74,12 @@
     return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
   }
 
-  // 그룹 목록으로 이동하는 함수
+  // 모임 목록으로 이동하는 함수
   function goGroupList() {
     router.push({ name: "groupList" });
   }
 
-  // 그룹 수정 화면으로 이동하는 함수
+  // 모임 수정 화면으로 이동하는 함수
   function goGroupModify() {
     router.push({
       name: "groupModify",
@@ -65,7 +87,7 @@
     });
   }
 
-  // 그룹 삭제하는 함수
+  // 모임 삭제하는 함수
   function removeGroup() {
     deleteGroup(
       groupId.value,
@@ -80,6 +102,27 @@
       }
     );
   }
+
+  // 모임 참가 신청하는 함수
+  const requestGroup = () => {
+    const request = {
+      groupId: groupId.value,
+      memberId: memberId.value,
+    };
+    console.log(request);
+
+    requestGroupMember(
+      request,
+      () => {
+        window.alert("모임 참가 신청을 했습니다!");
+        router.push({ name: "groupDetail" });
+      },
+      (error) => {
+        console.log("Group 참가 신청하는 중 에러 발생!");
+        console.dir(error);
+      }
+    );
+  };
 
   onMounted(() => {
     if (userInfo.value !== null) {
@@ -132,7 +175,16 @@
 
             <div class="list-button-section mt-5">
               <hr class="mt-3" />
-              <button class="btn btn-primary list-btn" @click="goGroupList">목록으로</button>
+              <div class="d-flex justify-content-between w-100">
+                <div class="flex-grow-1">
+                  <div v-show="!isGroupMember">
+                    <button class="btn btn-primary request-btn" @click="requestGroup">
+                      참가 신청
+                    </button>
+                  </div>
+                </div>
+                <button class="btn btn-primary list-btn" @click="goGroupList">목록으로</button>
+              </div>
             </div>
           </div>
 
@@ -225,10 +277,15 @@
   .list-button-section {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
   }
 
-  .list-button-section .btn-primary {
+  .list-button-section .request-btn {
+    background-color: #62bdc9;
+    border-color: #62bdc9;
+    color: white;
+  }
+
+  .list-button-section .list-btn {
     background-color: #689beb;
     border-color: #689beb;
     color: white;

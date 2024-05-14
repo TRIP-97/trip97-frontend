@@ -9,8 +9,8 @@ function listGroup(param, success, fail) {
 }
 
 // 내 그룹 목록을 불러오는 함수
-function listMyGroup(groupId, param, success, fail) {
-  local.get(`/group/${groupId}/member`, { params: param }).then(success).catch(fail);
+function listMyGroup(param, success, fail) {
+  local.get(`/group/member/${param.memberId}`, { params: param }).then(success).catch(fail);
 }
 
 // 그룹 상세내용을 불러오는 함수
@@ -37,6 +37,16 @@ function deleteGroup(groupId, success, fail) {
   local.delete(`/group/${groupId}`).then(success).catch(fail);
 }
 
+// 그룹 멤버이거나 신청했는지 확인하는 함수
+function checkGroupMember(param, success, fail) {
+  local.get(`group/${param.groupId}/member/${param.memberId}`).then(success).catch(fail);
+}
+
+// 그룹 참가 신청하는 함수
+function requestGroupMember(request, success, fail) {
+  local.post(`group/${request.groupId}/member`, request).then(success).catch(fail);
+}
+
 export {
   listGroup,
   listMyGroup,
@@ -44,4 +54,6 @@ export {
   registGroup,
   modifyGroup,
   deleteGroup,
+  checkGroupMember,
+  requestGroupMember,
 };
