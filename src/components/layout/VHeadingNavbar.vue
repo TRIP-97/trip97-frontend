@@ -1,6 +1,6 @@
 // VHeadingNavbar.vue
 <script setup>
-  import { ref, onMounted, onUnmounted } from "vue";
+  import { onMounted, onUnmounted } from "vue";
   import { RouterLink, useRouter } from "vue-router";
   import { getMemberProfile } from "@/api/member";
   import { useMemberStore } from "@/stores/member";

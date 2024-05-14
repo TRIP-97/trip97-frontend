@@ -1,6 +1,6 @@
 <script setup>
-import { RouterView } from "vue-router";
-import GroupSideBar from "@/components/group/item/GroupSideBar.vue";
+  import { RouterView } from "vue-router";
+  import GroupSideBar from "@/components/group/item/GroupSideBar.vue";
 </script>
 
 <template>
@@ -17,9 +17,8 @@ import GroupSideBar from "@/components/group/item/GroupSideBar.vue";
         <div class="col-md-2">
           <GroupSideBar />
         </div>
-
         <!-- 주 콘텐츠 섹션 -->
-        <div class="col-md-10">
+        <div class="col-md-9 ml-5">
           <RouterView />
         </div>
       </div>
@@ -28,32 +27,32 @@ import GroupSideBar from "@/components/group/item/GroupSideBar.vue";
 </template>
 
 <style scoped>
-.header-image {
-  position: relative;
-  width: 100%;
-  height: 300px;
-  overflow: hidden;
-  margin-bottom: 30px;
-}
+  .header-image {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    margin-bottom: 30px;
+  }
 
-.header-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
+  .header-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
 
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 2rem;
-}
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+  }
 </style>

@@ -124,7 +124,7 @@
       boardId: hotPlaceId.value,
       content: commentContent.value,
     });
-    
+
     registHotPlaceComment(
       comment.value,
       () => {
