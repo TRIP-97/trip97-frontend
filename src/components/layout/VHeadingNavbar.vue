@@ -55,20 +55,12 @@ onUnmounted(() => {
           Trip 97
         </RouterLink>
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
-<<<<<<< HEAD
-          <ul class="navbar-nav guest-menu me-auto ms-5">
-            <li class="nav-item">
-              <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'attraction' }">
-                관광지 찾기
-              </RouterLink>
-=======
           <ul class="navbar-nav content-menu me-auto ms-5">
             <li class="nav-item menu-item">
-              <a class="nav-link" style="cursor: pointer" id="">
+              <RouterLink class="nav-link" style="cursor: pointer" :to="{name : 'attraction'}">
                 <i class="fa-solid fa-earth-asia"></i>
                 여행 지도
-              </a>
->>>>>>> origin
+              </RouterLink>
             </li>
             <template v-if="isLoggedIn">
               <li class="nav-item menu-item">
@@ -78,23 +70,11 @@ onUnmounted(() => {
                 </a>
               </li>
             </template>
-<<<<<<< HEAD
-            <li class="nav-item">
-              <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'hotPlace' }">
-                HOTPLACE
-              </RouterLink>
-            </li>
-            <li class="nav-item">
-              <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'board' }">
-                자유게시판
-              </RouterLink>
-=======
             <li class="nav-item menu-item">
-              <a class="nav-link" style="cursor: pointer" id="">
+              <RouterLink class="nav-link" style="cursor: pointer" :to="{name : 'board'}">
                 <i class="fa-solid fa-user-group"></i>
                 여행 커뮤니티
-              </a>
->>>>>>> origin
+              </RouterLink>
             </li>
             <li class="nav-item menu-item">
               <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'hotPlace' }">

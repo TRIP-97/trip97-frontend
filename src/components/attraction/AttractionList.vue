@@ -16,7 +16,10 @@ const guguns = ref([]); // 드롭다운 메뉴 3
 const map = toRefs(null); // 카카오 맵
 
 // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
-var infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
+var infowindow = new kakao.maps.InfoWindow({
+    position: new kakao.maps.LatLng(33.450701, 126.570667),
+    content: 'open me plz.'
+});
 
 const content = ref({
   code: 0,
@@ -36,6 +39,7 @@ const gugun = ref({
 // 관광지를 받아오는 함수
 async function getAttractionList() {
   var bound = map.value.getBounds();
+  console.log(gugun);
   getAttractions(
     content.value.code,
     sido.value.code,
@@ -50,6 +54,7 @@ async function getAttractionList() {
       //     console.log(attraction.latitude);
       //   }
       addMarkerAndRemovePrevious();
+      displayPagination();
     },
     (error) => {
       console.log("관광지 불러오는 중 에러 발생");
@@ -57,6 +62,7 @@ async function getAttractionList() {
     }
   );
 }
+
 
 // 드롭다운
 async function getDropdownCS() {
@@ -151,15 +157,122 @@ function removeMarker() {
 
 // 마커를 추가하는 함수 (마커가 있다면 지운 뒤 추가)
 function addMarkerAndRemovePrevious() {
+
+  var listEl = document.getElementById('placesList'), 
+    menuEl = document.getElementById('menu_wrap'),
+    fragment = document.createDocumentFragment(), 
+    bounds = new kakao.maps.LatLngBounds(), 
+    listStr = '';
+    // 검색 결과 목록에 추가된 항목들을 제거합니다
+    removeAllChildNods(listEl);
+
+    // 지도에 표시되고 있는 마커를 제거합니다
   removeMarker();
-  var i = 0;
+
   for (var i = 0; i < attractions.value.length; i++) {
+    
     var placePosition = new kakao.maps.LatLng(
       attractions.value[i].latitude,
       attractions.value[i].longitude
-    );
-    var marker = addMarker(placePosition, i);
-  }
+    ),
+    marker = addMarker(placePosition, i),
+    itemEl = getListItem(i, attractions.value[i]); // 검색 결과 항목 Element를 생성합니다
+
+    // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+    // LatLngBounds 객체에 좌표를 추가합니다
+    bounds.extend(placePosition);
+
+    // 마커와 검색결과 항목에 mouseover 했을때
+    // 해당 장소에 인포윈도우에 장소명을 표시합니다
+    // mouseout 했을 때는 인포윈도우를 닫습니다
+    (function(marker, title) {
+
+        kakao.maps.event.addListener(marker, 'mouseover', function() {
+            displayInfowindow(marker, title);
+        });
+
+        kakao.maps.event.addListener(marker, 'mouseout', function() {
+            infowindow.close();
+        });
+
+        itemEl.onmouseover =  function () {
+            displayInfowindow(marker, title);
+        };
+
+        itemEl.onmouseout =  function () {
+            infowindow.close();
+        };
+    })(marker, attractions.value[i].title);
+
+      fragment.appendChild(itemEl);
+    }
+
+    // 검색결과 항목들을 검색결과 목록 Element에 추가합니다
+    listEl.appendChild(fragment);
+    menuEl.scrollTop = 0;
+}
+
+// 검색결과 항목을 Element로 반환하는 함수입니다
+function getListItem(index, places) {
+
+  var el = document.createElement('li'),
+  itemStr = '<span class="markerbg marker_' + (index+1) + '"></span>' +
+              '<div class="info">' +
+              '   <h2>' + places.title + '</h2>'; 
+    itemStr += '  <span class="tel">' + places.address  + '</span>' +
+              '</div>';           
+
+  el.innerHTML = itemStr;
+  el.className = 'item';
+
+  return el;
+}
+
+// 검색결과 목록 하단에 페이지번호를 표시는 함수입니다
+function displayPagination() {
+    var paginationEl = document.getElementById('pagination'),
+        fragment = document.createDocumentFragment(),
+        i; 
+
+    // 기존에 추가된 페이지번호를 삭제합니다
+    while (paginationEl.hasChildNodes()) {
+        paginationEl.removeChild (paginationEl.lastChild);
+    }
+
+    for (i=1; i<=attractions.value.length; i++) {
+        var el = document.createElement('a');
+        el.href = "#";
+        el.innerHTML = i;
+
+    //     if (i===pagination.current) {
+    //         el.className = 'on';
+    //     } else {
+    //         el.onclick = (function(i) {
+    //             return function() {
+    //                 pagination.gotoPage(i);
+    //             }
+    //         })(i);
+    //     }
+
+        fragment.appendChild(el);
+    }
+    paginationEl.appendChild(fragment);
+}
+
+// 검색결과 목록의 자식 Element를 제거하는 함수입니다
+function removeAllChildNods(el) {   
+    while (el.hasChildNodes()) {
+        el.removeChild (el.lastChild);
+    }
+}
+
+// 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다
+// 인포윈도우에 장소명을 표시합니다
+function displayInfowindow(marker, title) {
+
+    var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
+    infowindow.setContent(content);
+    infowindow.open(map.value, marker);
 }
 
 // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
@@ -206,14 +319,23 @@ onMounted(() => {
       <option v-for="con in contents" :value="con">{{ con.name }}</option>
     </select>
     <select v-model="sido">
+      <option :value="{ code: 0, name: '' }">전체</option>
       <option v-for="si in sidos" :value="si">{{ si.name }}</option>
     </select>
     <select v-model="gugun">
+      <option :value="{ code: 0, name: '' }">전체</option>
       <option v-for="gu in guguns" :value="gu">{{ gu.name }}</option>
     </select>
   </div>
   <button @click="getAttractionList">검색</button>
-  <div class="map" id="map"></div>
+  <div class="map_wrap">
+    <div id="map" class="map"></div>
+    <div id="menu_wrap" class="bg_white">
+        <hr>
+        <ul id="placesList"></ul>
+        <div id="pagination"></div>
+    </div>
+</div>
 </template>
 
 <style scoped>
