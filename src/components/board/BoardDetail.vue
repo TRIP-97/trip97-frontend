@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { detailBoard } from "@/api/board.js";
+import { detailBoard, deleteBoard } from "@/api/board.js";
 
 import axios from "axios";
 
@@ -24,11 +24,32 @@ async function getBoard(){
   )
 }
 
+async function removeBoard(){
+  deleteBoard(
+    no,
+    (response) => {
+      console.log(response);
+    },
+    (error) => {
+      console.log("Board 삭제중 에러");
+      console.dir(error);
+    }
+  )
+}
+
 const moveList = () => {
   // 목록 페이지로 이동
   // router.push("list"); // 일반적으로 사용, path방식
   router.push({ name: "boardList" });
 };
+
+const moveModify = () => {
+  router.push({name:"boardModify"});
+}
+
+const moveDelete = () => {
+  removeBoard();
+}
 
 onMounted(()=>{
   getBoard();
@@ -38,10 +59,13 @@ onMounted(()=>{
 <template>
   <div>
     <h2>게시판 상세</h2>
-    <h3>글 번호 : {{ board.id }}</h3>
-    <h2>글 내용</h2>
+    <h2>제목 : {{ board.title }}</h2>
+    <p>번호 : {{ board.id }}</p>
+    <h2>내용</h2>
     <p>{{ board.content }}</p>
     <button @click="moveList">목록</button>
+    <button @click="moveModify">수정</button>
+    <button @click="moveDelete">삭제</button>
   </div>
 </template>
 
