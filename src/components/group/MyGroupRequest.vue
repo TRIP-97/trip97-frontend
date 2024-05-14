@@ -14,7 +14,6 @@
 
   const setFilter = (filter) => {
     param.value.filter = filter;
-    //   getHotPlaceList();
   };
 </script>
 
