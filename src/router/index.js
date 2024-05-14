@@ -88,7 +88,7 @@ const router = createRouter({
   ],
 });
 
-router.afterEach((to, from) => {
+router.beforeEach((to, from) => {
   if (to.name !== from.name) {
     document.dispatchEvent(new CustomEvent("route-changed"));
   }

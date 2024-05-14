@@ -1,34 +1,33 @@
 <script setup>
-import { ref, defineProps } from "vue";
-import { useRouter } from "vue-router";
+  import { ref, defineProps } from "vue";
+  import { useRouter } from "vue-router";
 
-const router = useRouter();
+  const router = useRouter();
 
-const props = defineProps({
-  hotPlaceItem: Object,
-});
-
-const hotPlace = ref("");
-hotPlace.value = props.hotPlaceItem;
-hotPlace.value.startDate = formatVisitedDate(hotPlace.value.startDate);
-hotPlace.value.endDate = formatVisitedDate(hotPlace.value.endDate);
-console.log(props.hotPlaceItem);
-
-// 날짜 포맷 변경 함수
-function formatVisitedDate(dateString) {
-  const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  return `${year}/${month.toString().padStart(2, "0")}/${day.toString().padStart(2, "0")}`;
-}
-
-function goHotPlaceDetail() {
-  router.push({
-    name: 'hotPlaceDetail',
-    params: { id: hotPlace.value.id }
+  const props = defineProps({
+    hotPlaceItem: Object,
   });
-}
+
+  const hotPlace = ref("");
+  hotPlace.value = props.hotPlaceItem;
+  hotPlace.value.startDate = formatVisitedDate(hotPlace.value.startDate);
+  hotPlace.value.endDate = formatVisitedDate(hotPlace.value.endDate);
+
+  // 날짜 포맷 변경 함수
+  function formatVisitedDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year}/${month.toString().padStart(2, "0")}/${day.toString().padStart(2, "0")}`;
+  }
+
+  function goHotPlaceDetail() {
+    router.push({
+      name: "hotPlaceDetail",
+      params: { id: hotPlace.value.id },
+    });
+  }
 </script>
 
 <template>
@@ -49,7 +48,11 @@ function goHotPlaceDetail() {
     </div>
     <div class="position-relative hotplace-image-area">
       <template v-if="hotPlace.fileInfos === null">
-        <img src="@/assets/images/fubao.jpg" class="card-img-top hotplace-image" alt="HotPlace Image" />
+        <img
+          src="@/assets/images/fubao.jpg"
+          class="card-img-top hotplace-image"
+          alt="HotPlace Image"
+        />
       </template>
       <template v-else>
         <img :src="hotPlace.fileInfos[0].url" class="hotplace-image" style="width: 300px" />
@@ -76,92 +79,92 @@ function goHotPlaceDetail() {
 </template>
 
 <style scoped>
-.card {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
-  margin: 10px;
-  overflow: hidden; 
-  cursor: pointer;
-}
-.card:hover .hotplace-location {
-  color: white;
-  background-color: #00a1fc; 
-}
-.card:hover .hotplace-image {
-  transform: scale(1.15); 
-  transition: transform 0.3s ease; 
-}
+  .card {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .card:hover .hotplace-location {
+    color: white;
+    background-color: #00a1fc;
+  }
+  .card:hover .hotplace-image {
+    transform: scale(1.15);
+    transition: transform 0.3s ease;
+  }
 
-.card-header {
-  height: 50px;
-  font-size: 11px;
-  border-bottom: none;
-}
-.card-title {
-  font-size: 17px;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: normal;
-  height: 1.5em;
-}
-.custom-vr {
-  border-left: 1px solid lightgray;
-  height: 30px;
-  align-self: center;
-}
-.writer-nickname {
-  font-size: 13px;
-}
-.travel-date-icon {
-  color: gray;
-}
-.travel-date-label {
-  margin-left: 3px;
-  color: gray;
-}
-.travel-date {
-  color: #00a1fc;
-}
-.hotplace-info {
-  color: gray;
-  font-size: 16px;
-}
-.hotplace-image-area {
-  height: 160px;
-  overflow: hidden;
-  border-radius: 10px;
-}
-.hotplace-image {
-  border-radius: 10px;
-  transition: transform 0.3s ease; 
-}
-.hotplace-location {
-  top: 10px;
-  left: 10px;
-  height: 25px;
-  padding-top: 2px;
-  padding-left: 10px;
-  padding-right: 10px;
-  color: #00a1fc;
-  background-color: white;
-  border-radius: 10px;
-  font-size: 14px;
-}
-.view-count,
-.like-count {
-  margin-left: 5px;
-}
+  .card-header {
+    height: 50px;
+    font-size: 11px;
+    border-bottom: none;
+  }
+  .card-title {
+    font-size: 17px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    height: 1.5em;
+  }
+  .custom-vr {
+    border-left: 1px solid lightgray;
+    height: 30px;
+    align-self: center;
+  }
+  .writer-nickname {
+    font-size: 13px;
+  }
+  .travel-date-icon {
+    color: gray;
+  }
+  .travel-date-label {
+    margin-left: 3px;
+    color: gray;
+  }
+  .travel-date {
+    color: #00a1fc;
+  }
+  .hotplace-info {
+    color: gray;
+    font-size: 16px;
+  }
+  .hotplace-image-area {
+    height: 160px;
+    overflow: hidden;
+    border-radius: 10px;
+  }
+  .hotplace-image {
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+  }
+  .hotplace-location {
+    top: 10px;
+    left: 10px;
+    height: 25px;
+    padding-top: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: #00a1fc;
+    background-color: white;
+    border-radius: 10px;
+    font-size: 14px;
+  }
+  .view-count,
+  .like-count {
+    margin-left: 5px;
+  }
 
-.fa-calendar {
-  margin-top: 2px;
-}
-.fa-eye,
-.fa-heart {
-  margin-top: 3px;
-  margin-left: 15px;
-}
+  .fa-calendar {
+    margin-top: 2px;
+  }
+  .fa-eye,
+  .fa-heart {
+    margin-top: 3px;
+    margin-left: 15px;
+  }
 </style>
