@@ -60,7 +60,11 @@
   }
 
   .nav-link.active {
-    background-color: #71b8ff;
+    background-color: #71b8ff !important;
     border-color: #dee2e6;
+  }
+
+  .nav-link:not(.active) {
+    color: #6094c9;
   }
 </style>
