@@ -1,13 +1,16 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { getPlans } from "@/api/plan";
+import { getPlans, createPlan } from "@/api/plan";
 import PlanListItem from "./item/PlanListItem.vue";
+import PlanModal from "./item/PlanCreateModal.vue";
+
 
 const route = useRoute();
 
 const groupId = route.params.id;
 const plans = ref([]);
+const isModalActive = ref(false);
 
 // 모임의 여행 계획 목록을 조회하는 함수
 const getPlanList = () => {
@@ -24,16 +27,26 @@ const getPlanList = () => {
   );
 }
 
-// 여행 계획 추가하기 버튼 클릭 이벤트
 const addPlan = () => {
-  console.log("여행 계획 추가하기 버튼 클릭됨");
-  // 여기에 여행 계획 추가하기 로직을 구현하거나 다른 페이지로 이동할 수 있습니다.
+  isModalActive.value = true;
+};
+
+const savePlan = (newPlan) => {
+  createPlan(
+    newPlan,
+    () => {
+      getPlanList();
+    },
+    (error) => {
+      console.log("여행 계획 저장 중 에러 발생!");
+      console.dir(error);
+    }
+  );
 };
 
 onMounted(() => {
   getPlanList();
-})
-
+});
 </script>
 
 <template>
@@ -49,6 +62,7 @@ onMounted(() => {
         <PlanListItem :plan="plan" />
       </template>
     </div>
+    <PlanModal :isActive="isModalActive" @close="isModalActive = false" :onSave="savePlan" />
   </div>
 </template>
 
@@ -95,4 +109,3 @@ onMounted(() => {
   color: white;
 }
 </style>
-

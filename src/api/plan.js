@@ -7,6 +7,12 @@ function getPlans(groupId, success, fail) {
   local.get(`group/${groupId}/plan`).then(success).catch(fail);
 }
 
+// 모임의 여행 계획을 생성하는 함수
+function createPlan(plan, success, fail) {
+  local.post(`group/${plan.travelGroupId}/plan`, plan).then(success).catch(fail);
+}
+
 export {
   getPlans,
+  createPlan,
 };
