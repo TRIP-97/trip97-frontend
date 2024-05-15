@@ -67,6 +67,11 @@ function listGroupMembers(groupId, success, fail) {
   local.get(`group/${groupId}/member/accept`).then(success).catch(fail);
 }
 
+// 내 모임 신청을 조회하는 함수
+function listMyRequest(memberId, success, fail) {
+  local.get(`group/member/${memberId}/wait`).then(success).catch(fail);
+}
+
 export {
   listGroup,
   listMyGroup,
@@ -80,4 +85,5 @@ export {
   acceptRequest,
   refuseRequest,
   listGroupMembers,
+  listMyRequest,
 };

@@ -60,6 +60,12 @@
     </div>
     <div class="card-body">
       <h5 class="card-title">{{ group.name }}</h5>
+      <div class="d-flex justify-content-end align-items-center group-info">
+        <div class="d-flex">
+          <i class="fa-solid fa-users"></i>
+          <p class="member-count card-text">{{ group.currentMemberCount }} / {{ group.maxMemberCount }}</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -138,5 +144,19 @@
   }
   .fa-calendar {
     margin-top: 2px;
+  }
+  
+  .group-info {
+    color: gray;
+    font-size: 16px;
+  }
+
+  .member-count {
+    margin-left: 5px;
+  }
+
+  .fa-users {
+    margin-top: 3px;
+    margin-left: 15px;
   }
 </style>

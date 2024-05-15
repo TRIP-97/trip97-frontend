@@ -16,6 +16,8 @@
   const memberId = ref("");
   const isWriter = ref(false);
   const isGroupMember = ref(false);
+  const isFullMember = ref(false);
+  const requested = ref(false);
 
   // 모임 게시글 작성자인지 확인하는 함수
   const checkIsWriter = () => {
@@ -44,6 +46,13 @@
     );
   };
 
+  // 모임 인원수가 모두 차있는지 확인하는 함수
+  const checkIsFullMember = () => {
+    if (group.value.maxMemberCount === group.value.currentMemberCount) {
+      isFullMember.value = true;
+    }
+  }
+
   // 모임 게시글 조회하는 함수
   async function getGroup() {
     detailGroup(
@@ -57,6 +66,7 @@
 
         checkIsWriter();
         checkIsGroupMemberOrApplicant();
+        checkIsFullMember();
       },
       (error) => {
         console.log("HotPlace 게시글 불러오는 중 에러 발생!");
@@ -109,7 +119,8 @@
       groupId: groupId.value,
       memberId: memberId.value,
     };
-    console.log(request);
+    
+    requested.value = true;
 
     requestGroupMember(
       request,
@@ -139,7 +150,13 @@
         <div class="row">
           <div class="col-lg-8 mt-4">
             <h3 class="title">{{ group.name }}</h3>
-            <div class="d-flex justify-content-end mt-3 my-2 info-text">
+            <div class="d-flex justify-content-between mt-3 my-2 info-text">
+              <div class="d-flex justify-content-end align-items-center group-info">
+                <div class="d-flex">
+                  <i class="fa-solid fa-users"></i>
+                  <p class="member-count card-text">{{ group.currentMemberCount }} / {{ group.maxMemberCount }}</p>
+                </div>
+              </div>
               <span class="date-text">작성일: {{ group.createdDate }}</span>
             </div>
             <div class="d-flex justify-content-end mt-3 my-2" v-if="isWriter">
@@ -177,7 +194,7 @@
               <hr class="mt-3" />
               <div class="d-flex justify-content-between w-100">
                 <div class="flex-grow-1">
-                  <div v-show="!isGroupMember">
+                  <div v-show="!isGroupMember && !isFullMember && !requested">
                     <button class="btn btn-primary request-btn" @click="requestGroup">
                       참가 신청
                     </button>
@@ -343,5 +360,18 @@
     font-family: NanumSquareRound;
     font-size: 13px;
     color: gray;
+  }
+
+  .group-info {
+    color: gray;
+    font-size: 16px;
+  }
+
+  .member-count {
+    margin-left: 5px;
+  }
+
+  .fa-users {
+    margin-top: 3px;
   }
 </style>

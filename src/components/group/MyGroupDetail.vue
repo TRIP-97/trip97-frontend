@@ -4,11 +4,19 @@
   import MyGroupRequestList from "@/components/group/item/MyGroupRequestList.vue";
 
   const groupMenu = ref("groupDetail");
+  const groupDetailRef = ref(null);
 
   // 모임 메뉴를 선택하는 함수
   const setFilter = (menu) => {
     groupMenu.value = menu;
   }
+
+  const refreshMembers = () => {
+    if (groupDetailRef.value) {
+      groupDetailRef.value.getGroup();
+    }
+  }
+
 </script>
 
 <template>
@@ -41,8 +49,14 @@
           </div>
         </div>
         
-        <MyGroupDetailItem v-show="groupMenu === 'groupDetail'" class="my-group-detail-item"/>
-        <MyGroupRequestList v-show="groupMenu === 'requestList'" class="my-groop-request-item"/>
+        <MyGroupDetailItem 
+        v-show="groupMenu === 'groupDetail'"
+        ref="groupDetailRef"
+        class="my-group-detail-item"/>
+        <MyGroupRequestList 
+        v-show="groupMenu === 'requestList'"
+        @refresh-members="refreshMembers"
+        class="my-groop-request-item"/>
       </div>
     </div>
   </div>

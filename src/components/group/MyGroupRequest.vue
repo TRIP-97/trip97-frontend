@@ -1,70 +1,151 @@
 <script setup>
-  import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { listMyRequest, refuseRequest } from "@/api/group.js";
+import { useMemberStore } from "@/stores/member";
+import { storeToRefs } from "pinia";
 
-  const { VITE_GROUP_REQUEST_LIST_SIZE } = import.meta.env;
+const route = useRoute();
 
-  const currentPage = ref(1);
-  const totalPage = ref(0);
 
-  const param = ref({
-    pgno: currentPage.value,
-    spp: VITE_GROUP_REQUEST_LIST_SIZE,
-    filter: "requestTo",
-  });
+const memberStore = useMemberStore();
+const { userInfo } = storeToRefs(memberStore);
 
-  const setFilter = (filter) => {
-    param.value.filter = filter;
-  };
+const groupRequests = ref([]);
+
+// 내 모임 신청들을 가져오는 함수
+const getListWaitingRequest = () => {
+  listMyRequest(
+    userInfo.value.id,
+    ({ data }) => {
+      groupRequests.value = data;
+      console.log(data);
+    },
+    (error) => {
+      console.log("내 모임 신청 목록 조회 중 에러 발생!");
+      console.dir(error);
+    }
+  );
+}
+
+// 참가 신청을 취소하는 함수
+const cancleRequestFunc = (groupId) => {
+  refuseRequest(
+    groupId, userInfo.value.id,
+    () => {
+      getListWaitingRequest();
+      console.log("모임 참가 신청 취소!");
+    },
+    (error) => {
+      console.log("모임 참가 신청 취소중 에러 발생!");
+      console.dir(error);
+    }
+  )
+}
+
+onMounted(() => {
+  getListWaitingRequest();
+})
+
 </script>
 
 <template>
-  <div>
-    <div class="filter-search-container d-flex justify-content-between mb-3">
-      <div class="filters">
-        <div
-          :class="{ 'filter-selected': param.filter === 'requestTo' }"
-          class="filter-option"
-          @click="setFilter('requestTo')"
-        >
-          보낸 신청
+  <div class="requests" :class="{ 'center-content': !(groupRequests && groupRequests.length > 0) }">
+    <template v-for="request in groupRequests" :key="request.requestId">
+      <div class="row request">
+        <div class="col-lg-9 member-info d-flex align-items-center">
+          <img v-if="request.creatorProfileImage !== null" :src="request.creatorProfileImage" alt="Profile Image" class="profile-image">
+          <img v-else src="@/assets/images/profile.png" class="profile-image" />
+          <div class="member-text">
+            <h2 class="nickname">{{ request.creatorNickname }}</h2>
+            <p class="groupName">{{ request.groupName }}</p>
+          </div>
         </div>
-        <div
-          :class="{ 'filter-selected': param.filter === 'requestFrom' }"
-          class="filter-option"
-          @click="setFilter('requestFrom')"
-        >
-          받은 신청
+
+        <div class="col-lg-3 request-btn d-flex flex-column justify-content-center">
+          <button class="btn cancle-btn" @click.prevent="cancleRequestFunc(request.groupId)">신청 취소</button>
         </div>
       </div>
+    </template>
+
+    <div v-if="groupRequests === null || groupRequests.length === 0" class="empty-request">
+      현재 모임 신청이 없습니다!
     </div>
-    모임 요청 화면입니다!
   </div>
 </template>
 
 <style scoped>
-  .filter-search-container {
-    display: flex;
-    justify-content: space-between;
-  }
+.requests {
+  min-height: 500px;
+  color: #333;
+  padding: 20px;
+  border: 1px solid rgb(201, 201, 201);
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px #ebebeb;
+}
 
-  .filters {
-    display: flex;
-    gap: 10px;
-  }
+.center-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  .filter-option {
-    font-size: 14px;
-    font-family: NanumSquareRound;
-    padding: 8px 16px;
-    background-color: #ebebeb;
-    color: rgb(4, 4, 4);
-    border-radius: 8px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    cursor: pointer;
-  }
+.empty-request {
+  color: #888;  /* 회색 텍스트 */
+  font-size: 16px;
+}
 
-  .filter-selected {
-    background-color: black;
-    color: white;
-  }
+.request {
+  background-color: aliceblue;
+  margin: 10px;
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.member-info {
+  display: flex;
+  align-items: center;
+}
+
+.profile-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 15px;
+  transform: translateY(-5px);
+}
+
+.member-text {
+  transform: translateY(5px); 
+}
+
+.member-info h2, .member-info p {
+  font-size: 14px;  
+  color: #666;
+}
+
+.member-info h2 {
+  color: #007BFF; 
+  margin-bottom: 3px;
+}
+
+.btn {
+  padding: 5px 10px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.cancle-btn {
+  background-color: #f9d6ac; 
+}
+
+.cancle-btn:hover {
+  background-color: #e5b97a; 
+}
 </style>
+
