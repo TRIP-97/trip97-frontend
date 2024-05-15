@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineEmits } from "vue";
 import { useRoute } from "vue-router";
 import { listWaitingRequest, acceptRequest, refuseRequest } from "@/api/group.js";
 
@@ -7,6 +7,8 @@ const route = useRoute();
 
 const groupId = route.params.id;
 const groupRequests = ref([]);
+
+const emit = defineEmits(['refresh-members'])
 
 // 대기중인 참가 신청들 가져오는 함수
 const getListWaitingRequest = () => {
@@ -29,6 +31,7 @@ const acceptRequestFunc = (memberId) => {
     groupId, memberId,
     () => {
       getListWaitingRequest();
+      emit('refresh-members');
       console.log("모임 참가 신청 수락!");
     },
     (error) => {

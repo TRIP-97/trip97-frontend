@@ -48,6 +48,7 @@
         groups.value = data.groups;
         currentPage.value = data.currentPage;
         totalPage.value = data.totalPageCount;
+        console.log(groups.value);
       },
       (error) => {
         console.log("GroupList 불러오는 중 에러 발생!");

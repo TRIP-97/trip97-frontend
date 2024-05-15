@@ -1,7 +1,7 @@
 <script setup>
-  import { ref, onMounted } from "vue";
+  import { ref, onMounted} from "vue";
   import { useRoute, useRouter } from "vue-router";
-  import { detailGroup, deleteGroup, checkGroupMember, requestGroupMember, listGroupMembers } from "@/api/group";
+  import { detailGroup, deleteGroup, checkGroupMember, requestGroupMember, listGroupMembers, refuseRequest } from "@/api/group";
   import { useMemberStore } from "@/stores/member";
   import { storeToRefs } from "pinia";
 
@@ -58,6 +58,7 @@
 
         checkIsWriter();
         checkIsGroupMemberOrApplicant();
+        getListGroupMembers();
       },
       (error) => {
         console.log("HotPlace 게시글 불러오는 중 에러 발생!");
@@ -110,7 +111,6 @@
       groupId: groupId.value,
       memberId: memberId.value,
     };
-    console.log(request);
 
     requestGroupMember(
       request,
@@ -139,12 +139,27 @@
     )
   }
 
+  const kickGroupMember = (memberId) => {
+    refuseRequest(
+    groupId.value, memberId,
+    () => {
+      getGroup();
+      console.log("모임 멤버 내보내기 성공!");
+    },
+    (error) => {
+      console.log("모임 멤버 내보내기중 에러 발생!");
+      console.dir(error);
+    }
+  )
+  }
+
+  defineExpose({ getGroup });
+
   onMounted(() => {
     if (userInfo.value !== null) {
       memberId.value = userInfo.value.id;
     }
     getGroup();
-    getListGroupMembers();
   });
 </script>
 
@@ -221,19 +236,29 @@
 
       <h5 class="group-members-info-label mb-2">모임 멤버</h5>
       <div class="group-members-info-box">
-        <template v-for="(groupMember, index) in groupMembers" :key="groupMember.id">
-          <div class="d-flex align-items-center mb-1">
-            <img
-              v-if="groupMember.memberProfileImage === null"
-              src="@/assets/images/profile.png"
-              alt="Author"
-              class="img-fluid rounded-circle mr-3"
-              style="width: 40px; height: 40px"
-            />
-            <p class="writer-nickname">{{ groupMember.memberNickname }}</p>
-          </div>
-          <hr v-if="index !== groupMembers.length - 1">
-        </template>
+        <div class="d-flex justify-content-end align-items-center group-info">
+        <div class="d-flex">
+          <i class="fa-solid fa-users"></i>
+          <p class="member-count card-text">{{ group.currentMemberCount }} / {{ group.maxMemberCount }}</p>
+        </div>
+      </div>
+      <template v-for="(groupMember, index) in groupMembers" :key="groupMember.id">
+  <div class="d-flex justify-content-between align-items-center mb-1">
+    <div class="d-flex align-items-center">
+      <img
+        v-if="groupMember.memberProfileImage === null"
+        src="@/assets/images/profile.png"
+        alt="Author"
+        class="img-fluid rounded-circle mr-3"
+        style="width: 40px; height: 40px"
+      />
+      <p class="writer-nickname">{{ groupMember.memberNickname }}</p>
+    </div>
+    <button v-if="isWriter && group.creatorId !== groupMember.memberId" class="btn kick-btn" @click.prevent="kickGroupMember(groupMember.memberId)">내보내기</button>
+  </div>
+  <hr v-if="index !== groupMembers.length - 1">
+</template>
+
       </div>
     </div>
   </div>
@@ -376,4 +401,37 @@
     font-size: 13px;
     color: gray;
   }
+
+  
+  .group-info {
+    color: gray;
+    font-size: 16px;
+  }
+
+  .member-count {
+    margin-left: 5px;
+  }
+
+  .fa-users {
+    margin-top: 3px;
+    margin-left: 15px;
+  }
+
+  .btn {
+  padding: 5px 10px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.kick-btn {
+  background-color: #f9d6ac; 
+  position: relative;
+  top: -5px;
+}
+
+.kick-btn:hover {
+  background-color: #e5b97a; 
+}
 </style>
