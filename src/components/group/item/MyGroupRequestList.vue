@@ -16,7 +16,6 @@ const getListWaitingRequest = () => {
     groupId,
     ({ data }) => {
       groupRequests.value = data;
-      console.log(data);
     },
     (error) => {
       console.log("Group 신청자 여부 확인 중 에러 발생!");
@@ -103,7 +102,7 @@ onMounted(() => {
 }
 
 .empty-request {
-  color: #888;  /* 회색 텍스트 */
+  color: #888;  
   font-size: 16px;
 }
 
