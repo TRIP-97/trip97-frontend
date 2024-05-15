@@ -69,7 +69,7 @@ onMounted(() => {
     </template>
 
     <div v-if="groupRequests === null || groupRequests.length === 0" class="empty-request">
-      현재 모임 신청이 없습니다!
+      내가 보낸 모임 신청이 없습니다!
     </div>
   </div>
 </template>

@@ -5,6 +5,7 @@ import ProfileView from "@/views/ProfileView.vue";
 import NaverCallBack from "@/components/callback/NaverCallBack.vue";
 import HotPlaceView from "@/views/HotPlaceView.vue";
 import GroupView from "@/views/GroupView.vue";
+import PlanView from "@/views/PlanView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -99,6 +100,11 @@ const router = createRouter({
           component: () => import("../components/group/MyGroupRequest.vue"),
         },
       ],
+    },
+    {
+      path: "/group/:groupId/plan/:planId",
+      name: "plan",
+      component: PlanView,
     },
   ],
 });

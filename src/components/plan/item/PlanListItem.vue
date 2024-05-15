@@ -1,5 +1,9 @@
 <script setup>
 import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute();
+const router = useRouter();
 
 const props = defineProps({
   plan: Object,
@@ -10,6 +14,7 @@ const plan = ref(props.plan);
 plan.value.startDate = formatVisitedDate(plan.value.startDate);
 plan.value.endDate = formatVisitedDate(plan.value.endDate);
 
+// 날짜 형식을 변경하는 함수
 function formatVisitedDate(dateString) {
   const date = new Date(dateString);
   const year = date.getFullYear();
@@ -27,6 +32,17 @@ function getTotalDays(startDate, endDate) {
   return diffDays;
 }
 
+// 여행 계획 페이지로 이동하는 함수
+const goPlanPage = (planId) => {
+  router.push({
+    name: "plan",
+    params: {
+      groupId: route.params.id,
+      planId: planId,
+    }
+  })
+};
+
 </script>
 
 <template>
@@ -42,7 +58,7 @@ function getTotalDays(startDate, endDate) {
         <div class="day-number">{{ getTotalDays(plan.startDate, plan.endDate) }}</div>
       </div>
     </div>
-    <button class="add-plan-btn">여행 일정 보러가기</button>
+    <button class="add-plan-btn" @click.prevent="goPlanPage(plan.id)">여행 일정 보러가기</button>
   </div>
 </template>
 
@@ -123,6 +139,6 @@ function getTotalDays(startDate, endDate) {
 }
 
 .default-message {
-  color: #b4f6cf;
+  color: #b1eac8;
 }
 </style>
