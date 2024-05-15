@@ -355,7 +355,7 @@ function displayInfowindow(marker, attraction) {
 
 // 카테고리 아이콘 경로를 동적으로 반환하는 함수
 const getIconPath = (code) => {
-  return new URL(`../../assets/images/markIcon${code}.png`, import.meta.url).href;
+  return new URL(`../../assets/images/categoryIcon${code}.png`, import.meta.url).href;
 };
 
 // 컴포넌트가 마운트될 때 초기화

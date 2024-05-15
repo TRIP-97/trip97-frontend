@@ -102,17 +102,17 @@
   top: 10px; /* 지도 상단에서 10px 떨어진 위치 */
   left: 10px; /* 지도 좌측에서 10px 떨어진 위치 */
   z-index: 10; /* 지도 위에 표시되도록 z-index 조정 */
-  width: 65%; /* 너비를 80%로 설정 */
+  width: 51%; /* 너비를 80%로 설정 */
 }
 
 
 .category-list li {
   flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 10px;
+  font-size : 12px;
+  padding: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -127,7 +127,7 @@
 
 .category-icon {
   width: 55x;
-  height: 55px;
+  height: 35px;
   margin-bottom: 5px;
 }
 #menu_wrap {
