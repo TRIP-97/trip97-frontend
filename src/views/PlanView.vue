@@ -6,7 +6,7 @@ import PlanDetail from "@/components/plan/PlanDetail.vue";
 <template>
   <div>
     <div class="header-image">
-      <img src="@/assets/images/GroupPageLogo.jpg" alt="Plan Page Logo">
+      <img src="@/assets/images/PlanPageLogo.jpg" alt="Plan Page Logo">
       <div class="overlay">
         <h1>여행 계획</h1>
       </div>
