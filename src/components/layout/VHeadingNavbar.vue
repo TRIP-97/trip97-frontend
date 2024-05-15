@@ -57,10 +57,10 @@ onUnmounted(() => {
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
           <ul class="navbar-nav content-menu me-auto ms-5">
             <li class="nav-item menu-item">
-              <a class="nav-link" style="cursor: pointer" id="">
+              <RouterLink class="nav-link" style="cursor: pointer" :to="{name : 'attraction'}">
                 <i class="fa-solid fa-earth-asia"></i>
                 여행 지도
-              </a>
+              </RouterLink>
             </li>
             <template v-if="isLoggedIn">
               <li class="nav-item menu-item">
@@ -71,10 +71,10 @@ onUnmounted(() => {
               </li>
             </template>
             <li class="nav-item menu-item">
-              <a class="nav-link" style="cursor: pointer" id="">
+              <RouterLink class="nav-link" style="cursor: pointer" :to="{name : 'board'}">
                 <i class="fa-solid fa-user-group"></i>
                 여행 커뮤니티
-              </a>
+              </RouterLink>
             </li>
             <li class="nav-item menu-item">
               <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'hotPlace' }">
