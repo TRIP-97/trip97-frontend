@@ -2,6 +2,7 @@
   import { ref } from "vue";
   import MyGroupDetailItem from "@/components/group/item/MyGroupDetailItem.vue";
   import MyGroupRequestList from "@/components/group/item/MyGroupRequestList.vue";
+  import PlanList from "@/components/plan/PlanList.vue";
 
   const groupMenu = ref("groupDetail");
   const groupDetailRef = ref(null);
@@ -53,10 +54,14 @@
         v-show="groupMenu === 'groupDetail'"
         ref="groupDetailRef"
         class="my-group-detail-item"/>
+        <PlanList
+        v-show="groupMenu === 'travelPlan'"
+        class="plan-list"
+        />
         <MyGroupRequestList 
         v-show="groupMenu === 'requestList'"
         @refresh-members="refreshMembers"
-        class="my-groop-request-item"/>
+        class="my-group-request-item"/>
       </div>
     </div>
   </div>
@@ -94,7 +99,7 @@
     color: white;
   }
 
-  .my-group-detail-item, .my-groop-request-item {
+  .my-group-detail-item, .my-group-request-item, .plan-list {
     border: 1px solid rgb(201, 201, 201);
     padding: 10px;
     border-radius: 10px;

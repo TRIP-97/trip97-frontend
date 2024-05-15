@@ -427,6 +427,7 @@
 
 .kick-btn {
   background-color: #f9d6ac; 
+  font-size: 14px;
   position: relative;
   top: -5px;
 }
