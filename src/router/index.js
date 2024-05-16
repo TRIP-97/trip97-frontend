@@ -102,6 +102,11 @@ const router = createRouter({
           name: "myGroupRequest",
           component: () => import("../components/group/MyGroupRequest.vue"),
         },
+        {
+          path: "myInvitedRequest",
+          name: "myInvitedGroupRequest",
+          component: () => import("../components/group/MyInvitedGroupRequest.vue"),
+        },
       ],
     },
     {

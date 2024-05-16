@@ -3,6 +3,7 @@
   import MyGroupDetailItem from "@/components/group/item/MyGroupDetailItem.vue";
   import MyGroupRequestList from "@/components/group/item/MyGroupRequestList.vue";
   import PlanList from "@/components/plan/PlanList.vue";
+  import MyGroupInviteFriend from "./item/MyGroupInviteFriend.vue";
 
   const groupMenu = ref("groupDetail");
   const groupDetailRef = ref(null);
@@ -47,6 +48,13 @@
             >
               신청 목록
             </div>
+            <div
+              :class="{ 'filter-selected': groupMenu === 'inviteFriend' }"
+              class="filter-option"
+              @click="setFilter('inviteFriend')"
+            >
+              친구 초대
+            </div>
           </div>
         </div>
         
@@ -62,6 +70,10 @@
         v-show="groupMenu === 'requestList'"
         @refresh-members="refreshMembers"
         class="my-group-request-item"/>
+        <MyGroupInviteFriend
+        v-show="groupMenu === 'inviteFriend'"
+        class="my-group-invite-friend"
+        />
       </div>
     </div>
   </div>
@@ -99,7 +111,7 @@
     color: white;
   }
 
-  .my-group-detail-item, .my-group-request-item, .plan-list {
+  .my-group-detail-item, .my-group-request-item, .plan-list, .my-group-invite-friend {
     border: 1px solid rgb(201, 201, 201);
     padding: 10px;
     border-radius: 10px;
