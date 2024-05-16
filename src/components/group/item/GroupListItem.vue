@@ -5,13 +5,13 @@
   const router = useRouter();
 
   const props = defineProps({
-    hotPlaceItem: Object,
+    groupItem: Object,
   });
 
-  const hotPlace = ref("");
-  hotPlace.value = props.hotPlaceItem;
-  hotPlace.value.startDate = formatVisitedDate(hotPlace.value.startDate);
-  hotPlace.value.endDate = formatVisitedDate(hotPlace.value.endDate);
+  const group = ref("");
+  group.value = props.groupItem;
+  group.value.startDate = formatVisitedDate(group.value.startDate);
+  group.value.endDate = formatVisitedDate(group.value.endDate);
 
   // 날짜 포맷 변경 함수
   function formatVisitedDate(dateString) {
@@ -22,56 +22,48 @@
     return `${year}/${month.toString().padStart(2, "0")}/${day.toString().padStart(2, "0")}`;
   }
 
-  function goHotPlaceDetail() {
+  function goGroupDetail() {
     router.push({
-      name: "hotPlaceDetail",
-      params: { id: hotPlace.value.id },
+      name: "groupDetail",
+      params: { id: group.value.id },
     });
   }
 </script>
 
 <template>
-  <div class="card" @click="goHotPlaceDetail" style="width: 18rem">
+  <div class="card" @click="goGroupDetail" style="width: 18rem">
     <div class="card-header bg-transparent d-flex align-items-center">
       <div class="d-flex align-items-center">
         <img src="@/assets/images/profile.png" style="width: 30px" />
-        <p class="writer-nickname mb-0 ms-2">{{ hotPlace.writerNickname }}</p>
+        <p class="writer-nickname mb-0 ms-2">{{ group.creatorNickname }}</p>
         <div class="custom-vr mx-3"></div>
       </div>
       <div class="header-date mt-3">
         <div class="d-flex">
           <i class="travel-date-icon fa-solid fa-calendar"></i>
-          <p class="travel-date-label mb-0">여행 기간</p>
+          <p class="travel-date-label mb-0">모임 기간</p>
         </div>
-        <p class="travel-date">{{ hotPlace.startDate }} ~ {{ hotPlace.endDate }}</p>
+        <p class="travel-date">{{ group.startDate }} ~ {{ group.endDate }}</p>
       </div>
     </div>
-    <div class="position-relative hotplace-image-area">
-      <template v-if="hotPlace.fileInfos === null">
-        <img
-          src="@/assets/images/fubao.jpg"
-          class="card-img-top hotplace-image"
-          alt="HotPlace Image"
-        />
+    <div class="position-relative group-image-area">
+      <template v-if="group.fileInfos === null">
+        <img src="@/assets/images/fubao.jpg" class="card-img-top group-image" alt="Group Image" />
       </template>
       <template v-else>
-        <img :src="hotPlace.fileInfos[0].url" class="hotplace-image" style="width: 300px" />
+        <img :src="group.fileInfos[0].url" class="group-image" style="width: 300px" />
       </template>
-      <div class="hotplace-location position-absolute">
+      <div class="group-location position-absolute">
         <i class="fa-solid fa-location-dot"></i>
-        {{ hotPlace.location }}
+        {{ group.location }}
       </div>
     </div>
     <div class="card-body">
-      <h5 class="card-title">{{ hotPlace.title }}</h5>
-      <div class="d-flex justify-content-end align-items-center hotplace-info">
+      <h5 class="card-title">{{ group.name }}</h5>
+      <div class="d-flex justify-content-end align-items-center group-info">
         <div class="d-flex">
-          <i class="fa-solid fa-eye"></i>
-          <p class="view-count card-text">{{ hotPlace.viewCount }}</p>
-        </div>
-        <div class="d-flex">
-          <i class="fa-solid fa-heart"></i>
-          <p class="like-count card-text">{{ hotPlace.likeCount }}</p>
+          <i class="fa-solid fa-users"></i>
+          <p class="member-count card-text">{{ group.currentMemberCount }} / {{ group.maxMemberCount }}</p>
         </div>
       </div>
     </div>
@@ -84,32 +76,32 @@
     border-radius: 10px;
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
     margin: 10px;
-    overflow: hidden;
+    overflow: hidden; /* 카드 범위 밖 내용 숨기기 */
     cursor: pointer;
   }
-  .card:hover .hotplace-location {
-    color: white;
-    background-color: #00a1fc;
+  .card:hover .group-location {
+    color: white; /* 호버 시 글자 색 변경 */
+    background-color: #00a1fc; /* 호버 시 배경 색 변경 */
   }
-  .card:hover .hotplace-image {
-    transform: scale(1.15);
-    transition: transform 0.3s ease;
+  .card:hover .group-image {
+    transform: scale(1.15); /* 이미지 확대 */
+    transition: transform 0.3s ease; /* 이미지 확대 트랜지션 효과 추가 */
   }
 
   .card-header {
     height: 50px;
     font-size: 11px;
-    border-bottom: none;
+    border-bottom: none; /* 하단 테두리 제거 */
   }
   .card-title {
     font-size: 17px;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
+    -webkit-line-clamp: 1; /* 1줄로 제한 */
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: normal;
-    height: 1.5em;
+    height: 1.5em; /* 높이 조절을 통해 텍스트 라인의 개수와 높이를 일치시킴 */
   }
   .custom-vr {
     border-left: 1px solid lightgray;
@@ -129,20 +121,16 @@
   .travel-date {
     color: #00a1fc;
   }
-  .hotplace-info {
-    color: gray;
-    font-size: 16px;
-  }
-  .hotplace-image-area {
+  .group-image-area {
     height: 160px;
     overflow: hidden;
     border-radius: 10px;
   }
-  .hotplace-image {
+  .group-image {
     border-radius: 10px;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease; /* 이미지 트랜지션 효과 추가 */
   }
-  .hotplace-location {
+  .group-location {
     top: 10px;
     left: 10px;
     height: 25px;
@@ -154,16 +142,20 @@
     border-radius: 10px;
     font-size: 14px;
   }
-  .view-count,
-  .like-count {
-    margin-left: 5px;
-  }
-
   .fa-calendar {
     margin-top: 2px;
   }
-  .fa-eye,
-  .fa-heart {
+  
+  .group-info {
+    color: gray;
+    font-size: 16px;
+  }
+
+  .member-count {
+    margin-left: 5px;
+  }
+
+  .fa-users {
     margin-top: 3px;
     margin-left: 15px;
   }

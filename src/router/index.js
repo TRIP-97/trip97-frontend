@@ -4,6 +4,8 @@ import LoginView from "@/views/LoginView.vue";
 import ProfileView from "@/views/ProfileView.vue";
 import NaverCallBack from "@/components/callback/NaverCallBack.vue";
 import HotPlaceView from "@/views/HotPlaceView.vue";
+import GroupView from "@/views/GroupView.vue";
+import PlanView from "@/views/PlanView.vue";
 import BoardView from "@/views/BoardView.vue";
 import AttractionView from "@/views/AttractionView.vue";
 
@@ -59,6 +61,54 @@ const router = createRouter({
       ],
     },
     {
+      path: "/group",
+      name: "group",
+      component: GroupView,
+      redirect: { name: "groupList" },
+      children: [
+        {
+          path: "list",
+          name: "groupList",
+          component: () => import("../components/group/GroupList.vue"),
+        },
+        {
+          path: "detail/:id",
+          name: "groupDetail",
+          component: () => import("../components/group/GroupDetail.vue"),
+        },
+        {
+          path: "write",
+          name: "groupWrite",
+          component: () => import("../components/group/GroupWrite.vue"),
+        },
+        {
+          path: "modify/:id",
+          name: "groupModify",
+          component: () => import("../components/group/GroupModify.vue"),
+        },
+        {
+          path: "myList",
+          name: "myGroupList",
+          component: () => import("../components/group/MyGroupList.vue"),
+        },
+        {
+          path: "myDetail/:id",
+          name: "myGroupDetail",
+          component: () => import("../components/group/MyGroupDetail.vue"),
+        },
+        {
+          path: "myRequest",
+          name: "myGroupRequest",
+          component: () => import("../components/group/MyGroupRequest.vue"),
+        },
+      ],
+    },
+    {
+      path: "/group/:groupId/plan/:planId",
+      name: "plan",
+      component: PlanView,
+    },
+    {
       path: "/board",
       name: "board",
       component: BoardView,
@@ -102,7 +152,7 @@ const router = createRouter({
   ],
 });
 
-router.afterEach((to, from) => {
+router.beforeEach((to, from) => {
   if (to.name !== from.name) {
     document.dispatchEvent(new CustomEvent("route-changed"));
   }

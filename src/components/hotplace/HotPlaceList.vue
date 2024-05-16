@@ -12,10 +12,11 @@ const router = useRouter();
 const hotPlaces = ref([]);
 const currentPage = ref(1);
 const totalPage = ref(0);
-const { VITE_ARTICLE_LIST_SIZE } = import.meta.env;
+const { VITE_HOTPLACE_LIST_SIZE } = import.meta.env;
+
 const param = ref({
   pgno: currentPage.value,
-  spp: VITE_ARTICLE_LIST_SIZE,
+  spp: VITE_HOTPLACE_LIST_SIZE,
   key: "",
   word: "",
   filter: "createdDate",
@@ -24,6 +25,8 @@ const param = ref({
 const selectOption = ref([
   { text: "검색조건", value: "" },
   { text: "제목", value: "title" },
+  { text: "내용", value: "content" },
+  { text: "위치", value: "location" },
   { text: "닉네임", value: "member_nickname" },
 ]);
 
@@ -76,22 +79,28 @@ onMounted(() => {
       <div class="filter-search-container d-flex justify-content-between mb-3">
         <div class="filters">
           <div
-            :class="{'filter-selected': param.filter === 'createdDate'}"
+            :class="{ 'filter-selected': param.filter === 'createdDate' }"
             class="filter-option"
             @click="setFilter('createdDate')"
-          >최신 순</div>
+          >
+            최신 순
+          </div>
           <div
-            :class="{'filter-selected': param.filter === 'viewCount'}"
+            :class="{ 'filter-selected': param.filter === 'viewCount' }"
             class="filter-option"
             @click="setFilter('viewCount')"
-          >조회수 순</div>
+          >
+            조회수 순
+          </div>
           <div
-            :class="{'filter-selected': param.filter === 'likeCount'}"
+            :class="{ 'filter-selected': param.filter === 'likeCount' }"
             class="filter-option"
             @click="setFilter('likeCount')"
-          >좋아요 순</div>
+          >
+            좋아요 순
+          </div>
         </div>
-        <form class="search-form d-flex">
+        <form class="search-form d-flex" @submit.prevent="getHotPlaceList">
           <VSelect :selectOption="selectOption" @onKeySelect="changeKey" />
           <div class="input-group input-group-sm">
             <input
@@ -110,7 +119,8 @@ onMounted(() => {
           <HotPlaceListItem :hot-place-item="hotPlace" />
         </div>
       </div>
-      <div class="row mt-3 justify-content-end"> <!-- 상단 마진과 오른쪽 정렬 추가 -->
+      <div class="row mt-3 justify-content-end">
+
         <button class="btn btn-primary write-btn" @click="goWriteForm">글 작성</button>
       </div>
       <PageNavigation
@@ -155,13 +165,13 @@ onMounted(() => {
 }
 
 .search-form button {
-  background-color: #a3d8f4; /* 파스텔톤 하늘색 */
-  color: white; /* 버튼 글씨 색상을 흰색으로 설정 */
-  border: none; /* 테두리 제거 */
+  background-color: #a3d8f4; 
+  color: white;
+  border: none; 
 }
 
 .search-form button:hover {
-  background-color: #91c7e1; /* 마우스 오버 시 좀 더 진한 하늘색으로 변경 */
+  background-color: #91c7e1; 
 }
 
 .write-btn {

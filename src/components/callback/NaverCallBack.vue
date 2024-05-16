@@ -17,7 +17,7 @@ onMounted(() => {
       query.value,
       (response) => {
         console.log(response);
-        localStorage.setItem("accessToken", response.data.accessToken);
+        sessionStorage.setItem("accessToken", response.data.accessToken);
         console.log("로그인 성공:", response.data);
         router.replace({ name: "main" });
         document.dispatchEvent(new CustomEvent("login-event"));

@@ -1,50 +1,54 @@
 // VHeadingNavbar.vue
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import { RouterLink, useRouter } from "vue-router";
-import { getMemberProfile } from "@/api/member";
+  import { onMounted, onUnmounted } from "vue";
+  import { RouterLink, useRouter } from "vue-router";
+  import { getMemberProfile } from "@/api/member";
+  import { useMemberStore } from "@/stores/member";
+  import { storeToRefs } from "pinia";
 
-const router = useRouter();
-const isLoggedIn = ref(false);
-const nickname = ref("");
+  const router = useRouter();
 
-const logout = () => {
-  // 세션 스토리지에서 accessToken 삭제
-  localStorage.removeItem("accessToken");
-  isLoggedIn.value = false;
-  nickname.value = "";
-  router.push({ name: "main" });
-};
+  const memberStore = useMemberStore();
 
-const fetchProfile = async () => {
-  const token = localStorage.getItem("accessToken");
-  if (token) {
-    try {
-      const response = await getMemberProfile(token);
+  const { isLogin, userInfo } = storeToRefs(memberStore);
 
-      if (response.data) {
-        isLoggedIn.value = true;
-        nickname.value = response.data.nickname;
+  const logout = () => {
+    // 세션 스토리지에서 accessToken 삭제
+    sessionStorage.removeItem("accessToken");
+    isLogin.value = false;
+    userInfo.value = null;
+    router.push({ name: "main" });
+  };
+
+  const fetchProfile = async () => {
+    const token = sessionStorage.getItem("accessToken");
+
+    if (token) {
+      try {
+        const response = await getMemberProfile(token);
+
+        if (response.data) {
+          isLogin.value = true;
+          userInfo.value = response.data;
+        }
+      } catch (error) {
+        console.error("프로필 정보 조회 실패:", error);
+        logout(); // 토큰이 유효하지 않은 경우 로그아웃 처리
       }
-    } catch (error) {
-      console.error("프로필 정보 조회 실패:", error);
-      logout(); // 토큰이 유효하지 않은 경우 로그아웃 처리
     }
-  }
-};
+  };
 
-const handleRouteChange = () => {
-  fetchProfile();
-};
+  const handleRouteChange = () => {
+    fetchProfile();
+  };
 
-onMounted(() => {
-  // fetchProfile();
-  document.addEventListener("route-changed", handleRouteChange);
-});
+  onMounted(() => {
+    document.addEventListener("route-changed", handleRouteChange);
+  });
 
-onUnmounted(() => {
-  document.removeEventListener("route-changed", handleRouteChange);
-});
+  onUnmounted(() => {
+    document.removeEventListener("route-changed", handleRouteChange);
+  });
 </script>
 
 <template>
@@ -62,12 +66,12 @@ onUnmounted(() => {
                 여행 지도
               </RouterLink>
             </li>
-            <template v-if="isLoggedIn">
+            <template v-if="isLogin">
               <li class="nav-item menu-item">
-                <a class="nav-link" style="cursor: pointer" id="">
+                <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'group' }">
                   <i class="fa-solid fa-paper-plane"></i>
                   여행 계획
-                </a>
+                </RouterLink>
               </li>
             </template>
             <li class="nav-item menu-item">
@@ -84,18 +88,18 @@ onUnmounted(() => {
             </li>
           </ul>
           <ul class="navbar-nav member-menu ms-auto">
-            <template v-if="!isLoggedIn">
+            <template v-if="!isLogin">
               <li class="nav-item">
                 <RouterLink
                   class="nav-link"
                   style="cursor: pointer"
-                  v-if="!isLoggedIn"
+                  v-if="!isLogin"
                   :to="{ name: 'login' }"
                   >로그인</RouterLink
                 >
               </li>
             </template>
-            <template v-if="isLoggedIn">
+            <template v-if="isLogin">
               <li class="nav-item dropdown">
                 <a
                   class="nav-link dropdown-toggle"
@@ -111,16 +115,16 @@ onUnmounted(() => {
                     class="profile-image"
                     style="height: 30px; margin-right: 5px"
                   />
-                  {{ nickname }}
+                  {{ userInfo.nickname }}
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                   <li class="dropdown-item">
-                    <RouterLink class="header-dropdown" :to="{ name: 'profile' }" v-if="isLoggedIn"
+                    <RouterLink class="header-dropdown" :to="{ name: 'profile' }" v-if="isLogin"
                       >마이페이지</RouterLink
                     >
                   </li>
                   <li>
-                    <a class="header-dropdown dropdown-item" @click="logout" v-if="isLoggedIn"
+                    <a class="header-dropdown dropdown-item" @click="logout" v-if="isLogin"
                       >로그아웃</a
                     >
                   </li>
@@ -135,29 +139,27 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+  .nav-item.menu-item .nav-link {
+    color: #00a1fc;
+  }
 
-.nav-item.menu-item .nav-link {
-  color: #00A1FC;
-}
+  .header-dropdown {
+    color: gray;
+    text-decoration: none;
+    cursor: pointer;
+  }
 
-.header-dropdown {
-  color: gray;
-  text-decoration: none;
-  cursor: pointer;
-}
+  .header-dropdown:hover {
+    color: gray;
+    text-decoration: none;
+  }
 
-.header-dropdown:hover {
-  color: gray;
-  text-decoration: none;
-}
+  .logo {
+    font-family: NanumSquareRound;
+    margin-left: 120px;
+  }
 
-.logo {
-  font-family: NanumSquareRound;
-  margin-left: 120px;
-}
-
-.navbar-nav {
-  margin-right: 120px; 
-}
-
+  .navbar-nav {
+    margin-right: 120px;
+  }
 </style>
