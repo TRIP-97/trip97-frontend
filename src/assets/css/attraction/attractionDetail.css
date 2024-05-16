@@ -1,0 +1,12 @@
+.childBox {
+  position: relative;
+  width: 480px;
+}
+
+.infoImage {
+  width: 400px;
+}
+
+.dir {
+  border-bottom: 1px solid black;
+}

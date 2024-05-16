@@ -2,6 +2,49 @@
   display: flex;
 }
 
+#menu_wrap .searchDiv {
+  display: flex;
+  align-items: center;
+  border: 2px solid #00A1FC;
+  border-radius: 10px;
+  padding: 5px;
+  margin-bottom: 15px;
+}
+
+#menu_wrap .form-search {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 10px;
+  border-radius: 25px;
+  font-size: 18px;
+  margin-right: 10px;
+}
+
+#menu_wrap .searchBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+}
+
+#menu_wrap .form-search::placeholder {
+  color: #999;
+  font-size: 15px;
+}
+
+#menu_wrap .fa-search {
+  font-size: 20px;
+}
+
+#menu_wrap .searchIcon {
+  color: #00A1FC;
+  font-size: 20px;
+  margin-left: 10px;
+}
+
 .map {
   width: 1390px;
   height: 95%;
@@ -154,7 +197,7 @@
   padding: 5px;
   overflow-y: auto;
   background: rgba(255, 255, 255, 0.7);
-  z-index: 1;
+
   font-size: 12px;
   border-radius: 10px;
 }
@@ -188,6 +231,7 @@ li {
   min-height: 65px;
 }
 
+
 /* .info {
   text-overflow: ellipsis;
   overflow: hidden;
@@ -210,4 +254,14 @@ li {
 .infoReview,
 .infoType {
   margin-left: 10px;
+}
+
+.attraction-detail-container {
+  position: absolute;
+  z-index: 999;
+  background-color: white;
+  height: 100vh;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 1px 1px 1px 1px #3455;
 }
