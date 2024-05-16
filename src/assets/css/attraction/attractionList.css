@@ -1,8 +1,7 @@
-
-
 .map_body {
   display: flex;
 }
+
 .map {
   width: 1390px;
   height: 95%;
@@ -11,33 +10,38 @@
   border-radius: 10px;
 }
 
-.map_wrap a, .map_wrap a:hover, .map_wrap a:active{
-  color:#000;
+.map_wrap a,
+.map_wrap a:hover,
+.map_wrap a:active {
+  color: #000;
   text-decoration: none;
 }
 
 .map_wrap {
-  position:relative;
-  width:100%;
-  height:100vh;
-  padding : 20px;
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  padding: 20px;
 }
 
 .drop {
   display: flex;
-  align-items: flex-end; /* 요소들을 아래쪽으로 정렬 */
-  gap: 10px; /* 요소 간의 간격을 20px로 설정 */
+  align-items: flex-end;
+  /* 요소들을 아래쪽으로 정렬 */
+  gap: 10px;
+  /* 요소 간의 간격을 20px로 설정 */
 }
 
 .select-container {
-  position: relative; /* SVG 아이콘을 상대적으로 배치 */
+  position: relative;
+  /* SVG 아이콘을 상대적으로 배치 */
   display: flex;
   flex-direction: column;
 }
 
 .select-label {
   margin-bottom: 5px;
-  margin-left : 10px;
+  margin-left: 10px;
   font-size: 25px;
   color: #333;
 }
@@ -45,7 +49,8 @@
 .select-container select {
   appearance: none;
   padding: 8px 16px;
-  padding-right: 40px; /* 아이콘 공간 확보 */
+  padding-right: 40px;
+  /* 아이콘 공간 확보 */
   border: 1px solid #ddd;
   border-radius: 8px;
   background-color: white;
@@ -58,7 +63,8 @@
   position: absolute;
   right: 10px;
   bottom: 10px;
-  pointer-events: none; /* SVG가 클릭되지 않도록 설정 */
+  pointer-events: none;
+  /* SVG가 클릭되지 않도록 설정 */
   width: 16px;
   height: 16px;
   fill: #333;
@@ -94,15 +100,21 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  background: rgba(255, 255, 255, 0.8); /* 배경색을 흰색으로 하고 투명도를 0.8로 설정 */
+  background: rgba(255, 255, 255, 0.8);
+  /* 배경색을 흰색으로 하고 투명도를 0.8로 설정 */
   border: 1px solid #ddd;
   border-radius: 5px;
   overflow: hidden;
-  position: absolute; /* 지도 위에 배치 */
-  top: 10px; /* 지도 상단에서 10px 떨어진 위치 */
-  left: 10px; /* 지도 좌측에서 10px 떨어진 위치 */
-  z-index: 10; /* 지도 위에 표시되도록 z-index 조정 */
-  width: 51%; /* 너비를 80%로 설정 */
+  position: absolute;
+  /* 지도 위에 배치 */
+  top: 10px;
+  /* 지도 상단에서 10px 떨어진 위치 */
+  left: 10px;
+  /* 지도 좌측에서 10px 떨어진 위치 */
+  z-index: 10;
+  /* 지도 위에 표시되도록 z-index 조정 */
+  width: 55%;
+  /* 너비를 80%로 설정 */
 }
 
 
@@ -111,7 +123,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size : 12px;
+  font-size: 12px;
   padding: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
@@ -130,36 +142,37 @@
   height: 35px;
   margin-bottom: 5px;
 }
+
 #menu_wrap {
-  position:flex;
-  top:0;
-  left:0;
-  bottom:0;
-  width:480px;
+  position: flex;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 480px;
   height: 100vh;
-  margin:0 0 30px 10px;
-  padding:5px;
-  overflow-y:auto;
-  background:rgba(255, 255, 255, 0.7);
+  margin: 0 0 30px 10px;
+  padding: 5px;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.7);
   z-index: 1;
-  font-size:12px;
+  font-size: 12px;
   border-radius: 10px;
 }
 
 .bg_white {
-  background:#fff;
+  background: #fff;
 }
 
-#menu_wrap .option{
+#menu_wrap .option {
   text-align: center;
 }
 
 #menu_wrap .option p {
-  margin:10px 0;
-}  
+  margin: 10px 0;
+}
 
 #menu_wrap .option button {
-  margin-left:5px;
+  margin-left: 5px;
 }
 
 li {
@@ -190,9 +203,11 @@ li {
 }
 
 .infoImg {
-  width : 300px;
+  width: 300px;
 }
 
-.infoCount, .infoReview, .infoType {
+.infoCount,
+.infoReview,
+.infoType {
   margin-left: 10px;
 }

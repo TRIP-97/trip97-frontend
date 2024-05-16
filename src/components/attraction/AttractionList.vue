@@ -1,6 +1,18 @@
 <template>
   <div class="map_body">
     <div id="menu_wrap" class="bg_white">
+      <div class="searchDiv">
+        검색창 화면?
+        <input 
+        type="text" 
+        class="form-search" 
+        v-model="title"
+        placeholder="장소명을 입력해주세요"
+        @keyup.enter="getAttractionList">
+      </input>
+      <!-- <button class="searchBtn" @click="getAttractionList">
+      </button> -->
+      </div>
       <ul
         v-for="(list, contentTypeId) in listsByContentTypeId"
         :key="contentTypeId"
@@ -75,7 +87,10 @@
             :id="category.code"
             :data-order="category.order"
             @click="onClickCategory($event)"
-            :class="{ on: category.code === content.code }"
+            :class="{
+              on: category.code === content.code,
+              off: category.code !== content.code,
+            }"
           >
             <img :src="getIconPath(category.code)" alt="" class="category-icon" />
             {{ category.name }}
@@ -108,6 +123,7 @@ const map = ref(null); // 카카오 맵
 const placeOverlay = ref(new kakao.maps.CustomOverlay({ zIndex: 1 }));
 const contentNode = ref(document.createElement("div"));
 const markers = ref([]);
+const title = ref("");
 
 // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
 const infowindow = new kakao.maps.InfoWindow({
@@ -141,8 +157,13 @@ async function getAttractionList() {
     bound.qa,
     bound.oa,
     bound.pa,
+    title.value,
     (response) => {
       attractions.value = response.data;
+      if (content.value.code === 0) {
+        removeAllList();
+        removeAllMarkers();
+      }
       addMarkerAndPrevious();
       content.value.code = 0;
       content.value.name = "";
@@ -262,6 +283,18 @@ watch(gugun, () => {
   ps.keywordSearch(`${sido.value.name} ${gugun.value.name}`, placesSearchCB);
 });
 
+// 해당 카테고리 관광지가 있으면 카테고리 선택
+function addCategorySelection(category) {
+  const categoryElements = document.querySelectorAll("#category .off");
+  categoryElements.forEach((el) => {
+    if (el.id == category) {
+      el.classList.remove("off");
+      el.classList.add("on");
+    }
+  })
+}
+
+// 카테고리 전부 선택 해제
 function resetCategorySelection() {
   const categoryElements = document.querySelectorAll("#category .on");
   categoryElements.forEach((el) => {
@@ -337,17 +370,21 @@ function addMarker(position, idx, category) {
 // 마커, 목록 추가 함수
 function addMarkerAndPrevious() {
   const bounds = new kakao.maps.LatLngBounds();
-  const contentTypeId = content.value.code;
-
-  listsByContentTypeId.value[contentTypeId] = [];
-  markers.value[contentTypeId] = [];
 
   attractions.value.forEach((attraction, index) => {
     const placePosition = new kakao.maps.LatLng(attraction.latitude, attraction.longitude);
     const marker = addMarker(placePosition, index, attraction.contentTypeId);
-    markers.value[contentTypeId].push(marker);
+    markers.value.push(marker);
 
     bounds.extend(placePosition);
+
+    // attraction.contentTypeId를 사용하여 contentTypeId 기반으로 관리
+    const contentTypeId = attraction.contentTypeId;
+
+    if (!listsByContentTypeId.value[contentTypeId]) {
+      listsByContentTypeId.value[contentTypeId] = [];
+      addCategorySelection(contentTypeId);
+    }
 
     listsByContentTypeId.value[contentTypeId].push({
       attraction: attraction,
@@ -371,7 +408,23 @@ function addMarkerAndPrevious() {
 }
 
 function removeContentChildNodes(id) {
-  listsByContentTypeId.value[id].splice(0, listsByContentTypeId.value[id].length);
+  // 모든 마커를 순회하면서 category가 일치하는 마커를 삭제
+  if (Array.isArray(markers.value)) {
+    // 필터를 사용하여 category가 일치하지 않는 마커들만 남김
+    markers.value = markers.value.filter((marker) => {
+      if (marker.category === id) {
+        // 지도에서 해당 마커를 제거
+        marker.setMap(null);
+        return false; // 이 마커는 제거할 것이므로 필터링
+      }
+      return true; // 이 마커는 유지
+    });
+
+    // listsByContentTypeId에서 해당 id를 삭제
+    delete listsByContentTypeId.value[id];
+  } else {
+    console.error(`Markers is not an array`);
+  }
 }
 
 // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수
