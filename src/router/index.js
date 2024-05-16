@@ -8,6 +8,7 @@ import GroupView from "@/views/GroupView.vue";
 import PlanView from "@/views/PlanView.vue";
 import BoardView from "@/views/BoardView.vue";
 import AttractionView from "@/views/AttractionView.vue";
+import FriendView from "@/views/FriendView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -146,6 +147,24 @@ const router = createRouter({
           path: "/",
           name: "attractionList",
           component: () => import("../components/attraction/AttractionList.vue"),
+        },
+      ],
+    },
+    {
+      path: "/friend",
+      name: "friend",
+      component: FriendView,
+      redirect: { name: "friendList" },
+      children: [
+        {
+          path: "list",
+          name: "friendList",
+          component: () => import("../components/friend/FriendList.vue"),
+        },
+        {
+          path: "/request/list",
+          name: "friendRequestList",
+          component: () => import("../components/friend/FriendRequestList.vue"),
         },
       ],
     },

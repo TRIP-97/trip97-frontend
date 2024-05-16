@@ -54,7 +54,7 @@ function listWaitingRequest(groupId, success, fail) {
 
 // 모임 참가 신청을 수락하는 함수
 function acceptRequest(groupId, memberId, success, fail) {
-  local.patch(`group/${groupId}/member/${memberId}`).then(success).catch(fail);
+  local.put(`group/${groupId}/member/${memberId}`).then(success).catch(fail);
 }
 
 // 모임 참가 신청을 거절하는 함수

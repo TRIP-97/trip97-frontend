@@ -16,4 +16,9 @@ function getMemberProfile(token) {
   });
 }
 
-export { naverLogin, getMemberProfile };
+// 친구 코드로 멤버 검색하는 함수
+function getMemberByFriendCode(friendCode, success, fail) {
+  local.get(`/member/search/friendCode`, { params: friendCode }).then(success).catch(fail);
+}
+
+export { naverLogin, getMemberProfile, getMemberByFriendCode };
