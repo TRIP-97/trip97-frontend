@@ -135,8 +135,6 @@ const guguns = ref([]); // 드롭다운 메뉴 2
 const listsByContentTypeId = ref({}); // 관광지 내용을 저장한 배열, contentType에 따라 다르게 저장됨
 
 const map = ref(null); // 카카오 맵
-const placeOverlay = ref(new kakao.maps.CustomOverlay({ zIndex: 1 }));
-const contentNode = ref(document.createElement("div"));
 const markers = ref([]);
 const title = ref("");
 const infowindows = ref([]);
@@ -186,7 +184,9 @@ async function getAttractionList() {
         removeAllList();
         removeAllMarkers();
       }
-      addMarkerAndPrevious();
+      if(attractions.value.length>0){
+        addMarkerAndPrevious();
+      }
       content.value.code = 0;
       content.value.name = "";
     },
@@ -391,14 +391,21 @@ function addMarker(position, idx, category) {
 
 // 마커, 목록 추가 함수
 function addMarkerAndPrevious() {
-  const bounds = new kakao.maps.LatLngBounds();
+
+  const bounds = ref(null);
+
+  if(title.value!="" && title.value!=null){
+    bounds.value = new kakao.maps.LatLngBounds();
+  }
 
   attractions.value.forEach((attraction, index) => {
     const placePosition = new kakao.maps.LatLng(attraction.latitude, attraction.longitude);
     const marker = addMarker(placePosition, index, attraction.contentTypeId);
     markers.value.push(marker);
 
-    bounds.extend(placePosition);
+    if(bounds.value){
+      bounds.value.extend(placePosition);
+    }
 
     // attraction.contentTypeId를 사용하여 contentTypeId 기반으로 관리
     const contentTypeId = attraction.contentTypeId;
@@ -427,10 +434,12 @@ function addMarkerAndPrevious() {
   console.log("listsByContentTypeId: ", listsByContentTypeId.value);
 
   try {
-        map.value.setBounds(bounds);
-      } catch (error) {
-        console.error('Error setting map bounds:', error);
-      }
+    if (bounds.value) {
+      map.value.setBounds(bounds.value);
+    }
+  } catch (error) {
+    console.error('Error setting map bounds:', error);
+  }
 
   nextTick(() => {
     const menuEl = document.getElementById("menu_wrap");
