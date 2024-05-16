@@ -1,20 +1,36 @@
 <template>
   <div class="map_body">
     <div id="menu_wrap" class="bg_white">
-      <ul v-for="(list, contentTypeId) in listsByContentTypeId" :key="contentTypeId" :id="'placesList_' + contentTypeId" class="placesList">
-        <li v-for="place in list" :key="place.id" class="item"
-          @mouseover="()=>displayInfowindow(place.marker, place.attraction)">
+      <ul
+        v-for="(list, contentTypeId) in listsByContentTypeId"
+        :key="contentTypeId"
+        :id="'placesList_' + contentTypeId"
+        class="placesList"
+      >
+        <li
+          v-for="place in list"
+          :key="place"
+          class="item"
+          @mouseover="() => displayInfowindow(place.marker, place.attraction)"
+        >
           <div class="info">
             <div class="infoTop">
               <h5>{{ place.attraction.title }}</h5>
-              <p class="infoType">{{ categories.find(category => category.code === parseInt(contentTypeId))?.name }}</p>
+              <p class="infoType">
+                {{ categories.find((category) => category.code === parseInt(contentTypeId))?.name }}
+              </p>
             </div>
             <div class="infoBottom">
               <span>{{ place.attraction.address }}</span>
               <p class="infoRating">평점 : {{ place.attraction.rating }}</p>
               <p class="infoReview">리뷰수 : {{ place.attraction.reviewCount }}</p>
             </div>
-            <img class="infoImg" v-if="place.attraction.firstImage" :src="place.attraction.firstImage" alt="Place Image" />
+            <img
+              class="infoImg"
+              v-if="place.attraction.firstImage"
+              :src="place.attraction.firstImage"
+              alt="Place Image"
+            />
           </div>
         </li>
       </ul>
@@ -22,40 +38,52 @@
     <div class="map_wrap">
       <div class="drop">
         <div class="select-container">
-            <label class="select-label" for="sido">시도</label>
-            <select class="sido" id="sido" v-model="sido">
-                <option :value="{ code: 0, name: '' }">전체</option>
-                <option v-for="si in sidos" :value="si">{{ si.name }}</option>
-            </select>
-            <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-down w-6 h-6">
-  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-</svg>
+          <label class="select-label" for="sido">시도</label>
+          <select class="sido" id="sido" v-model="sido">
+            <option :value="{ code: 0, name: '' }">전체</option>
+            <option v-for="si in sidos" :value="si">{{ si.name }}</option>
+          </select>
+          <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-down w-6 h-6">
+            <path
+              fill-rule="evenodd"
+              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+              clip-rule="evenodd"
+            />
+          </svg>
         </div>
         <div class="select-container">
-            <label class="select-label" for="gugun">구군</label>
-            <select class="gugun" id="gugun" v-model="gugun">
-                <option :value="{ code: 0, name: '' }">전체</option>
-                <option v-for="gu in guguns" :value="gu">{{ gu.name }}</option>
-            </select>
-            <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-down w-6 h-6">
-  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-</svg>
+          <label class="select-label" for="gugun">구군</label>
+          <select class="gugun" id="gugun" v-model="gugun">
+            <option :value="{ code: 0, name: '' }">전체</option>
+            <option v-for="gu in guguns" :value="gu">{{ gu.name }}</option>
+          </select>
+          <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-down w-6 h-6">
+            <path
+              fill-rule="evenodd"
+              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+              clip-rule="evenodd"
+            />
+          </svg>
         </div>
-        <button class="searchBtn" @click="getAttractionList">
-            검색
-        </button>
+        <button class="searchBtn" @click="getAttractionList">검색</button>
       </div>
       <div id="map" class="map">
         <ul id="category" class="category-list">
-          <li v-for="category in categories" :key="category.code" :id="category.code" 
-          :data-order="category.order" @click="onClickCategory($event)" :class="{ on: category.code === content.code }">
-            <img :src="getIconPath(category.code)" alt="" class="category-icon"/>
+          <li
+            v-for="category in categories"
+            :key="category.code"
+            :id="category.code"
+            :data-order="category.order"
+            @click="onClickCategory($event)"
+            :class="{ on: category.code === content.code }"
+          >
+            <img :src="getIconPath(category.code)" alt="" class="category-icon" />
             {{ category.name }}
           </li>
         </ul>
       </div>
     </div>
- </div>
+  </div>
 </template>
 
 <script setup>
@@ -78,13 +106,13 @@ const listsByContentTypeId = ref({}); // 관광지 내용을 저장한 배열, c
 
 const map = ref(null); // 카카오 맵
 const placeOverlay = ref(new kakao.maps.CustomOverlay({ zIndex: 1 }));
-const contentNode = ref(document.createElement('div'));
+const contentNode = ref(document.createElement("div"));
 const markers = ref([]);
 
 // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
 const infowindow = new kakao.maps.InfoWindow({
-    position: new kakao.maps.LatLng(33.450701, 126.570667),
-    content: 'open me plz.'
+  position: new kakao.maps.LatLng(33.450701, 126.570667),
+  content: "open me plz.",
 });
 
 const content = ref({
@@ -128,7 +156,7 @@ async function getAttractionList() {
 
 // 지도에 카테고리 추가
 const addCategoryClickEvent = () => {
-  const category = document.getElementById('category');
+  const category = document.getElementById("category");
   Array.from(category.children).forEach((child) => {
     child.onclick = onClickCategory;
   });
@@ -149,8 +177,8 @@ const onClickCategory = (event) => {
   let target = event.target;
 
   // 클릭된 요소가 <img>인 경우 부모 <li> 요소를 찾습니다.
-  if (target.tagName === 'IMG') {
-    target = target.closest('li');
+  if (target.tagName === "IMG") {
+    target = target.closest("li");
   }
 
   const id = target.id;
@@ -158,7 +186,8 @@ const onClickCategory = (event) => {
 
   console.log("눌렀더니?", id);
 
-  if (className.includes('on')) { // className.includes로 클래스 이름을 확인
+  if (className.includes("on")) {
+    // className.includes로 클래스 이름을 확인
     content.value = { code: 0, name: "" };
     changeCategoryClass(target);
     removeCategoryMarkers(id);
@@ -172,16 +201,16 @@ const onClickCategory = (event) => {
 
 // 클릭된 카테고리에 스타일 적용 함수
 const changeCategoryClass = (el) => {
-  const category = document.getElementById('category');
+  const category = document.getElementById("category");
 
   if (el) {
     // 클릭된 요소의 클래스가 'on'이면 'off'로, 'off'이면 'on'으로 변경
-    if (el.classList.contains('on')) {
-      el.classList.remove('on');
-      el.classList.add('off');
+    if (el.classList.contains("on")) {
+      el.classList.remove("on");
+      el.classList.add("off");
     } else {
-      el.classList.remove('off');
-      el.classList.add('on');
+      el.classList.remove("off");
+      el.classList.add("on");
     }
   }
 };
@@ -234,16 +263,16 @@ watch(gugun, () => {
 });
 
 function resetCategorySelection() {
-  const categoryElements = document.querySelectorAll('#category .on');
-  categoryElements.forEach(el => {
-    el.classList.remove('on');
-    el.classList.add('off');
+  const categoryElements = document.querySelectorAll("#category .on");
+  categoryElements.forEach((el) => {
+    el.classList.remove("on");
+    el.classList.add("off");
   });
 }
 
 // 지도 위 모든 마커들 삭제
 function removeAllMarkers() {
-  markers.value.forEach(marker => {
+  markers.value.forEach((marker) => {
     if (marker.setMap) {
       marker.setMap(null);
     }
@@ -253,9 +282,12 @@ function removeAllMarkers() {
 
 // 옆에 있는 모든 관광지 목록들 삭제
 function removeAllList() {
-  Object.keys(listsByContentTypeId).forEach(categoryId => {
-    listsByContentTypeId[categoryId] = [];
-  });
+  // 객체의 키를 배열로 반환하고 길이를 확인
+  if (Object.keys(listsByContentTypeId.value).length > 0) {
+    Object.keys(listsByContentTypeId.value).forEach((categoryId) => {
+      delete listsByContentTypeId.value[categoryId];
+    });
+  }
 }
 
 // 키워드 검색 완료 시 호출되는 콜백함수
@@ -316,13 +348,14 @@ function addMarkerAndPrevious() {
     markers.value[contentTypeId].push(marker);
 
     bounds.extend(placePosition);
+
     listsByContentTypeId.value[contentTypeId].push({
       attraction: attraction,
-      marker: marker
+      marker: marker,
     });
 
     // 이벤트 리스너를 추가할 때 콜백 함수에 접근하는 데이터를 클로저로 처리
-    kakao.maps.event.addListener(marker, 'mouseover', function(){
+    kakao.maps.event.addListener(marker, "mouseover", function () {
       displayInfowindow(marker, attraction);
     });
   });
@@ -330,7 +363,7 @@ function addMarkerAndPrevious() {
   console.log("listsByContentTypeId: ", listsByContentTypeId.value);
 
   nextTick(() => {
-    const menuEl = document.getElementById('menu_wrap');
+    const menuEl = document.getElementById("menu_wrap");
     if (menuEl) {
       menuEl.scrollTop = 0;
     }
@@ -338,17 +371,16 @@ function addMarkerAndPrevious() {
 }
 
 function removeContentChildNodes(id) {
-  if (!listsByContentTypeId.value[id]) {
-    listsByContentTypeId.value[id] = [];
-  }
   listsByContentTypeId.value[id].splice(0, listsByContentTypeId.value[id].length);
 }
 
 // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수
 function displayInfowindow(marker, attraction) {
-  const content = `<div style="padding:5px; z-index:1; width:250px; max-height:300px;">${attraction.title}`+
-    `<div style="font-size:12px">${attraction.address}</div>`+
-    `<div><img src="${attraction.firstImage}" style="width:200px"/></div>`+`</div>`;
+  const content =
+    `<div style="padding:5px; z-index:1; width:250px; max-height:300px;">${attraction.title}` +
+    `<div style="font-size:12px">${attraction.address}</div>` +
+    `<div><img src="${attraction.firstImage}" style="width:200px"/></div>` +
+    `</div>`;
   infowindow.setContent(content);
   infowindow.open(map.value, marker);
 }
