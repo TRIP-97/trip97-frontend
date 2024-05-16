@@ -6,6 +6,8 @@ import NaverCallBack from "@/components/callback/NaverCallBack.vue";
 import HotPlaceView from "@/views/HotPlaceView.vue";
 import GroupView from "@/views/GroupView.vue";
 import PlanView from "@/views/PlanView.vue";
+import BoardView from "@/views/BoardView.vue";
+import AttractionView from "@/views/AttractionView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -105,6 +107,47 @@ const router = createRouter({
       path: "/group/:groupId/plan/:planId",
       name: "plan",
       component: PlanView,
+    },
+    {
+      path: "/board",
+      name: "board",
+      component: BoardView,
+      redirect: { name: "boardList" },
+      children: [
+        {
+          path: "/",
+          name: "boardList",
+          component: () => import("../components/board/BoardList.vue"),
+        },
+        {
+          path: "/:id",
+          name: "boardDetail",
+          component: () => import("../components/board/BoardDetail.vue"),
+        },
+        {
+          path: "/",
+          name: "boardWrite",
+          component: () => import("../components/board/BoardWrite.vue"),
+        },
+        {
+          path: "/:id",
+          name: "boardModify",
+          component: () => import("../components/board/BoardModify.vue"),
+        },
+      ],
+    },
+    {
+      path: "/attraction",
+      name: "attraction",
+      component: AttractionView,
+      redirect: { name: "attractionList" },
+      children: [
+        {
+          path: "/",
+          name: "attractionList",
+          component: () => import("../components/attraction/AttractionList.vue"),
+        },
+      ],
     },
   ],
 });
