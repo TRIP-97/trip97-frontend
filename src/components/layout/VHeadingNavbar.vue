@@ -1,54 +1,54 @@
 // VHeadingNavbar.vue
 <script setup>
-  import { onMounted, onUnmounted } from "vue";
-  import { RouterLink, useRouter } from "vue-router";
-  import { getMemberProfile } from "@/api/member";
-  import { useMemberStore } from "@/stores/member";
-  import { storeToRefs } from "pinia";
+import { onMounted, onUnmounted } from "vue";
+import { RouterLink, useRouter } from "vue-router";
+import { getMemberProfile } from "@/api/member";
+import { useMemberStore } from "@/stores/member";
+import { storeToRefs } from "pinia";
 
-  const router = useRouter();
+const router = useRouter();
 
-  const memberStore = useMemberStore();
+const memberStore = useMemberStore();
 
-  const { isLogin, userInfo } = storeToRefs(memberStore);
+const { isLogin, userInfo } = storeToRefs(memberStore);
 
-  const logout = () => {
-    // 세션 스토리지에서 accessToken 삭제
-    sessionStorage.removeItem("accessToken");
-    isLogin.value = false;
-    userInfo.value = null;
-    router.push({ name: "main" });
-  };
+const logout = () => {
+  // 세션 스토리지에서 accessToken 삭제
+  sessionStorage.removeItem("accessToken");
+  isLogin.value = false;
+  userInfo.value = null;
+  router.push({ name: "main" });
+};
 
-  const fetchProfile = async () => {
-    const token = sessionStorage.getItem("accessToken");
+const fetchProfile = async () => {
+  const token = sessionStorage.getItem("accessToken");
 
-    if (token) {
-      try {
-        const response = await getMemberProfile(token);
+  if (token) {
+    try {
+      const response = await getMemberProfile(token);
 
-        if (response.data) {
-          isLogin.value = true;
-          userInfo.value = response.data;
-        }
-      } catch (error) {
-        console.error("프로필 정보 조회 실패:", error);
-        logout(); // 토큰이 유효하지 않은 경우 로그아웃 처리
+      if (response.data) {
+        isLogin.value = true;
+        userInfo.value = response.data;
       }
+    } catch (error) {
+      console.error("프로필 정보 조회 실패:", error);
+      logout(); // 토큰이 유효하지 않은 경우 로그아웃 처리
     }
-  };
+  }
+};
 
-  const handleRouteChange = () => {
-    fetchProfile();
-  };
+const handleRouteChange = () => {
+  fetchProfile();
+};
 
-  onMounted(() => {
-    document.addEventListener("route-changed", handleRouteChange);
-  });
+onMounted(() => {
+  document.addEventListener("route-changed", handleRouteChange);
+});
 
-  onUnmounted(() => {
-    document.removeEventListener("route-changed", handleRouteChange);
-  });
+onUnmounted(() => {
+  document.removeEventListener("route-changed", handleRouteChange);
+});
 </script>
 
 <template>
@@ -61,7 +61,7 @@
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
           <ul class="navbar-nav content-menu me-auto ms-5">
             <li class="nav-item menu-item">
-              <RouterLink class="nav-link" style="cursor: pointer" :to="{name : 'attraction'}">
+              <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'attraction' }">
                 <i class="fa-solid fa-earth-asia"></i>
                 여행 지도
               </RouterLink>
@@ -75,7 +75,7 @@
               </li>
             </template>
             <li class="nav-item menu-item">
-              <RouterLink class="nav-link" style="cursor: pointer" :to="{name : 'board'}">
+              <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'board' }">
                 <i class="fa-solid fa-user-group"></i>
                 여행 커뮤니티
               </RouterLink>
@@ -139,27 +139,27 @@
 </template>
 
 <style scoped>
-  .nav-item.menu-item .nav-link {
-    color: #00a1fc;
-  }
+.nav-item.menu-item .nav-link {
+  color: #00a1fc;
+}
 
-  .header-dropdown {
-    color: gray;
-    text-decoration: none;
-    cursor: pointer;
-  }
+.header-dropdown {
+  color: gray;
+  text-decoration: none;
+  cursor: pointer;
+}
 
-  .header-dropdown:hover {
-    color: gray;
-    text-decoration: none;
-  }
+.header-dropdown:hover {
+  color: gray;
+  text-decoration: none;
+}
 
-  .logo {
-    font-family: NanumSquareRound;
-    margin-left: 120px;
-  }
+.logo {
+  font-family: NanumSquareRound;
+  margin-left: 120px;
+}
 
-  .navbar-nav {
-    margin-right: 120px;
-  }
+.navbar-nav {
+  margin-right: 120px;
+}
 </style>
