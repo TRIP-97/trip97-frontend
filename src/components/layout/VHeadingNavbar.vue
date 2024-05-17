@@ -53,36 +53,32 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <header class="navbar navbar-expand-md shadow bg-light navbar-light fixed-top">
+    <header class="navbar navbar-expand-md bg-transparent-custom navbar-light fixed-top">
       <div class="container-fluid">
         <RouterLink class="navbar-brand logo text-primary fw-bold" :to="{ name: 'main' }">
           Trip 97
         </RouterLink>
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
-          <ul class="navbar-nav content-menu me-auto ms-5">
+          <ul class="navbar-nav content-menu mx-auto">
             <li class="nav-item menu-item">
               <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'attraction' }">
-                <i class="fa-solid fa-earth-asia"></i>
                 여행 지도
               </RouterLink>
             </li>
             <template v-if="isLogin">
               <li class="nav-item menu-item">
                 <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'group' }">
-                  <i class="fa-solid fa-paper-plane"></i>
                   여행 계획
                 </RouterLink>
               </li>
             </template>
             <li class="nav-item menu-item">
               <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'board' }">
-                <i class="fa-solid fa-user-group"></i>
                 여행 커뮤니티
               </RouterLink>
             </li>
             <li class="nav-item menu-item">
               <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'hotPlace' }">
-                <i class="fa-solid fa-martini-glass-citrus"></i>
                 HOTPLACE
               </RouterLink>
             </li>
@@ -90,13 +86,9 @@ onUnmounted(() => {
           <ul class="navbar-nav member-menu ms-auto">
             <template v-if="!isLogin">
               <li class="nav-item">
-                <RouterLink
-                  class="nav-link"
-                  style="cursor: pointer"
-                  v-if="!isLogin"
-                  :to="{ name: 'login' }"
-                  >로그인</RouterLink
-                >
+                <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'login' }">
+                  로그인
+                </RouterLink>
               </li>
             </template>
             <template v-if="isLogin">
@@ -113,20 +105,17 @@ onUnmounted(() => {
                     src="@/assets/images/profile.png"
                     alt="프로필 이미지"
                     class="profile-image"
-                    style="height: 30px; margin-right: 5px"
                   />
                   {{ userInfo.nickname }}
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                  <li class="dropdown-item">
-                    <RouterLink class="header-dropdown" :to="{ name: 'profile' }" v-if="isLogin"
-                      >마이페이지</RouterLink
-                    >
+                  <li>
+                    <RouterLink class="dropdown-item" :to="{ name: 'profile' }" v-if="isLogin">
+                      마이페이지
+                    </RouterLink>
                   </li>
                   <li>
-                    <a class="header-dropdown dropdown-item" @click="logout" v-if="isLogin"
-                      >로그아웃</a
-                    >
+                    <a class="dropdown-item" @click="logout" v-if="isLogin">로그아웃</a>
                   </li>
                 </ul>
               </li>
@@ -139,27 +128,65 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.nav-item.menu-item .nav-link {
-  color: #00a1fc;
+@import "@/assets/css/style.css";
+
+.bg-transparent-custom {
+  background-color: rgb(255, 255, 255); /* 배경을 반투명하게 설정 */
 }
 
-.header-dropdown {
-  color: gray;
-  text-decoration: none;
-  cursor: pointer;
+.navbar-nav .nav-item .nav-link {
+  color: black; /* 네비게이션 링크 색상 */
+  padding: 10px 15px; /* 패딩 추가 */
+  text-align: center; /* 텍스트 가운데 정렬 */
 }
 
-.header-dropdown:hover {
-  color: gray;
-  text-decoration: none;
-}
-
-.logo {
-  font-family: NanumSquareRound;
-  margin-left: 120px;
+.nav-item {
+  font-size: 23px;
+  /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); */
+  width: 343px;
 }
 
 .navbar-nav {
-  margin-right: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navbar-nav .nav-item .nav-link:hover {
+  color: #ccc; /* 링크 호버 시 색상 */
+}
+
+.profile-image {
+  height: 30px;
+  margin-right: 5px;
+  border-radius: 50%; /* 프로필 이미지 둥글게 설정 */
+}
+
+.header-dropdown {
+  color: black; /* 드롭다운 링크 색상 */
+}
+
+.dropdown-menu {
+  background-color: rgba(255, 255, 255, 0.9); /* 드롭다운 메뉴 배경 반투명하게 설정 */
+}
+
+.dropdown-item:hover {
+  background-color: rgba(0, 0, 0, 0.1); /* 드롭다운 항목 호버 시 배경색 */
+}
+
+.navbar-brand.logo {
+  margin-left: 40px;
+  color: black !important;
+  font-weight: bold;
+  font-family: "PassionOneBold", sans-serif;
+  font-size: 40px; /* 로고 텍스트 크기 */
+}
+
+.navbar-brand.logo:hover {
+  color: #ccc; /* 로고 텍스트 호버 시 색상 */
+}
+
+.text-primary {
+  color: inherit; /* 기본 색상을 상속 */
 }
 </style>

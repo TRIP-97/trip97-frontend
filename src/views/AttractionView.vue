@@ -2,7 +2,7 @@
 import { RouterView } from "vue-router";
 import { ref, onMounted } from "vue";
 
-import videoFile from '@/assets/images/11490-230853032.mp4';
+import videoFile from "@/assets/images/11490-230853032.mp4";
 
 // 이미지 파일을 import 구문으로 불러옵니다
 // import waveGifSrc from '@/assets/images/ship.gif';
@@ -23,30 +23,46 @@ onMounted(() => {
   }
 });
 
+import VHeadingNavbar from "../components/layout/VHeadingNavbar.vue";
 // const waveGif = ref(waveGifSrc);
 </script>
 
 <template>
   <div>
     <div class="header-image">
-      <!-- <img :src="waveGif" alt="Attraction Page Logo" /> -->
-      <video ref="videoPlayer" @ended="handleVideoEnded" :src="videoSrc" autoplay muted loop>
-    </video>
+      <video
+        ref="videoPlayer"
+        @ended="handleVideoEnded"
+        :src="videoSrc"
+        autoplay
+        muted
+        loop
+      ></video>
+      <div class="gradient-overlay"></div>
       <div class="overlay">
-        <h1>여행 지도</h1>
+        <h1 class="pageTitle">여행 지도</h1>
       </div>
     </div>
-    <RouterView />
+    <div class="body-color">
+      <RouterView />
+    </div>
   </div>
 </template>
 
 <style scoped>
+.pageTitle {
+  font-size: 48px;
+}
+
+.body-color {
+  background-color: rgb(232, 232, 255);
+}
+
 .header-image {
   text-align: center;
   position: relative;
   overflow: hidden;
-  height : 500px;
-  margin-bottom: 30px;
+  height: 843px;
 }
 
 .header-image video {
@@ -57,22 +73,37 @@ onMounted(() => {
 }
 
 video {
-  width: 100%; 
+  width: 100%;
   height: auto;
-  display: block; 
+  display: block;
+}
+
+.gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(119, 119, 156, 0.4) 0%,
+    rgba(255, 255, 255, 0.01) 32%,
+    rgba(255, 255, 255, 0.01) 70%,
+    rgba(74, 73, 95, 0.1) 86%,
+    rgb(231, 231, 255) 100%
+  );
+  pointer-events: none; /* 마우스 이벤트를 통과시켜 비디오 조작 가능 */
 }
 
 .overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(52, 62, 66, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  top: 40%; /* 텍스트를 상단에 위치시키기 위해 조정 */
+  left: 50%;
+  transform: translate(-50%, -10%);
+  padding: 10px 20px;
+  border-radius: 10px; /* 둥근 모서리 */
   color: white;
   font-size: 2rem;
+  z-index: 2; /* 텍스트를 최상위로 배치 */
 }
 </style>

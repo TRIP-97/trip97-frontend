@@ -18,6 +18,21 @@
   src: url("/fonts/NanumSquareRoundEB.ttf");
 }
 
+@font-face {
+  font-family: "PassionOneBlack";
+  src: url("/fonts/PassionOne-Black.ttf");
+}
+
+@font-face {
+  font-family: "PassionOneBold";
+  src: url("/fonts/PassionOne-Bold.ttf");
+}
+
+@font-face {
+  font-family: "PassionOneRegular";
+  src: url("/fonts/PassionOne-Regular.ttf");
+}
+
 * {
   font-family: "NanumSquareRoundBold";
 }

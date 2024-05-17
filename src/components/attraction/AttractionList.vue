@@ -143,7 +143,11 @@ const selectedAttractionId = ref("");
 // 자식 컴포넌트에 보낼 파라미터 값 
 const showAttractionDetail = (attractionId) => {
   console.log("attractionDetail", attractionId);
-  selectedAttractionId.value = attractionId;
+  if (selectedAttractionId.value === attractionId) {
+    selectedAttractionId.value = null;
+  } else {
+    selectedAttractionId.value = attractionId;
+  }
 };
 
 // 자식 컴포넌트 닫기 

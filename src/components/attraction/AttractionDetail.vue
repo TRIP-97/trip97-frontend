@@ -24,23 +24,19 @@
 </template>
 
 <script setup>
-import { onMounted, watch, ref, nextTick } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { onMounted, watch, ref } from "vue";
 import { getAttractionId } from "@/api/attraction.js";
 import { defineProps, defineEmits } from "vue";
 
-const attractionId = ref("");
-
 const props = defineProps({
-  attractionId: String,
+  attractionId: [String, Number],
 });
 
-attractionId.value = props.attractionId;
 const attraction = ref({});
 
-async function getAttract() {
+async function getAttract(id) {
   getAttractionId(
-    attractionId.value,
+    id,
     // 125266,
     (response) => {
       attraction.value = response.data;
@@ -52,8 +48,15 @@ async function getAttract() {
   );
 }
 
+watch(
+  () => props.attractionId,
+  (newId) => {
+    getAttract(newId);
+  }
+);
+
 onMounted(() => {
-  getAttract();
+  getAttract(props.attractionId);
 });
 
 const emits = defineEmits(["close"]);
