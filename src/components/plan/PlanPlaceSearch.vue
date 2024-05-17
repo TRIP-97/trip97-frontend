@@ -1,12 +1,7 @@
 <script setup>
-  import { ref, onMounted, toRefs } from "vue";
+  import { ref, onMounted, toRefs, watchEffect } from "vue";
   import { useRoute } from "vue-router";
-  import {
-    getPlanDetail,
-    createDayPlanItem,
-    deleteDayPlanItemById,
-    updateDayPlanItemOrder,
-  } from "@/api/plan";
+  import { getPlanDetail, createDayPlanItem, deleteDayPlanItemById } from "@/api/plan";
 
   const route = useRoute();
 
@@ -23,7 +18,6 @@
       },
       ({ data }) => {
         planInfo.value = data;
-        console.log("planInfo: ", planInfo.value);
 
         planInfo.value.startDate = formatDate(planInfo.value.startDate);
         planInfo.value.endDate = formatDate(planInfo.value.endDate);
@@ -129,33 +123,7 @@
     }
   };
 
-  // 장소 및 메모 순서를 바꾸는 함수
-  const updateOrder = (dayPlanId) => {
-    const dayPlan = planInfo.value.dayPlans.find((d) => d.id === dayPlanId);
-    if (dayPlan) {
-      dayPlan.items.forEach((item, index) => {
-        const newOrder = index + 1;
-        if (item.order !== newOrder) {
-          item.order = newOrder;
-          updateDayPlanItemOrder(
-            {
-              groupId: groupId,
-              planId: planId,
-              itemId: item.id,
-              order: item.order,
-            },
-            () => {
-              console.log("순서가 성공적으로 업데이트되었습니다.");
-            },
-            (error) => {
-              console.log("순서 업데이트 중 에러 발생!");
-              console.dir(error);
-            }
-          );
-        }
-      });
-    }
-  };
+  // TODO: 장소 및 메모 순서를 바꾸는 함수
 
   // KAKAO MAP API 시작
   const map = toRefs(null);
@@ -265,18 +233,10 @@
             <div class="day-header">
               <h3>Day {{ dayPlan.day }}</h3>
             </div>
-            <draggable v-model="dayPlan.items" @end="updateOrder(dayPlan.id)">
-              <template v-slot="item">
-                <div>
-                  <span>{{ item.title }} ({{ item.type }})</span>
-                  <button @click="removeItem(dayPlan.id, item.id)">삭제</button>
-                </div>
-              </template>
-              <!-- <div v-for="item in dayPlan.items" :key="item.id" class="item">
-                <span>{{ item.title }} ({{ item.type }})</span>
-                <button @click="removeItem(dayPlan.id, item.id)">삭제</button>
-              </div> -->
-            </draggable>
+            <div v-for="item in dayPlan.items" :key="item.id" class="item">
+              <span>{{ item.title }} ({{ item.type }})</span>
+              <button @click="removeItem(dayPlan.id, item.id)">삭제</button>
+            </div>
             <div class="actions">
               <button class="btn btn-outline-secondary" @click="addPlace(dayPlan.id)">
                 장소 추가
@@ -372,10 +332,5 @@
 
   .actions button {
     margin-right: 5px;
-  }
-
-  .item {
-    background-color: #ddd;
-    margin: 5px 0px;
   }
 </style>
