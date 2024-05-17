@@ -8,6 +8,7 @@ import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import { createPinia } from "pinia";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
+
 const app = createApp(App);
 const pinia = createPinia();
 

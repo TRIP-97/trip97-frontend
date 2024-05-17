@@ -1,5 +1,6 @@
 // VHeadingNavbar.vue
 <script setup>
+
 import { onMounted, onUnmounted } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 import { getMemberProfile } from "@/api/member";
@@ -31,24 +32,25 @@ const fetchProfile = async () => {
         isLogin.value = true;
         userInfo.value = response.data;
       }
-    } catch (error) {
-      console.error("프로필 정보 조회 실패:", error);
-      logout(); // 토큰이 유효하지 않은 경우 로그아웃 처리
+      } catch (error) {
+        console.error("프로필 정보 조회 실패:", error);
+        logout(); // 토큰이 유효하지 않은 경우 로그아웃 처리
+      }
     }
-  }
-};
+  };
 
-const handleRouteChange = () => {
-  fetchProfile();
-};
+  const handleRouteChange = () => {
+    fetchProfile();
+  };
 
-onMounted(() => {
-  document.addEventListener("route-changed", handleRouteChange);
-});
 
-onUnmounted(() => {
-  document.removeEventListener("route-changed", handleRouteChange);
-});
+  onMounted(() => {
+    document.addEventListener("route-changed", handleRouteChange);
+  });
+
+  onUnmounted(() => {
+    document.removeEventListener("route-changed", handleRouteChange);
+  });
 </script>
 
 <template>
@@ -68,6 +70,7 @@ onUnmounted(() => {
             <template v-if="isLogin">
               <li class="nav-item menu-item">
                 <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'group' }">
+                  <i class="fa-solid fa-paper-plane"></i>
                   여행 계획
                 </RouterLink>
               </li>
@@ -109,13 +112,15 @@ onUnmounted(() => {
                   {{ userInfo.nickname }}
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                  <li>
-                    <RouterLink class="dropdown-item" :to="{ name: 'profile' }" v-if="isLogin">
-                      마이페이지
-                    </RouterLink>
+                  <li class="dropdown-item">
+                    <RouterLink class="header-dropdown" :to="{ name: 'profile' }" v-if="isLogin"
+                      >마이페이지</RouterLink
+                    >
                   </li>
                   <li>
-                    <a class="dropdown-item" @click="logout" v-if="isLogin">로그아웃</a>
+                    <a class="header-dropdown dropdown-item" @click="logout" v-if="isLogin"
+                      >로그아웃</a
+                    >
                   </li>
                 </ul>
               </li>
