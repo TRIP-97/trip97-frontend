@@ -35,9 +35,7 @@ function deleteDayPlanItemById(params, success, fail) {
 // 모임의 여행 계획의 순서를 바꾸는 함수
 function updateDayPlanItemOrder(param, success, fail) {
   local
-    .put(`group/${param.groupId}/plan/${param.planId}/dayPlanItem/${param.itemId}`, null, {
-      params: param,
-    })
+    .put(`group/${param.groupId}/plan/${param.planId}/dayPlanItem/${param.itemId}`, param)
     .then(success)
     .catch(fail);
 }

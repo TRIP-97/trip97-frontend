@@ -7,12 +7,18 @@
     deleteDayPlanItemById,
     updateDayPlanItemOrder,
   } from "@/api/plan";
+  import draggable from "vuedraggable";
 
   const route = useRoute();
 
   const groupId = route.params.groupId;
   const planId = route.params.planId;
-  const planInfo = ref("");
+  const planInfo = ref({
+  title: "",
+  startDate: "",
+  endDate: "",
+  dayPlans: []
+});
 
   // 여행 계획 상세 정보를 가져오는 함수
   const getPlanInfo = () => {
@@ -265,17 +271,14 @@
             <div class="day-header">
               <h3>Day {{ dayPlan.day }}</h3>
             </div>
+
             <draggable v-model="dayPlan.items" @end="updateOrder(dayPlan.id)">
-              <template v-slot="item">
-                <div>
-                  <span>{{ item.title }} ({{ item.type }})</span>
-                  <button @click="removeItem(dayPlan.id, item.id)">삭제</button>
+              <template #item="{ element }">
+                <div class="item">
+                  <span>{{ element.title }} ({{ element.type }})</span>
+                  <button @click="removeItem(dayPlan.id, element.id)">삭제</button>
                 </div>
               </template>
-              <!-- <div v-for="item in dayPlan.items" :key="item.id" class="item">
-                <span>{{ item.title }} ({{ item.type }})</span>
-                <button @click="removeItem(dayPlan.id, item.id)">삭제</button>
-              </div> -->
             </draggable>
             <div class="actions">
               <button class="btn btn-outline-secondary" @click="addPlace(dayPlan.id)">
