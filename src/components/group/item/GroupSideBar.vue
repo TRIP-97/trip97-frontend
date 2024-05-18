@@ -10,12 +10,13 @@
   const isActiveMyGroupList = computed(() => route.name === "myGroupList" || route.name === "myGroupDetail"
     || route.name === "groupWrite" || route.name === "groupModify");
   const isActiveMyGroupRequest = computed(() => route.name === "myGroupRequest");
+  const isActiveMyInvitedGroupRequest = computed(() => route.name === "myInvitedGroupRequest");
 </script>
 
 <template>
   <div
     class="d-flex flex-column flex-shrink-0 p-3 bg-light"
-    style="width: 200px; height: 230px; text-align: center"
+    style="width: 200px; height: 260px; text-align: center"
   >
     <span class="fs-4">여행 모임</span>
     <hr />
@@ -47,7 +48,17 @@
           :class="{ active: isActiveMyGroupRequest }"
           aria-current="page"
         >
-          모임 신청
+          보낸 신청
+        </RouterLink>
+      </li>
+      <li class="nav-item" :class="{ active: isActiveMyInvitedGroupRequest }">
+        <RouterLink
+          :to="{ name: 'myInvitedGroupRequest' }"
+          class="nav-link"
+          :class="{ active: isActiveMyInvitedGroupRequest }"
+          aria-current="page"
+        >
+          받은 신청
         </RouterLink>
       </li>
     </ul>

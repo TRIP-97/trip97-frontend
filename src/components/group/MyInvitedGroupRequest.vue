@@ -1,8 +1,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { listMyRequest, refuseRequest } from "@/api/group.js";
+import { useRoute } from "vue-router";
+import { getWaitingByFriendGroupsForMember, acceptRequest, refuseRequest } from "@/api/group.js";
 import { useMemberStore } from "@/stores/member";
 import { storeToRefs } from "pinia";
+
+const route = useRoute();
 
 const memberStore = useMemberStore();
 const { userInfo } = storeToRefs(memberStore);
@@ -11,7 +14,7 @@ const groupRequests = ref([]);
 
 // 내 모임 신청들을 가져오는 함수
 const getListWaitingRequest = () => {
-  listMyRequest(
+  getWaitingByFriendGroupsForMember(
     userInfo.value.id,
     ({ data }) => {
       groupRequests.value = data;
@@ -24,16 +27,31 @@ const getListWaitingRequest = () => {
   );
 }
 
-// 참가 신청을 취소하는 함수
-const cancleRequestFunc = (groupId) => {
+// 참가 신청을 수락하는 함수
+const acceptRequestFunc = (groupId) => {
+  acceptRequest(
+    groupId, userInfo.value.id,
+    () => {
+      getListWaitingRequest();
+      console.log("모임 참가 신청 수락!");
+    },
+    (error) => {
+      console.log("모임 참가 신청 수락중 에러 발생!");
+      console.dir(error);
+    }
+  )
+}
+
+// 참가 신청을 거절하는 함수
+const refuseRequestFunc = (groupId) => {
   refuseRequest(
     groupId, userInfo.value.id,
     () => {
       getListWaitingRequest();
-      console.log("모임 참가 신청 취소!");
+      console.log("모임 참가 신청 거절!");
     },
     (error) => {
-      console.log("모임 참가 신청 취소중 에러 발생!");
+      console.log("모임 참가 신청 거절중 에러 발생!");
       console.dir(error);
     }
   )
@@ -59,13 +77,14 @@ onMounted(() => {
         </div>
 
         <div class="col-lg-3 request-btn d-flex flex-column justify-content-center">
-          <button class="btn cancle-btn" @click.prevent="cancleRequestFunc(request.groupId)">신청 취소</button>
+          <button class="btn accept-btn mb-2" @click.prevent="acceptRequestFunc(request.groupId)">수락</button>
+          <button class="btn refuse-btn" @click.prevent="refuseRequestFunc(request.groupId)">거절</button>
         </div>
       </div>
     </template>
 
     <div v-if="groupRequests === null || groupRequests.length === 0" class="empty-request">
-      내가 보낸 모임 신청이 없습니다!
+      내가 친구에게 받은 모임 신청이 없습니다!
     </div>
   </div>
 </template>
@@ -136,11 +155,19 @@ onMounted(() => {
   transition: background-color 0.3s;
 }
 
-.cancle-btn {
+.accept-btn {
+  background-color: #ace0f9; 
+}
+
+.accept-btn:hover {
+  background-color: #7ac0e5; 
+}
+
+.refuse-btn {
   background-color: #f9d6ac; 
 }
 
-.cancle-btn:hover {
+.refuse-btn:hover {
   background-color: #e5b97a; 
 }
 </style>

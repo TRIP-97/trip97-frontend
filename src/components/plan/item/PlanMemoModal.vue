@@ -1,36 +1,39 @@
 <script setup>
-import { ref } from 'vue';
-import { useRoute } from 'vue-router';
-import { useMemberStore } from "@/stores/member";
-import { storeToRefs } from "pinia";
-
-const route = useRoute();
-
-const memberStore = useMemberStore();
-const { userInfo } = storeToRefs(memberStore);
+import { ref, defineProps, defineEmits, watch } from 'vue';
 
 const props = defineProps({
   isActive: Boolean,
   onSave: Function,
+  dayPlanId: Number,
+  dayPlanItemsLength: Number,
 });
 
 const emit = defineEmits(['close']);
 
-const plan = ref({
-  travelGroupId: route.params.id,
-  creatorId: userInfo.value.id,
-  title: '',
-  overview: '',
-  startDate: '',
-  endDate: '',
+const memo = ref({
+  dayPlanId: props.dayPlanId,
+  type: "MEMO",
+  title: "",
+  content: "",
+  attractionId: null,
+  contentTypeId: 0,
+  latitude: null,
+  longitude: null,
+  order: props.dayPlanItemsLength + 1,
+});
+
+watch(() => [props.dayPlanId, props.dayPlanItemsLength], () => {
+  memo.value.dayPlanId = props.dayPlanId;
+  memo.value.order = props.dayPlanItemsLength + 1;
 });
 
 const closeModal = () => {
+  memo.value.content = "";
   emit('close');
 };
 
-const savePlan = () => {
-  props.onSave(plan.value);
+const saveMemo = () => {
+  props.onSave(memo.value);
   closeModal();
 };
 </script>
@@ -40,28 +43,16 @@ const savePlan = () => {
     <div class="modal-background" @click="closeModal"></div>
     <div class="modal-content">
       <div class="box">
-        <h3 class="title text-center">여행 계획 만들기</h3>
+        <h3 class="title text-center">메모 작성</h3>
         <div class="field">
-          <label class="label">제목</label>
+          <label class="label">내용</label>
           <div class="control">
-            <input class="input" type="text" v-model="plan.title" />
-          </div>
-        </div>
-        <div class="field">
-          <label class="label">시작일</label>
-          <div class="control">
-            <input class="input" type="date" v-model="plan.startDate" />
-          </div>
-        </div>
-        <div class="field">
-          <label class="label">종료일</label>
-          <div class="control">
-            <input class="input" type="date" v-model="plan.endDate" />
+            <textarea class="textarea" v-model="memo.content"></textarea>
           </div>
         </div>
         <div class="field is-grouped">
           <div class="control">
-            <button class="button is-link" @click="savePlan">저장</button>
+            <button class="button is-link" @click="saveMemo">저장</button>
           </div>
           <div class="control">
             <button class="button is-light" @click="closeModal">취소</button>
@@ -92,7 +83,7 @@ const savePlan = () => {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5); 
+  background: rgba(0, 0, 0, 0.3); 
   z-index: -1; 
 }
 

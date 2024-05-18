@@ -54,7 +54,7 @@ function listWaitingRequest(groupId, success, fail) {
 
 // 모임 참가 신청을 수락하는 함수
 function acceptRequest(groupId, memberId, success, fail) {
-  local.patch(`group/${groupId}/member/${memberId}`).then(success).catch(fail);
+  local.put(`group/${groupId}/member/${memberId}`).then(success).catch(fail);
 }
 
 // 모임 참가 신청을 거절하는 함수
@@ -72,6 +72,16 @@ function listMyRequest(memberId, success, fail) {
   local.get(`group/member/${memberId}/wait`).then(success).catch(fail);
 }
 
+// 모임에 친구를 초대하는 함수
+function inviteGroupMember(invite, success, fail) {
+  local.post(`group/${invite.groupId}/member/invite`, invite).then(success).catch(fail);
+}
+
+// 친구에게 받은 그룹 초대를 조회하는 함수
+function getWaitingByFriendGroupsForMember(memberId, success, fail) {
+  local.get(`group/member/${memberId}/waitByFriend`).then(success).catch(fail);
+}
+
 export {
   listGroup,
   listMyGroup,
@@ -86,4 +96,6 @@ export {
   refuseRequest,
   listGroupMembers,
   listMyRequest,
+  inviteGroupMember,
+  getWaitingByFriendGroupsForMember,
 };
