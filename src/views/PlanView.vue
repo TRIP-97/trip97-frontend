@@ -1,6 +1,13 @@
 <script setup>
+import { ref } from "vue";
 import PlanDetail from "@/components/plan/PlanDetail.vue";
+import PlanPlaceSearch from "@/components/plan/PlanPlaceSearch.vue";
 
+const viewName = ref("planDetail");
+
+const changeView = (changeName) => {
+  viewName.value = changeName;
+}
 </script>
 
 <template>
@@ -12,7 +19,12 @@ import PlanDetail from "@/components/plan/PlanDetail.vue";
       </div>
     </div>
     
-    <PlanDetail />
+    <PlanDetail
+    v-if="viewName === 'planDetail'"
+    @change-view="changeView('planPlaceSearch')" />
+    <PlanPlaceSearch
+    v-if="viewName === 'planPlaceSearch'"
+    @change-view="changeView('planDetail')" />
   </div>
 </template>
 

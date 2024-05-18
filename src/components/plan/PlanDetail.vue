@@ -1,6 +1,6 @@
 <script setup>
-  import { ref, onMounted, toRefs } from "vue";
-  import { useRoute } from "vue-router";
+  import { ref, onMounted, toRefs, defineProps, defineEmits } from "vue";
+  import { useRoute, useRouter } from "vue-router";
   import {
     getPlanDetail,
     createDayPlanItem,
@@ -10,6 +10,16 @@
   import draggable from "vuedraggable";
 
   const route = useRoute();
+  const router = useRouter();
+
+  const props = defineProps({
+    selectedDay: Number,
+    addedPlace: {
+      type: Array,
+      default: () => []
+    }
+  })
+  const emit = defineEmits(['change-view']);
 
   const groupId = route.params.groupId;
   const planId = route.params.planId;
@@ -81,6 +91,11 @@
       );
     }
   };
+
+  // 장소 검색 화면으로 이동하는 함수
+  const changeSearchView = () => {
+    emit('change-view', planInfo.value);
+  }
 
   // 메모 추가 기능을 하는 함수
   const addMemo = (dayPlanId) => {
@@ -163,6 +178,14 @@
     }
   };
 
+  // 모임 상세 화면으로 이동하는 함수
+  const goMyGroupDetail = () => {
+    router.push({
+      name: "myGroupDetail",
+      params: { id: groupId },
+    });
+  }
+
   // KAKAO MAP API 시작
   const map = toRefs(null);
 
@@ -243,8 +266,7 @@
         <!-- 헤더 -->
         <div class="row plan-header text-center">
           <div class="col-lg-2">
-            <i class="fa-solid fa-chevron-left"></i>
-            <i class="fa-solid fa-house"></i>
+            <i @click="goMyGroupDetail" class="fa-solid fa-chevron-left"></i>
           </div>
           <div class="col-lg-8">
             <p>{{ planInfo.title }}</p>
@@ -261,7 +283,6 @@
             <span class="date-span">{{ planInfo.startDate }}</span>
             <span class="dash">-</span>
             <span class="date-span">{{ planInfo.endDate }}</span>
-            <i class="fa-solid fa-angle-down"></i>
           </div>
         </div>
 
@@ -281,7 +302,10 @@
               </template>
             </draggable>
             <div class="actions">
-              <button class="btn btn-outline-secondary" @click="addPlace(dayPlan.id)">
+              <!-- <button class="btn btn-outline-secondary" @click="addPlace(dayPlan.id)">
+                장소 추가
+              </button> -->
+              <button class="btn btn-outline-secondary" @click="changeSearchView">
                 장소 추가
               </button>
               <button class="btn btn-outline-secondary" @click="addMemo(dayPlan.id)">
@@ -309,7 +333,7 @@
 
   .map {
     width: auto;
-    height: 800px;
+    height: 650px;
     margin-top: 15px;
     margin-bottom: 15px;
     border: 1px solid rgb(183, 183, 183);
@@ -318,6 +342,10 @@
 
   .fa-chevron-left {
     margin-right: 30px;
+  }
+
+  .fa-chevron-left, .fa-house, .fa-ellipsis-vertical {
+    cursor: pointer;
   }
 
   .plan-date {
@@ -345,10 +373,6 @@
   .plan-date-content .dash {
     margin-left: 5px;
     margin-right: 5px;
-  }
-
-  .fa-angle-down {
-    color: gray;
   }
 
   .plan-date-content i,
