@@ -50,6 +50,7 @@ async function getAttractionList() {
     bound.qa,
     bound.oa,
     bound.pa,
+    searchPlaceTitle.value,
     (response) => {
       attractions.value = response.data;
       content.value.code = 0;
