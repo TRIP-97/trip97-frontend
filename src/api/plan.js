@@ -17,6 +17,11 @@ function createPlan(plan, success, fail) {
   local.post(`group/${plan.travelGroupId}/plan`, plan).then(success).catch(fail);
 }
 
+// 모임의 여행 계획을 삭제하는 함수
+function deletePlan(param, success, fail) {
+  local.delete(`group/${param.groupId}/plan/${param.planId}`).then(success).catch(fail);
+}
+
 // 모임의 여행 계획에 아이템을 생성하는 함수
 function createDayPlanItem(params, dayPlanItem, success, fail) {
   local
@@ -25,6 +30,7 @@ function createDayPlanItem(params, dayPlanItem, success, fail) {
     .catch(fail);
 }
 
+// 모임의 여행 계획의 아이템을 삭제하는 함수
 function deleteDayPlanItemById(params, success, fail) {
   local
     .delete(`group/${params.groupId}/plan/${params.planId}/dayPlanItem/${params.itemId}`)
@@ -43,6 +49,7 @@ function updateDayPlanItemOrder(param, success, fail) {
 export {
   getPlans,
   createPlan,
+  deletePlan,
   getPlanDetail,
   createDayPlanItem,
   deleteDayPlanItemById,

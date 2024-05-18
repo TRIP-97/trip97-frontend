@@ -48,12 +48,6 @@ const savePlan = () => {
           </div>
         </div>
         <div class="field">
-          <label class="label">내용</label>
-          <div class="control">
-            <textarea class="textarea" v-model="plan.overview"></textarea>
-          </div>
-        </div>
-        <div class="field">
           <label class="label">시작일</label>
           <div class="control">
             <input class="input" type="date" v-model="plan.startDate" />

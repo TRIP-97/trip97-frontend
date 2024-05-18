@@ -2,6 +2,7 @@
   import { ref, onMounted, toRefs, defineProps, defineEmits } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import {
+    deletePlan,
     getPlanDetail,
     createDayPlanItem,
     deleteDayPlanItemById,
@@ -35,6 +36,7 @@
   const isModalActive = ref(false);
   const memoPlanId = ref(0);
   const memoPlanItemsLength = ref(0);
+  const showDropdown = ref(false);
 
   // 여행 계획 상세 정보를 가져오는 함수
   const getPlanInfo = () => {
@@ -64,6 +66,36 @@
     const month = date.getMonth() + 1;
     const day = date.getDate();
     return `${year}년 ${month.toString().padStart(2, "0")}월 ${day.toString().padStart(2, "0")}일`;
+  }
+
+  // 계획 삭제 드롭다운 여부를 바꾸는 함수
+  const toggleDropdown = () => {
+    showDropdown.value = !showDropdown.value;
+  };
+
+  const removePlan = () => {
+    const confirmation = window.confirm("정말 계획을 삭제하시겠어요?");
+    if (confirmation) {
+      deletePlan(
+        {
+          groupId: groupId,
+          planId: planId,
+        },
+        () => {
+          console.log("계획이 정상적으로 삭제되었습니다!");
+          router.push({
+            name: "myGroupDetail",
+            params: {
+              id: groupId,
+            }
+          })
+        },
+        (error) => {
+          console.log("계획 삭제중 오류가 발생했습니다!");
+          console.dir(error);
+        }
+      )
+    }
   }
 
   // 장소 검색 화면으로 이동하는 함수
@@ -290,8 +322,11 @@ const removeItem = (dayPlanId, itemId) => {
           <div class="col-lg-8">
             <p>{{ planInfo.title }}</p>
           </div>
-          <div class="col-lg-2">
-            <i class="fa-solid fa-ellipsis-vertical"></i>
+          <div class="col-lg-2 position-relative">
+            <i class="fa-solid fa-ellipsis-vertical" @click="toggleDropdown"></i>
+            <div class="dropdown" v-if="showDropdown">
+              <button @click="removePlan">삭제</button>
+            </div>
           </div>
         </div>
 
@@ -375,6 +410,37 @@ const removeItem = (dayPlanId, itemId) => {
 
   .fa-chevron-left, .fa-house, .fa-ellipsis-vertical {
     cursor: pointer;
+  }
+
+  .position-relative {
+    position: relative;
+  }
+
+  .dropdown {
+    position: absolute;
+    top: 60%;
+    right: 40%;
+    width: 50px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+  }
+
+  .dropdown button {
+    background: none;
+    border: none;
+    padding: 10px 0px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    color: #333;
+    margin-left: 9px;
+  }
+
+  .dropdown button:hover {
+    background-color: #f5f5f5;
   }
 
   .plan-date {
