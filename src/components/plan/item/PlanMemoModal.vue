@@ -16,6 +16,7 @@ const memo = ref({
   title: "",
   content: "",
   attractionId: null,
+  contentTypeId: 0,
   latitude: null,
   longitude: null,
   order: props.dayPlanItemsLength + 1,
@@ -32,7 +33,6 @@ const closeModal = () => {
 };
 
 const saveMemo = () => {
-  console.log("메모 정보:", memo.value);
   props.onSave(memo.value);
   closeModal();
 };

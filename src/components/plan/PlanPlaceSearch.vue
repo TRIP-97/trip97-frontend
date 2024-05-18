@@ -54,7 +54,7 @@ async function getAttractionList() {
       attractions.value = response.data;
       content.value.code = 0;
       content.value.name = "";
-      console.log(attractions.value);
+      console.log("관광지 불러오기 성공!")
     },
     (error) => {
       console.log("관광지 불러오는 중 에러 발생");
@@ -135,7 +135,8 @@ const handleAddPlace = () => {
     selectedPlaces.value.push({
       title: customPlaceTitle.value,
       latitude: customLatitude.value,
-      longitude: customLongitude.value
+      longitude: customLongitude.value,
+      contentTypeId: 0,
     });
   }
 
@@ -146,12 +147,12 @@ const handleAddPlace = () => {
         selectedPlaces.value.push({
           title: attraction.title,
           latitude: attraction.latitude,
-          longitude: attraction.longitude
+          longitude: attraction.longitude,
+          contentTypeId: attraction.contentTypeId,
         });
       }
     }
   }
-  console.log("check");
   emit('add-place', selectedPlaces.value);
   emit('change-view');
 }
@@ -197,7 +198,6 @@ function addMarkerAndRemovePrevious(position, category) {
   }
 
   if (category !== "") {
-    console.log(category);
     const imageSrc = new URL(`../../assets/images/markIcon${category}.png`, import.meta.url).href;
     const imageSize = new kakao.maps.Size(53, 65);
     const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);

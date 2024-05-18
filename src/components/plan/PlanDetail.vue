@@ -47,7 +47,6 @@
       },
       ({ data }) => {
         planInfo.value = data;
-        console.log("planInfo: ", planInfo.value);
 
         planInfo.value.startDate = formatDate(planInfo.value.startDate);
         planInfo.value.endDate = formatDate(planInfo.value.endDate);
@@ -109,19 +108,23 @@
 
     if (places) {
       places.forEach(place => {
-        console.log("selectedDayPlanId:", selectedDayPlanId.value);
 
         const dayPlan = planInfo.value.dayPlans.find(plan => plan.id === selectedDayPlanId.value);
+        // dayPlan이 설정될 때까지 대기
         if (!dayPlan) {
-          console.error("No day plan found with id:", selectedDayPlanId.value);
-          return;
+          // dayPlan이 아직 설정되지 않은 경우 지연 실행
+          const interval = setInterval(() => {
+            if (dayPlan) {
+              clearInterval(interval);
+            }
+          }, 100); // 100ms마다 확인
         }
-        console.log("dayPlan:", dayPlan);
         const newItem = {
           dayPlanId: selectedDayPlanId.value,
           type: "PLACE",
           title: place.title,
           content: "",
+          contentTypeId: place.contentTypeId,
           latitude: place.latitude,
           longitude: place.longitude,
           order: dayPlan.items.length + 1,
@@ -149,7 +152,6 @@
   // 메모 추가 기능을 하는 함수
   const addMemo = (planId) => {
     memoPlanId.value = planId;
-    console.log(memoPlanId.value);
     const dayPlan = planInfo.value.dayPlans.find(plan => plan.id === memoPlanId.value);
     memoPlanItemsLength.value = dayPlan.items.length;
     isModalActive.value = true;
@@ -173,28 +175,28 @@
   };
 
   // 장소 및 메모 삭제 기능을 하는 함수
-const removeItem = (dayPlanId, itemId) => {
-  const confirmation = window.confirm("정말 해당 계획을 삭제하시겠어요?");
-  if (confirmation) {
-    const dayPlan = planInfo.value.dayPlans.find((d) => d.id === dayPlanId);
-    if (dayPlan) {
-      deleteDayPlanItemById(
-        {
-          groupId: groupId,
-          planId: planId,
-          itemId: itemId,
-        },
-        () => {
-          getPlanInfo();
-        },
-        (error) => {
-          console.log("계획에서 장소, 메모 삭제중 에러 발생!");
-          console.dir(error);
-        }
-      );
+  const removeItem = (dayPlanId, itemId) => {
+    const confirmation = window.confirm("정말 해당 계획을 삭제하시겠어요?");
+    if (confirmation) {
+      const dayPlan = planInfo.value.dayPlans.find((d) => d.id === dayPlanId);
+      if (dayPlan) {
+        deleteDayPlanItemById(
+          {
+            groupId: groupId,
+            planId: planId,
+            itemId: itemId,
+          },
+          () => {
+            getPlanInfo();
+          },
+          (error) => {
+            console.log("계획에서 장소, 메모 삭제중 에러 발생!");
+            console.dir(error);
+          }
+        );
+      }
     }
-  }
-};
+  };
 
 
   // 장소 및 메모 순서를 바꾸는 함수
@@ -231,6 +233,11 @@ const removeItem = (dayPlanId, itemId) => {
       name: "myGroupDetail",
       params: { id: groupId },
     });
+  }
+
+  // 동적 이미지 경로를 얻는 함수
+  const getImagePath = (contentTypeId) => {
+    return new URL(`../../assets/images/planImages/planCategory${contentTypeId}.png`, import.meta.url).href;
   }
 
   defineExpose({
@@ -350,7 +357,10 @@ const removeItem = (dayPlanId, itemId) => {
             <draggable v-model="dayPlan.items" @end="updateOrder(dayPlan.id)">
               <template #item="{ element }">
                 <div v-if="element.type === 'PLACE'" class="item item-place justify-content-between">
-                  <span>{{ element.title }}</span>
+                  <span>
+                    <img v-if="element.contentTypeId !== 0" :src="getImagePath(element.contentTypeId)" class="item-title-image" alt="">
+                    <span>{{ element.title }}</span>
+                  </span>
                   <i class="fa-solid fa-trash item-delete-icon" @click="removeItem(dayPlan.id, element.id)"></i>
                 </div>
                 <div v-else class="item item-memo justify-content-between">
@@ -546,6 +556,11 @@ const removeItem = (dayPlanId, itemId) => {
   .fa-file-pen {
     margin-right: 10px;
     color: rgb(111, 111, 111);
+  }
+
+  .item-title-image {
+    width: 20px;
+    margin-right: 10px;
   }
 
   .item .item-delete-icon {
