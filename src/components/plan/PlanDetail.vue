@@ -7,6 +7,8 @@
     deleteDayPlanItemById,
     updateDayPlanItemOrder,
   } from "@/api/plan";
+  import PlanMemoModal from "./item/PlanMemoModal.vue"
+  
   import draggable from "vuedraggable";
 
   const route = useRoute();
@@ -30,6 +32,9 @@
     dayPlans: []
   });
   const selectedDayPlanId = ref(props.selectedDayId);
+  const isModalActive = ref(false);
+  const memoPlanId = ref(0);
+  const memoPlanItemsLength = ref(0);
 
   // 여행 계획 상세 정보를 가져오는 함수
   const getPlanInfo = () => {
@@ -66,6 +71,7 @@
     emit('change-view', dayPlanId);
   }
 
+  // 장소를 추가하는 함수
   const addPlace = () => {
     const places = props.addedPlaces;
 
@@ -109,26 +115,21 @@
   };
 
   // 메모 추가 기능을 하는 함수
-  const addMemo = (dayPlanId) => {
-    const dayPlan = planInfo.value.dayPlans.find((d) => d.id === dayPlanId);
-    if (dayPlan) {
-      const newItem = {
-        dayPlanId,
-        type: "MEMO",
-        title: "",
-        content: "새로운 내용",
-        attractionId: null,
-        latitude: null,
-        longitude: null,
-        order: dayPlan.items.length + 1,
-      };
+  const addMemo = (planId) => {
+    memoPlanId.value = planId;
+    console.log(memoPlanId.value);
+    const dayPlan = planInfo.value.dayPlans.find(plan => plan.id === memoPlanId.value);
+    memoPlanItemsLength.value = dayPlan.items.length;
+    isModalActive.value = true;
+  };
 
-      createDayPlanItem(
+  const saveMemo = (newMemo) => {
+    createDayPlanItem(
         {
           groupId: groupId,
           planId: planId,
         },
-        newItem,
+        newMemo,
         () => {
           getPlanInfo();
         },
@@ -137,7 +138,6 @@
           console.dir(error);
         }
       );
-    }
   };
 
   // 장소 및 메모 삭제 기능을 하는 함수
@@ -314,8 +314,15 @@ const removeItem = (dayPlanId, itemId) => {
 
             <draggable v-model="dayPlan.items" @end="updateOrder(dayPlan.id)">
               <template #item="{ element }">
-                <div class="item justify-content-between">
+                <div v-if="element.type === 'PLACE'" class="item item-place justify-content-between">
                   <span>{{ element.title }}</span>
+                  <i class="fa-solid fa-trash item-delete-icon" @click="removeItem(dayPlan.id, element.id)"></i>
+                </div>
+                <div v-else class="item item-memo justify-content-between">
+                  <span>
+                    <i class="fa-solid fa-file-pen"></i>
+                    <span>{{ element.content }}</span>
+                  </span>
                   <i class="fa-solid fa-trash item-delete-icon" @click="removeItem(dayPlan.id, element.id)"></i>
                 </div>
               </template>
@@ -332,6 +339,12 @@ const removeItem = (dayPlanId, itemId) => {
         </div>
       </div>
     </div>
+    <PlanMemoModal 
+    :isActive="isModalActive" 
+    :dayPlanId="memoPlanId"
+    :dayPlanItemsLength="memoPlanItemsLength"
+    @close="isModalActive = false" 
+    :onSave="saveMemo" />
   </div>
 </template>
 
@@ -441,7 +454,7 @@ const removeItem = (dayPlanId, itemId) => {
     padding: 10px;
   }
 
-  .item {
+  .item-place {
     border: 1px solid rgb(185, 185, 185);
     border-radius: 10px;
     padding: 7px 10px;
@@ -450,6 +463,23 @@ const removeItem = (dayPlanId, itemId) => {
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+
+  .item-memo {
+    background-color: #f1f1f1;
+    border: 0px;
+    border-radius: 10px;
+    padding: 15px 10px;
+    margin: 10px 0px;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .fa-file-pen {
+    margin-right: 10px;
+    color: rgb(111, 111, 111);
   }
 
   .item .item-delete-icon {
