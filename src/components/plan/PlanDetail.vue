@@ -13,8 +13,8 @@
   const router = useRouter();
 
   const props = defineProps({
-    selectedDay: Number,
-    addedPlace: {
+    selectedDayId: Number,
+    addedPlaces: {
       type: Array,
       default: () => []
     }
@@ -24,11 +24,12 @@
   const groupId = route.params.groupId;
   const planId = route.params.planId;
   const planInfo = ref({
-  title: "",
-  startDate: "",
-  endDate: "",
-  dayPlans: []
-});
+    title: "",
+    startDate: "",
+    endDate: "",
+    dayPlans: []
+  });
+  const selectedDayPlanId = ref(props.selectedDayId);
 
   // 여행 계획 상세 정보를 가져오는 함수
   const getPlanInfo = () => {
@@ -60,42 +61,52 @@
     return `${year}년 ${month.toString().padStart(2, "0")}월 ${day.toString().padStart(2, "0")}일`;
   }
 
-  // 장소 추가 기능을 하는 함수
-  const addPlace = (dayPlanId) => {
-    const dayPlan = planInfo.value.dayPlans.find((d) => d.id === dayPlanId);
-    if (dayPlan) {
-      const newItem = {
-        dayPlanId,
-        type: "PLACE",
-        title: "새로운 장소",
-        content: "",
-        attractionId: null,
-        latitude: null,
-        longitude: null,
-        order: dayPlan.items.length + 1,
-      };
+  // 장소 검색 화면으로 이동하는 함수
+  const changeSearchView = (dayPlanId) => {
+    emit('change-view', dayPlanId);
+  }
 
-      createDayPlanItem(
-        {
-          groupId: groupId,
-          planId: planId,
-        },
-        newItem,
-        () => {
-          getPlanInfo();
-        },
-        (error) => {
-          console.log("계획에 장소 추가중 에러 발생!");
-          console.dir(error);
+  const addPlace = () => {
+    const places = props.addedPlaces;
+
+    if (places) {
+      places.forEach(place => {
+        console.log("selectedDayPlanId:", selectedDayPlanId.value);
+
+        const dayPlan = planInfo.value.dayPlans.find(plan => plan.id === selectedDayPlanId.value);
+        if (!dayPlan) {
+          console.error("No day plan found with id:", selectedDayPlanId.value);
+          return;
         }
-      );
+        console.log("dayPlan:", dayPlan);
+        const newItem = {
+          dayPlanId: selectedDayPlanId.value,
+          type: "PLACE",
+          title: place.title,
+          content: "",
+          latitude: place.latitude,
+          longitude: place.longitude,
+          order: dayPlan.items.length + 1,
+        };
+
+        createDayPlanItem(
+          {
+            groupId: groupId,
+            planId: planId,
+          },
+          newItem,
+          () => {
+            getPlanInfo();
+          },
+          (error) => {
+            console.log("계획에 장소 추가중 에러 발생!");
+            console.dir(error);
+          }
+        );
+      });
+      console.log("계획에 장소 추가 완료!");
     }
   };
-
-  // 장소 검색 화면으로 이동하는 함수
-  const changeSearchView = () => {
-    emit('change-view', planInfo.value);
-  }
 
   // 메모 추가 기능을 하는 함수
   const addMemo = (dayPlanId) => {
@@ -130,7 +141,9 @@
   };
 
   // 장소 및 메모 삭제 기능을 하는 함수
-  const removeItem = (dayPlanId, itemId) => {
+const removeItem = (dayPlanId, itemId) => {
+  const confirmation = window.confirm("정말 해당 계획을 삭제하시겠어요?");
+  if (confirmation) {
     const dayPlan = planInfo.value.dayPlans.find((d) => d.id === dayPlanId);
     if (dayPlan) {
       deleteDayPlanItemById(
@@ -148,7 +161,9 @@
         }
       );
     }
-  };
+  }
+};
+
 
   // 장소 및 메모 순서를 바꾸는 함수
   const updateOrder = (dayPlanId) => {
@@ -185,6 +200,10 @@
       params: { id: groupId },
     });
   }
+
+  defineExpose({
+    addPlace
+  });
 
   // KAKAO MAP API 시작
   const map = toRefs(null);
@@ -290,25 +309,22 @@
         <div class="days">
           <div class="day" v-for="dayPlan in planInfo.dayPlans" :key="dayPlan.id">
             <div class="day-header">
-              <h3>Day {{ dayPlan.day }}</h3>
+              <p><i class="fa-regular fa-paper-plane"></i>Day {{ dayPlan.day }}</p>
             </div>
 
             <draggable v-model="dayPlan.items" @end="updateOrder(dayPlan.id)">
               <template #item="{ element }">
-                <div class="item">
-                  <span>{{ element.title }} ({{ element.type }})</span>
-                  <button @click="removeItem(dayPlan.id, element.id)">삭제</button>
+                <div class="item justify-content-between">
+                  <span>{{ element.title }}</span>
+                  <i class="fa-solid fa-trash item-delete-icon" @click="removeItem(dayPlan.id, element.id)"></i>
                 </div>
               </template>
             </draggable>
-            <div class="actions">
-              <!-- <button class="btn btn-outline-secondary" @click="addPlace(dayPlan.id)">
-                장소 추가
-              </button> -->
-              <button class="btn btn-outline-secondary" @click="changeSearchView">
+            <div class="actions justify-content-center">
+              <button class="btn btn-outline-secondary add-place-btn" @click="changeSearchView(dayPlan.id)">
                 장소 추가
               </button>
-              <button class="btn btn-outline-secondary" @click="addMemo(dayPlan.id)">
+              <button class="btn btn-outline-secondary add-memo-btn" @click="addMemo(dayPlan.id)">
                 메모 추가
               </button>
             </div>
@@ -380,16 +396,34 @@
     margin: 0 10px;
   }
 
+  .days {
+    height: 520px;
+    overflow-y: auto;
+    margin-top: 20px;
+    border-radius: 10px;
+    margin-top: 15px;
+    padding: 5px;
+  }
+
   .day {
     border-bottom: 1px solid #ddd;
     padding: 10px 0;
   }
 
   .day-header {
-    display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin: 5px 0px 10px 10px;
+    font-size: 15px;
+    color: white;
+    background-color: rgb(199, 162, 231);
+    width: fit-content;
+    padding: 3px 7px 0px 7px;
+    border-radius: 13px;
+  }
+
+  .fa-paper-plane {
+    margin-right: 5px;
   }
 
   .actions {
@@ -398,11 +432,56 @@
   }
 
   .actions button {
-    margin-right: 5px;
+    margin: 10px 10px;
+    font-size: 14px;
+    font-family: NanumSquareRound;
+    background-color: rgb(242, 242, 242);
+    border: 0px;
+    border-radius: 20px;
+    padding: 10px;
   }
 
   .item {
-    background-color: #ddd;
-    margin: 5px 0px;
+    border: 1px solid rgb(185, 185, 185);
+    border-radius: 10px;
+    padding: 7px 10px;
+    margin: 10px 0px;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .item .item-delete-icon {
+    margin-right: 10px;
+    cursor: pointer;
+    display: none;
+    color: rgb(232, 117, 117);
+  }
+
+  .item:hover .item-delete-icon {
+    display: block;
+  }
+
+  .days::-webkit-scrollbar,
+  .days::-webkit-scrollbar {
+    width: 10px; 
+  }
+
+  .days::-webkit-scrollbar-track,
+  .days::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 5px;
+  }
+
+  .days::-webkit-scrollbar-thumb,
+  .days::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px; 
+  }
+
+  .days::-webkit-scrollbar-thumb:hover,
+  .days::-webkit-scrollbar-thumb:hover {
+    background: #555;
   }
 </style>
