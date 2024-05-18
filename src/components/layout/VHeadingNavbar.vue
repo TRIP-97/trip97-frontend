@@ -136,7 +136,7 @@ const fetchProfile = async () => {
 @import "@/assets/css/style.css";
 
 .bg-transparent-custom {
-  background-color: rgb(255, 255, 255); /* 배경을 반투명하게 설정 */
+  background-color: rgb(255, 255, 255,0); /* 배경을 반투명하게 설정 */
 }
 
 .navbar-nav .nav-item .nav-link {

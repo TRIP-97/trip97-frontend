@@ -1,6 +1,33 @@
+
+.listBody {
+  display: flex;
+  justify-content: center;
+  width : 100%;
+}
+
 .map_body {
   display: flex;
+  width: 100%;
+  margin-top: 30px;
+  overflow-y: auto;
 }
+
+#menu_wrap {
+  position: flex;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 25%;
+  height: 1500px;
+  margin: 0 0 30px 10px;
+  padding: 10px;
+  padding-top: 20px;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  border-radius: 10px;
+}
+
 
 #menu_wrap .searchDiv {
   display: flex;
@@ -48,10 +75,15 @@
   margin-left: 10px;
 }
 
+.right {
+  width:75%;
+}
+
 .map {
-  width: 1390px;
-  height: 95%;
+  width: 100%;
+  height: 30%;
   margin-top: 15px;
+  margin-bottom: 30px;
   border: 1px solid;
   border-radius: 10px;
 }
@@ -64,9 +96,10 @@
 }
 
 .map_wrap {
-  position: relative;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   padding: 20px;
 }
 
@@ -187,24 +220,6 @@
   height: 35px;
   margin-bottom: 5px;
 }
-
-#menu_wrap {
-  position: flex;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 480px;
-  height: 100vh;
-  margin: 0 0 30px 10px;
-  padding: 10px;
-  padding-top: 20px;
-  overflow-y: auto;
-  background: rgba(255, 255, 255, 0.7);
-
-  font-size: 12px;
-  border-radius: 10px;
-}
-
 .bg_white {
   background: #fff;
 }
@@ -260,11 +275,12 @@ li {
 }
 
 .attraction-detail-container {
-  position: absolute;
+  /* position: absolute; */
   z-index: 999;
   background-color: white;
+  border-radius: 2%;
+  width : 100%;
   height: 100vh;
-  padding: 10px;
-  text-align: center;
-  box-shadow: 1px 1px 1px 1px #3455;
+  /* padding: 10px; */
+  overflow-y : auto;
 }
