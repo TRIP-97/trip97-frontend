@@ -1,4 +1,3 @@
-// VHeadingNavbar.vue
 <script setup>
 
 import { onMounted, onUnmounted } from "vue";
@@ -43,7 +42,6 @@ const fetchProfile = async () => {
     fetchProfile();
   };
 
-
   onMounted(() => {
     document.addEventListener("route-changed", handleRouteChange);
   });
@@ -64,6 +62,7 @@ const fetchProfile = async () => {
           <ul class="navbar-nav content-menu mx-auto">
             <li class="nav-item menu-item">
               <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'attraction' }">
+                <i class="fa-solid fa-earth-asia"></i>
                 여행 지도
               </RouterLink>
             </li>
@@ -77,6 +76,7 @@ const fetchProfile = async () => {
             </template>
             <li class="nav-item menu-item">
               <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'board' }">
+                <i class="fa-solid fa-user-group"></i>
                 여행 커뮤니티
               </RouterLink>
             </li>
@@ -115,6 +115,11 @@ const fetchProfile = async () => {
                   <li class="dropdown-item">
                     <RouterLink class="header-dropdown" :to="{ name: 'profile' }" v-if="isLogin"
                       >마이페이지</RouterLink
+                    >
+                  </li>
+                  <li class="dropdown-item">
+                    <RouterLink class="header-dropdown" :to="{ name: 'friend' }" v-if="isLogin"
+                      >내 친구</RouterLink
                     >
                   </li>
                   <li>
