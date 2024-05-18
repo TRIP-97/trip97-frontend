@@ -6,6 +6,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import vuetify from "./plugins/vuetify";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import { createPinia } from "pinia";
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 const app = createApp(App);
 const pinia = createPinia();
