@@ -1,4 +1,5 @@
 import { localAxios } from "@/util/http-commons";
+import axios from "axios";
 
 const local = localAxios();
 
@@ -46,6 +47,23 @@ function updateDayPlanItemOrder(param, success, fail) {
     .catch(fail);
 }
 
+// 카카오 모빌리티 API에서 추천 경로를 받아오는 함수
+function getRecommendPlanRoute(places, success, fail) {
+  axios.post(`/api`,
+    {
+      origin: places.origin,
+      destination: places.destination,
+      waypoints: places.waypoints,
+    },
+    {
+      headers: {
+        "Authorization": "KakaoAK e7a082643c3fac69a31a2b74d74050aa",
+        "Content-Type": "application/json",
+      },
+    }
+  ).then(success).catch(fail);
+}
+
 export {
   getPlans,
   createPlan,
@@ -54,4 +72,5 @@ export {
   createDayPlanItem,
   deleteDayPlanItemById,
   updateDayPlanItemOrder,
+  getRecommendPlanRoute,
 };
