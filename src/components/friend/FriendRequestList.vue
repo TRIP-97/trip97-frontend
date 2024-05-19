@@ -77,7 +77,7 @@
           <img v-else src="@/assets/images/profile.png" class="profile-image" />
           <div class="member-text">
             <h2 class="nickname">{{ friendRequest.friendNickname }}</h2>
-            <p v-if="friendRequest.friendIntroduction === null" class="introduction">
+            <p v-if="friendRequest.friendIntroduction !== null && friendRequest.friendIntroduction !== ''" class="introduction">
               자기소개를 아직 작성하지 않았어요.
             </p>
             <p v-else class="introduction">{{ friendRequest.friendIntroduction }}</p>

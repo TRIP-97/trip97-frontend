@@ -213,13 +213,22 @@
                   v-if="group.creatorProfileImage === null"
                   src="@/assets/images/profile.png"
                   alt="Author"
-                  class="img-fluid rounded-circle mr-3"
-                  style="width: 40px; height: 40px"
+                  class="img-fluid rounded-circle profile-image mr-3"
                 />
+                <img
+                  v-else
+                  :src="group.creatorProfileImage"
+                  alt="Author"
+                  class="img-fluid rounded-circle profile-image mr-3"
+                />
+                
                 <p class="writer-nickname">{{ group.creatorNickname }}</p>
               </div>
-              <p v-if="group.creatorIntroduction === null" class="writer-introduction">
-                {{ "자기소개를 아직 작성하지 않았어요." }}
+              <p v-if="group.creatorIntroduction !== null && group.creatorIntroduction !== ''" class="writer-introduction">
+                {{ group.creatorIntroduction }}
+              </p>
+              <p v-else class="writer-introduction">
+                "자기소개를 아직 작성하지 않았어요."
               </p>
             </div>
           </div>
@@ -348,6 +357,12 @@
 
   img.rounded-circle {
     margin-right: 15px;
+  }
+
+  .profile-image {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
   }
 
   .writer-nickname {

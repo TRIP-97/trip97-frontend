@@ -34,7 +34,8 @@
   <div class="card" @click="goHotPlaceDetail" style="width: 18rem">
     <div class="card-header bg-transparent d-flex align-items-center">
       <div class="d-flex align-items-center">
-        <img src="@/assets/images/profile.png" style="width: 30px" />
+        <img v-if="hotPlace.writerProfileImage === null" src="@/assets/images/profile.png" alt="Profile" class="profile-image">
+        <img v-else :src="hotPlace.writerProfileImage" alt="" class="profile-image">
         <p class="writer-nickname mb-0 ms-2">{{ hotPlace.writerNickname }}</p>
         <div class="custom-vr mx-3"></div>
       </div>
@@ -115,6 +116,11 @@
     border-left: 1px solid lightgray;
     height: 30px;
     align-self: center;
+  }
+  .profile-image {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
   }
   .writer-nickname {
     font-size: 13px;

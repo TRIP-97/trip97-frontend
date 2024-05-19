@@ -65,7 +65,8 @@ onMounted(() => {
   <div class="comment-card">
     <template v-if="!isEditing">
       <div class="comment-header">
-        <img src="@/assets/images/profile.png" alt="Profile" class="profile-img">
+        <img v-if="comment.writerProfileImage === null" src="@/assets/images/profile.png" alt="Profile" class="profile-img">
+        <img v-else :src="comment.writerProfileImage" alt="" class="profile-img">
         <div class="comment-metadata">
           <span class="comment-writer">{{ comment.writerNickname }}</span>
           <span class="comment-date">{{ comment.createdAt }}</span>
@@ -85,7 +86,8 @@ onMounted(() => {
     </template>
     <template v-else>
       <div class="comment-header">
-        <img src="@/assets/images/profile.png" alt="Profile" class="profile-img">
+        <img v-if="comment.writerProfileImage === null" src="@/assets/images/profile.png" alt="Profile" class="profile-img">
+        <img v-else :src="comment.writerProfileImage" alt="" class="profile-img">
         <div class="comment-metadata">
           <span class="comment-writer">{{ comment.writerNickname }}</span>
           <span class="comment-date">{{ comment.createdAt }}</span>
