@@ -63,9 +63,9 @@
               </select>
               <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-down w-6 h-6">
                 <path
-                fill-rule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clip-rule="evenodd"
+                  fill-rule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
                 />
               </svg>
             </div>
@@ -77,9 +77,9 @@
               </select>
               <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-down w-6 h-6">
                 <path
-                fill-rule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clip-rule="evenodd"
+                  fill-rule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
                 />
               </svg>
             </div>
@@ -88,20 +88,21 @@
           <div id="map" class="map">
             <ul id="category" class="category-list">
               <li
-              v-for="category in categories"
-              :key="category.code"
-              :id="category.code"
-              :data-order="category.order"
-              @click="onClickCategory($event)"
-              :class="{
-                on: category.code === content.code,
-                off: category.code !== content.code,
-              }"
+                v-for="category in categories"
+                :key="category.code"
+                :id="category.code"
+                :data-order="category.order"
+                @click="onClickCategory($event)"
+                :class="{
+                  on: category.code === content.code,
+                  off: category.code !== content.code,
+                }"
               >
-              <img :src="getIconPath(category.code)" alt="" class="category-icon" />
-              {{ category.name }}
-            </li>
-          </ul>
+                <img :src="getIconPath(category.code)" alt="" class="category-icon" />
+                {{ category.name }}
+              </li>
+            </ul>
+          </div>
         </div>
         <div ref="section">
           <transition name="slide">
@@ -111,9 +112,8 @@
           </transition>
         </div>
       </div>
+    </div>
   </div>
-</div>
-</div>
 </template>
 
 <script setup>

@@ -17,26 +17,31 @@ const router = createRouter({
       path: "/",
       name: "main",
       component: MainView,
+      meta : { showHeader : false},
     },
     {
       path: "/login",
       name: "login",
       component: LoginView,
+      meta : { showHeader : true },
     },
     {
       path: "/naver/callback",
       name: "naverCallBack",
       component: NaverCallBack,
+      meta : { showHeader : true },
     },
     {
       path: "/profile",
       name: "profile",
       component: ProfileView,
+      meta : { showHeader : true },
     },
     {
       path: "/hotplace",
       name: "hotPlace",
       component: HotPlaceView,
+      meta : { showHeader : true },
       redirect: { name: "hotPlaceList" },
       children: [
         {
@@ -66,6 +71,7 @@ const router = createRouter({
       name: "group",
       component: GroupView,
       redirect: { name: "groupList" },
+      meta : { showHeader : true },
       children: [
         {
           path: "list",
@@ -113,11 +119,13 @@ const router = createRouter({
       path: "/group/:groupId/plan/:planId",
       name: "plan",
       component: PlanView,
+      meta : { showHeader : true },
     },
     {
       path: "/board",
       name: "board",
       component: BoardView,
+      meta : { showHeader : true },
       redirect: { name: "boardList" },
       children: [
         {
@@ -146,6 +154,7 @@ const router = createRouter({
       path: "/attraction",
       name: "attraction",
       component: AttractionView,
+      meta : { showHeader : true },
       redirect: { name: "attractionList" },
       children: [
         {
@@ -159,6 +168,7 @@ const router = createRouter({
       path: "/friend",
       name: "friend",
       component: FriendView,
+      meta : { showHeader : true },
       redirect: { name: "friendList" },
       children: [
         {

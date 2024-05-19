@@ -1,14 +1,23 @@
 <script setup>
 
-import { onMounted, onUnmounted } from "vue";
+import { ref,onMounted, onUnmounted } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 import { getMemberProfile } from "@/api/member";
 import { useMemberStore } from "@/stores/member";
 import { storeToRefs } from "pinia";
 
+import blackIcon from '@/assets/images/profileDropBlack.png';
+import whiteIcon from '@/assets/images/profileDropWhite.png';
+
 const router = useRouter();
 
 const memberStore = useMemberStore();
+
+const dropdownIconSrc = ref(blackIcon);
+
+const toggleDropdownIcon = (isHovered) => {
+  dropdownIconSrc.value = isHovered ? whiteIcon : blackIcon;
+};
 
 const { isLogin, userInfo } = storeToRefs(memberStore);
 
@@ -103,6 +112,8 @@ const fetchProfile = async () => {
                   role="button"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
+                  @mouseover="toggleDropdownIcon(true)"
+                  @mouseout="toggleDropdownIcon(false)"
                 >
                   <img
                     src="@/assets/images/profile.png"
@@ -110,6 +121,10 @@ const fetchProfile = async () => {
                     class="profile-image"
                   />
                   {{ userInfo.nickname }}
+                  <img 
+                  :src="dropdownIconSrc"
+                  alt = "드롭다운 아이콘"
+                  class="profile-drop"/>
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                   <li class="dropdown-item">
@@ -180,8 +195,29 @@ const fetchProfile = async () => {
   background-color: rgba(255, 255, 255, 0.9); /* 드롭다운 메뉴 배경 반투명하게 설정 */
 }
 
-.dropdown-item:hover {
+.dropdown-item:hover{
   background-color: rgba(0, 0, 0, 0.1); /* 드롭다운 항목 호버 시 배경색 */
+}
+
+.nav-link.dropdown-toggle::after {
+  display: none;
+}
+
+.nav-link.dropdown-toggle {
+  display: flex;
+  align-items: center;
+}
+
+.nickname {
+  margin-right: 5px;
+}
+
+.profile-drop {
+  height : 20px;
+}
+
+.member-menu {
+  width : 200px;
 }
 
 .navbar-brand.logo {

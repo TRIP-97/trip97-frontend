@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, onMounted, toRefs, defineProps, defineEmits } from "vue";
+  import { ref, onMounted, toRefs} from "vue";
   import { useRoute, useRouter } from "vue-router";
   import {
     deletePlan,
