@@ -7,6 +7,7 @@
     createDayPlanItem,
     deleteDayPlanItemById,
     updateDayPlanItemOrder,
+    getRecommendPlanRoute,
   } from "@/api/plan";
   import PlanMemoModal from "./item/PlanMemoModal.vue"
   
@@ -188,6 +189,7 @@
           },
           () => {
             getPlanInfo();
+            clearMap(); // 기존 마커와 폴리라인 삭제
           },
           (error) => {
             console.log("계획에서 장소, 메모 삭제중 에러 발생!");
@@ -198,7 +200,7 @@
     }
   };
 
-
+  
   // 장소 및 메모 순서를 바꾸는 함수
   const updateOrder = (dayPlanId) => {
     const dayPlan = planInfo.value.dayPlans.find((d) => d.id === dayPlanId);
@@ -216,6 +218,7 @@
             },
             () => {
               console.log("순서가 성공적으로 업데이트되었습니다.");
+              clearMap(); // 기존 마커와 폴리라인 삭제
             },
             (error) => {
               console.log("순서 업데이트 중 에러 발생!");
@@ -266,28 +269,181 @@
     // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
     let zoomControl = new kakao.maps.ZoomControl();
     map.value.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+    
+  };
+  
+  // 마커와 폴리라인을 저장할 배열
+  const markers = ref([]);
+  const polylines = ref([]);
 
-    // map 객체가 초기화된 이후에 이벤트 리스너를 추가
-    kakao.maps.event.addListener(map.value, "click", function (mouseEvent) {
-      var latlng = mouseEvent.latLng;
-      // latitude.value = latlng.getLat();
-      // longitude.value = latlng.getLng();
+  // 마커와 폴리라인을 제거하는 함수
+  const clearMap = () => {
+    markers.value.forEach(marker => marker.setMap(null));
+    markers.value = [];
 
-      addMarkerAndRemovePrevious(latlng);
-    });
+    polylines.value.forEach(polyline => polyline.setMap(null));
+    polylines.value = [];
   };
 
-  var marker;
-  // 마커를 추가하는 함수 (마커가 있다면 지운 뒤 추가)
-  function addMarkerAndRemovePrevious(position) {
-    if (marker != null) {
-      marker.setMap(null);
-    }
-    marker = new kakao.maps.Marker({
-      position: position,
-      map: map.value,
-    });
+  // 마커를 생성하고 지도 위에 숫자 마커를 표시하는 함수
+  function addNumberMarker(mapInstance, position, idx, title) {
+    var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png',
+        imageSize = new kakao.maps.Size(36, 37), 
+        imgOptions =  {
+            spriteSize: new kakao.maps.Size(36, 691), 
+            spriteOrigin: new kakao.maps.Point(0, (idx * 46) + 10),
+            offset: new kakao.maps.Point(13, 37)
+        },
+        markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
+        marker = new kakao.maps.Marker({
+            position: position,
+            image: markerImage 
+        });
+
+    marker.setMap(mapInstance); 
+    markers.value.push(marker); 
+    return marker;
   }
+
+  // Haversine 공식을 사용하여 두 좌표 간의 거리를 계산하는 함수
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371e3; 
+    const φ1 = lat1 * Math.PI / 180;
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    const distance = R * c;
+    return distance;
+  };
+
+  // 카카오 모빌리티 API에서 추천 경로를 받아오는 함수
+  const createPlanRoute = (dayPlanId, priority) => {
+    clearMap(); // 기존 마커와 폴리라인 삭제
+
+    const dayPlan = planInfo.value.dayPlans.find((d) => d.id === dayPlanId);
+
+    if (!dayPlan) {
+      console.error("Day plan이 없습니다!");
+      return;
+    }
+
+    let items = dayPlan.items.filter(item => item.type === "PLACE");
+
+    if (items.length < 2) {
+      window.alert("경로를 만들기 전에 장소를 적어도 2개 추가해주세요!");
+      console.error("경로를 만들기에 장소 개수가 부족합니다!");
+      return;
+    }
+
+    // priority가 DISTANCE일 경우, 가까운 지점부터 방문하도록 순서 변경
+    if (priority === 'DISTANCE') {
+      const startPoint = items[0];
+      const distances = items.slice(1).map((item) => ({
+        item: item,
+        distance: calculateDistance(startPoint.latitude, startPoint.longitude, item.latitude, item.longitude)
+      }));
+
+      distances.sort((a, b) => a.distance - b.distance);
+      items = [startPoint, ...distances.map(d => d.item)];
+    }
+
+    const places = {
+      origin: {
+        x: items[0].longitude,
+        y: items[0].latitude,
+      },
+      destination: {
+        x: items[items.length - 1].longitude,
+        y: items[items.length - 1].latitude,
+      },
+      waypoints: items.slice(1, - 1).map((item, index) => ({
+        name: `waypoint${index + 1}`,
+        x: item.longitude,
+        y: item.latitude,
+      })),
+    };
+
+    getRecommendPlanRoute(
+      places,
+      (response) => {
+        console.log("Recommended route:", response.data);
+
+        const { result_code, summary, sections } = response.data.routes[0];
+
+        if (sections.length > 0) {
+          sections.forEach((section, index) => {
+            const { distance, duration, guides: arrays, roads } = section;  
+
+            const detailRoads = [];
+
+            for (let i = 0; i < roads.length; i++) {
+              const arg = roads[i];
+              const mini = arg.vertexes;
+              let cursor = 0;
+              while (cursor < mini.length) {
+                const obj = new kakao.maps.LatLng(mini[cursor + 1], mini[cursor]);
+                detailRoads.push(obj);
+                cursor += 2;
+              }
+            }
+
+            const guidePositions = arrays.map((arg) => {
+              const { x, y } = arg;
+              if (x && y) {
+                arg.position = new kakao.maps.LatLng(y, x);
+              }
+              return arg;
+            });
+
+            const mapInstance = map.value;  
+           
+            if (guidePositions.length > 0) {
+              const { title, position } = guidePositions[0];
+              addNumberMarker(mapInstance, position, index, title);
+            }
+
+            if (index === sections.length - 1 && guidePositions.length > 1) {
+              const { title: titleFirst, position: positionFirst } = guidePositions[0];
+              const { title: titleLast, position: positionLast } = guidePositions[guidePositions.length - 1];
+
+              addNumberMarker(mapInstance, positionFirst, index, titleFirst);
+              addNumberMarker(mapInstance, positionLast, index + 1, titleLast);
+            }
+
+            const polyline = new kakao.maps.Polyline({
+              path: detailRoads,
+              strokeWeight: 5,
+              strokeColor: '#8181F7',
+              strokeOpacity: 0.7,
+              strokeStyle: 'solid'
+            });
+
+            polyline.setMap(mapInstance);
+            polylines.value.push(polyline); 
+          });
+        }
+
+        centerMap(items[0].latitude, items[0].longitude);
+      },
+      (error) => {
+        console.error("Failed to fetch route:", error);
+      }
+    );
+  };
+
+  // 지도 중심을 변경하는 함수
+  const centerMap = (latitude, longitude) => {
+    const mapInstance = map.value;
+    const moveLatLon = new kakao.maps.LatLng(latitude, longitude);
+    mapInstance.setCenter(moveLatLon);
+  };
+  // KAKAO MAP API 끝
 
   onMounted(() => {
     /* global kakao */
@@ -350,14 +506,25 @@
         <!-- 일정 일차별 상세 계획 -->
         <div class="days">
           <div class="day" v-for="dayPlan in planInfo.dayPlans" :key="dayPlan.id">
-            <div class="day-header">
-              <p><i class="fa-regular fa-paper-plane"></i>Day {{ dayPlan.day }}</p>
+            <div class="day-container">
+              <div class="day-header">
+                <p><i class="fa-regular fa-paper-plane"></i>Day {{ dayPlan.day }}</p>
+              </div>
+              <div class="route-make-buttons">
+                <div class="route-make-button" @click="createPlanRoute(dayPlan.id, 'RECOMMEND')">
+                  <p><i class="fa-solid fa-route"></i>경로 만들기</p>
+                </div>
+                <div class="route-optimize-button"  @click="createPlanRoute(dayPlan.id, 'DISTANCE')">
+                  <p><i class="fa-solid fa-wand-magic-sparkles"></i>경로 최적화</p>
+                </div>
+              </div>
             </div>
-
             <draggable v-model="dayPlan.items" @end="updateOrder(dayPlan.id)">
               <template #item="{ element }">
-                <div v-if="element.type === 'PLACE'" class="item item-place justify-content-between">
-                  <span>
+                <div
+                v-if="element.type === 'PLACE'" 
+                class="item item-place justify-content-between">
+                  <span @mouseover="centerMap(element.latitude, element.longitude)" class="item-info">
                     <img v-if="element.contentTypeId !== 0" :src="getImagePath(element.contentTypeId)" class="item-title-image" alt="">
                     <span>{{ element.title }}</span>
                   </span>
@@ -499,21 +666,54 @@
     padding: 10px 0;
   }
 
-  .day-header {
-    justify-content: space-between;
-    align-items: center;
-    margin: 5px 0px 10px 10px;
-    font-size: 15px;
-    color: white;
-    background-color: rgb(199, 162, 231);
-    width: fit-content;
-    padding: 3px 7px 0px 7px;
-    border-radius: 13px;
-  }
+  .day-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-  .fa-paper-plane {
-    margin-right: 5px;
-  }
+.day-header {
+  margin: 5px 0px 10px 10px;
+  font-size: 15px;
+  color: white;
+  background-color: rgb(199, 162, 231);
+  width: fit-content;
+  height: 30px;
+  padding: 4px 7px 0px 7px;
+  border-radius: 13px;
+}
+
+.fa-paper-plane, .fa-route, .fa-wand-magic-sparkles {
+  margin-right: 5px;
+}
+
+.route-make-buttons {
+  display: flex;
+}
+
+.route-make-button {
+  margin: 5px 10px 10px 0px;
+  font-size: 15px;
+  color: white;
+  background-color: rgb(162, 185, 231);
+  width: fit-content;
+  height: 30px;
+  padding: 4px 7px 0px 7px;
+  border-radius: 13px;
+  cursor: pointer;
+}
+
+.route-optimize-button {
+  margin: 5px 10px 10px 0px;
+  font-size: 15px;
+  color: white;
+  background-color: rgb(160, 202, 232);
+  width: fit-content;
+  height: 30px;
+  padding: 4px 7px 0px 7px;
+  border-radius: 13px;
+  cursor: pointer;
+}
 
   .actions {
     display: flex;
@@ -539,6 +739,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+
+  .item-info {
+    cursor: default;
   }
 
   .item-memo {
