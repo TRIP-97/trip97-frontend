@@ -16,10 +16,10 @@
     nickname: userInfo.value.nickname,
     profileImage: userInfo.value.profileImage,
     introduction: userInfo.value.introduction,
-    friendCode: userInfo.value.friendCode
+    friendCode: userInfo.value.friendCode,
   });
 
-  const fileDto = ref('');
+  const fileDto = ref("");
   const previewImage = ref(userInfo.value.profileImage);
 
   const handleFile = (event) => {
@@ -44,6 +44,7 @@
       nickname: memberInfo.value.nickname,
       introduction: memberInfo.value.introduction,
       friendCode: memberInfo.value.friendCode,
+      profileImage: memberInfo.value.profileImage,
     };
 
     const memberDto = new Blob([JSON.stringify(member)], {
@@ -61,21 +62,21 @@
       () => {
         console.log("멤버 정보 수정 성공!");
         router.replace({
-          name: "profileDetail"
+          name: "profileDetail",
         });
       },
       (error) => {
         console.log("멤버 정보 수정 중 에러 발생!");
         console.dir(error);
       }
-    )
-  }
+    );
+  };
 </script>
 
 <template>
   <div class="member-info-container">
     <div class="member-info">
-      <img class="member-profile-image" :src="previewImage" alt="">
+      <img class="member-profile-image" :src="previewImage" alt="" />
       <div>
         <label for="nickname">닉네임</label>
         <input id="nickname" v-model="memberInfo.nickname" type="text" />
@@ -94,65 +95,66 @@
 </template>
 
 <style scoped>
-.member-info-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 50px;
-}
+  .member-info-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+  }
 
-.member-info {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  width: 300px;
-}
+  .member-info {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
+  }
 
-.member-profile-image {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 20px;
-}
+  .member-profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+  }
 
-.member-info div {
-  margin-bottom: 15px;
-  text-align: left;
-}
+  .member-info div {
+    margin-bottom: 15px;
+    text-align: left;
+  }
 
-label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
 
-input[type="text"], textarea {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
+  input[type="text"],
+  textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
 
-.file-upload-btn {
-  display: block;
-  margin-top: 10px;
-}
+  .file-upload-btn {
+    display: block;
+    margin-top: 10px;
+  }
 
-.edit-button {
-  background-color: rgb(199, 162, 231);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
+  .edit-button {
+    background-color: rgb(199, 162, 231);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
 
-.edit-button:hover {
-  background-color: rgb(172, 119, 218);
-}
+  .edit-button:hover {
+    background-color: rgb(172, 119, 218);
+  }
 </style>
