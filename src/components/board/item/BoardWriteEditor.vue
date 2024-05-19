@@ -3,7 +3,7 @@
     <editor-content :editor="editor" class="editorContent"/>
     <input
       ref="image"
-      @change="addImage()"
+      @change="addImage"
       type="file"
       id="chooseFile"
       name="chooseFile"
@@ -12,72 +12,85 @@
   </div>
 </template>
 
-<script>
-import { Editor, EditorContent } from "@tiptap/vue-3";
-import StarterKit from "@tiptap/starter-kit";
-import Document from "@tiptap/extension-document";
-import Dropcursor from "@tiptap/extension-dropcursor";
-import Image from "@tiptap/extension-image";
-import Paragraph from "@tiptap/extension-paragraph";
-import Text from "@tiptap/extension-text";
+<script setup>
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
+import { Editor, EditorContent } from '@tiptap/vue-3';
+import StarterKit from '@tiptap/starter-kit';
+import Document from '@tiptap/extension-document';
+import Dropcursor from '@tiptap/extension-dropcursor';
+import Image from '@tiptap/extension-image';
+import Paragraph from '@tiptap/extension-paragraph';
+import Text from '@tiptap/extension-text';
+import axios from 'axios';
 
-export default {
-  components: {
-    EditorContent,
+// 컴포넌트 참조 및 에디터 인스턴스 설정
+const editor = ref(null);
+const imageInput = ref(null);
+const postId = ref(1); // 예제용으로 고정된 글 번호
+let imageOrder = ref(1); // 이미지 순서 초기화
+
+// props 및 emits 정의
+const props = defineProps({
+  modelValue: {
+    type: String,
+    default: '',
   },
+});
 
-  props: {
-    modelValue: {
-      type: String,
-      defualt: "",
-    },
-  },
+const emit = defineEmits(['update:modelValue']);
 
-  emits: ["update:modelValue"],
+// 이미지 업로드 처리 함수
+const handleImageUpload = async () => {
+  const file = imageInput.value.files[0];
+  const formData = new FormData();
+  formData.append('image', file);
+  formData.append('postId', postId.value);
+  formData.append('imageOrder', imageOrder.value);
 
-  data() {
-    return {
-      editor: null,
-    };
-  },
-
-  methods: {
-    addImage() {
-      var image = this.$refs["image"].files[0];
-      const url = URL.createObjectURL(image);
-      this.image = url;
-
-      if (url) {
-        this.editor.chain().focus().setImage({ src: url }).run();
-      }
-    },
-  },
-
-  watch: {
-    modelValue(value) {
-      const isSame = this.editor.getHTML() === value;
-      if (isSame) {
-        return;
-      }
-      this.editor.commands.setContent(value, false);
-    },
-  },
-
-  mounted() {
-    this.editor = new Editor({
-      extensions: [Document, Paragraph, Text, Image, Dropcursor],
-      content: this.modelValue,
-      onUpdate: () => {
-        this.$emit("update:modelValue", this.editor.getHTML());
+  try {
+    const response = await axios.post('http://localhost:8080/api/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
       },
-
     });
-  },
+    const url = response.data;
 
-  beforeUnmount() {
-    this.editor.destroy();
-  },
+    if (url) {
+      editor.value.chain().focus().setImage({ src: url }).run();
+      imageOrder.value += 1; // 이미지 순서 증가
+    }
+  } catch (error) {
+    console.error('Error uploading image:', error);
+  }
 };
+
+// 에디터 초기화 및 업데이트 핸들러
+onMounted(() => {
+  editor.value = new Editor({
+    extensions: [Document, Paragraph, Text, Image, Dropcursor, StarterKit],
+    content: props.modelValue,
+    onUpdate: () => {
+      emit('update:modelValue', editor.value.getHTML());
+    },
+  });
+});
+
+// 에디터 내용이 변경되었을 때의 처리
+watch(
+  () => props.modelValue,
+  (value) => {
+    if (editor.value.getHTML() !== value) {
+      editor.value.commands.setContent(value, false);
+    }
+  }
+);
+
+// 컴포넌트 언마운트 시 에디터 정리
+onBeforeUnmount(() => {
+  if (editor.value) {
+    editor.value.destroy();
+  }
+});
 </script>
 
 <style lang="scss">

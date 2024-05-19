@@ -4,8 +4,61 @@ import { RouterView } from "vue-router";
 
 <template>
   <div>
-    <RouterView />
+    <div class="header-image">
+      <img 
+      src="@/assets/images/AttractionPageLogo.jpg"
+      class="BoardLogo"/>
+      <div class="gradient-overlay"></div>
+        <div class="overlay">
+          <h1 class="pageTitle">여행 지도</h1>
+        </div>
+    </div>
+    <div class="body-color">
+      <RouterView />
+    </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+.BoardLogo {
+  width : 100%;
+  height : 600px;
+}
+
+.header-image {
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  height: 530px;
+}
+
+.gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(119, 119, 156, 0.4) 0%,
+    rgba(255, 255, 255, 0.01) 32%,
+    rgba(255, 255, 255, 0.01) 77%,
+    rgba(233, 233, 255, 0.8) 90%,
+    rgb(255, 255, 255) 100%
+  );
+}
+
+.overlay {
+  position: absolute;
+  top: 40%; /* 텍스트를 상단에 위치시키기 위해 조정 */
+  left: 50%;
+  transform: translate(-50%, -10%);
+  padding: 10px 20px;
+  border-radius: 10px; /* 둥근 모서리 */
+  color: white;
+  font-size: 2rem;
+  z-index: 2; /* 텍스트를 최상위로 배치 */
+}
+
+</style>

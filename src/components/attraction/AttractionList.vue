@@ -28,7 +28,7 @@
             class="item"
             @mouseover="() => windowOnOff(place.marker, place.attraction,'on')"
             @mouseout="() => windowOnOff(place.marker, place.attraction, 'off')"
-            @click="showAttractionDetail(place.attraction.id)"
+            @click="showAttractionDetail(place.attraction.id,contentTypeId)"
           >
             <div class="info">
               <div class="infoTop">
@@ -52,67 +52,68 @@
           </li>
         </ul>
       </div>
-      <div>
-        <transition name="slide">
-          <div v-if="selectedAttractionId" class="attraction-detail-container">
-            <AttarctionDetail :attraction-id="selectedAttractionId" @close="closeAttractionDetail"/>
+      <div class="right">
+        <div class="map_wrap">
+          <div class="drop">
+            <div class="select-container">
+              <label class="select-label" for="sido">시도</label>
+              <select class="sido" id="sido" v-model="sido">
+                <option :value="{ code: 0, name: '' }">전체</option>
+                <option v-for="si in sidos" :value="si">{{ si.name }}</option>
+              </select>
+              <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-down w-6 h-6">
+                <path
+                  fill-rule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+            <div class="select-container">
+              <label class="select-label" for="gugun">구군</label>
+              <select class="gugun" id="gugun" v-model="gugun">
+                <option :value="{ code: 0, name: '' }">전체</option>
+                <option v-for="gu in guguns" :value="gu">{{ gu.name }}</option>
+              </select>
+              <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-down w-6 h-6">
+                <path
+                  fill-rule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+            <button class="searchBtn" @click="getAttractionList">검색</button>
           </div>
-        </transition>
-      <div class="map_wrap">
-        <div class="drop">
-          <div class="select-container">
-            <label class="select-label" for="sido">시도</label>
-            <select class="sido" id="sido" v-model="sido">
-              <option :value="{ code: 0, name: '' }">전체</option>
-              <option v-for="si in sidos" :value="si">{{ si.name }}</option>
-            </select>
-            <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-down w-6 h-6">
-              <path
-              fill-rule="evenodd"
-              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-              clip-rule="evenodd"
-              />
-            </svg>
+          <div id="map" class="map">
+            <ul id="category" class="category-list">
+              <li
+                v-for="category in categories"
+                :key="category.code"
+                :id="category.code"
+                :data-order="category.order"
+                @click="onClickCategory($event)"
+                :class="{
+                  on: category.code === content.code,
+                  off: category.code !== content.code,
+                }"
+              >
+                <img :src="getIconPath(category.code)" alt="" class="category-icon" />
+                {{ category.name }}
+              </li>
+            </ul>
           </div>
-          <div class="select-container">
-            <label class="select-label" for="gugun">구군</label>
-            <select class="gugun" id="gugun" v-model="gugun">
-              <option :value="{ code: 0, name: '' }">전체</option>
-              <option v-for="gu in guguns" :value="gu">{{ gu.name }}</option>
-            </select>
-            <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-down w-6 h-6">
-              <path
-              fill-rule="evenodd"
-              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-              clip-rule="evenodd"
-              />
-            </svg>
-          </div>
-          <button class="searchBtn" @click="getAttractionList">검색</button>
         </div>
-        <div id="map" class="map">
-          <ul id="category" class="category-list">
-            <li
-            v-for="category in categories"
-            :key="category.code"
-            :id="category.code"
-            :data-order="category.order"
-            @click="onClickCategory($event)"
-            :class="{
-              on: category.code === content.code,
-              off: category.code !== content.code,
-            }"
-            >
-            <img :src="getIconPath(category.code)" alt="" class="category-icon" />
-            {{ category.name }}
-          </li>
-        </ul>
+        <div ref="section">
+          <transition name="slide">
+            <div v-if="selectedAttractionId" class="attraction-detail-container">
+              <AttarctionDetail :attraction-id="selectedAttractionId" :attraction-content="selectedAttractionContent" @close="closeAttractionDetail"/>
+            </div>
+          </transition>
+        </div>
       </div>
-
-      </div>
+    </div>
   </div>
-</div>
-</div>
 </template>
 
 <script setup>
@@ -138,15 +139,19 @@ const map = ref(null); // 카카오 맵
 const markers = ref([]);
 const title = ref("");
 const infowindows = ref([]);
-const selectedAttractionId = ref("");
+const selectedAttractionId = ref(""); // 자식에게 보낼 id 값
+const selectedAttractionContent = ref(""); // 자식에게 보낼 관광지 타입 값 
+const section = ref(null);
 
 // 자식 컴포넌트에 보낼 파라미터 값 
-const showAttractionDetail = (attractionId) => {
+const showAttractionDetail = (attractionId,contentTypeId) => {
   console.log("attractionDetail", attractionId);
   if (selectedAttractionId.value === attractionId) {
     selectedAttractionId.value = null;
   } else {
+    section.value.scrollIntoView({behavior : 'smooth'});
     selectedAttractionId.value = attractionId;
+    selectedAttractionContent.value = categories.value.find((category) => category.code === parseInt(contentTypeId))?.name;
   }
 };
 
@@ -429,9 +434,13 @@ function addMarkerAndPrevious() {
       displayInfowindow(marker, attraction);
     });
 
+    kakao.maps.event.addListener(marker, "click", function() {
+      showAttractionDetail(attraction.id, attraction.contentTypeId);
+    });
+    
     kakao.maps.event.addListener(marker, "mouseout", function () {
           closeAllInfoWindows();
-        });
+    });
 
   });
 

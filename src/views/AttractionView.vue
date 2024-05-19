@@ -62,7 +62,7 @@ import VHeadingNavbar from "../components/layout/VHeadingNavbar.vue";
   text-align: center;
   position: relative;
   overflow: hidden;
-  height: 843px;
+  height: 530px;
 }
 
 .header-image video {
@@ -88,9 +88,9 @@ video {
     to bottom,
     rgba(119, 119, 156, 0.4) 0%,
     rgba(255, 255, 255, 0.01) 32%,
-    rgba(255, 255, 255, 0.01) 70%,
-    rgba(74, 73, 95, 0.1) 86%,
-    rgb(231, 231, 255) 100%
+    rgba(255, 255, 255, 0.01) 80%,
+    rgb(133, 133, 167,0.8) 92%,
+    rgb(232, 232, 255) 100%
   );
   pointer-events: none; /* 마우스 이벤트를 통과시켜 비디오 조작 가능 */
 }
