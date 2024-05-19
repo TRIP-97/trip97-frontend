@@ -3,6 +3,7 @@ import MainView from "@/views/MainView.vue";
 import LoginView from "@/views/LoginView.vue";
 import ProfileView from "@/views/ProfileView.vue";
 import NaverCallBack from "@/components/callback/NaverCallBack.vue";
+import KakaoCallBack from '@/components/callback/KakaoCallBack.vue'
 import HotPlaceView from "@/views/HotPlaceView.vue";
 import GroupView from "@/views/GroupView.vue";
 import PlanView from "@/views/PlanView.vue";
@@ -30,6 +31,12 @@ const router = createRouter({
       name: "naverCallBack",
       component: NaverCallBack,
       meta : { showHeader : true },
+    },
+    {
+      path : "/kakao/callback",
+      name : "kakaoCallBack",
+      component : KakaoCallBack,
+      meta : {showHeader : true},
     },
     {
       path: "/profile",

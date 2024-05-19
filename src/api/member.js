@@ -7,6 +7,10 @@ function naverLogin(query, success, fail) {
   local.post(`/member/login/naver`, JSON.stringify(query)).then(success).catch(fail);
 }
 
+function kakaoLogin(query, success, fail) {
+  local.post(`/member/login/kakao`, JSON.stringify(query)).then(success).catch(fail);
+}
+
 // JWT를 통해 멤버 프로필을 얻어오는 함수
 function getMemberProfile(token) {
   return local.get(`/member/profile`, {
@@ -21,4 +25,4 @@ function getMemberByFriendCode(friendCode, success, fail) {
   local.get(`/member/search/friendCode`, { params: friendCode }).then(success).catch(fail);
 }
 
-export { naverLogin, getMemberProfile, getMemberByFriendCode };
+export { naverLogin, kakaoLogin, getMemberProfile, getMemberByFriendCode };
