@@ -1,8 +1,7 @@
-
 .listBody {
   display: flex;
   justify-content: center;
-  width : 100%;
+  width: 100%;
 }
 
 .map_body {
@@ -77,10 +76,14 @@
 
 .right {
   display: flex;
-  flex-direction: column; /* 세로로 배치되도록 수정 */
-  width: 75%;
+  flex-direction: column;
+  /* 세로로 배치되도록 수정 */
+  width: 73%;
+  margin-bottom: 30px;
+  margin-left: 10px;
   position: relative;
 }
+
 .map {
   width: 100%;
   height: 100%;
@@ -167,7 +170,7 @@
 }
 
 .searchBtn:hover {
-  background-color: #008bd4;
+  background-color: #56559c;
 }
 
 .searchBtn svg {
@@ -224,6 +227,7 @@
   height: 35px;
   margin-bottom: 5px;
 }
+
 .bg_white {
   background: #fff;
 }
@@ -253,6 +257,20 @@ li {
   min-height: 65px;
 }
 
+.infoAddress {
+  margin: 2px 0px 2px 0px;
+  font-size: 14px;
+}
+
+.infoTitle {
+  margin: 0px 0px 0px 0px;
+}
+
+.infoType {
+  margin-top: 5px;
+  margin-bottom: 3px;
+  font-size: 15px;
+}
 
 /* .info {
   text-overflow: ellipsis;
@@ -266,6 +284,7 @@ li {
 
 .infoBottom {
   display: flex;
+  height: 58px;
 }
 
 .infoImg {
@@ -278,12 +297,35 @@ li {
   margin-left: 10px;
 }
 
+.infoReview {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.infoStar {
+  width: 20px;
+  height: 20px;
+}
+
+.infoRating {
+  font-size: 15px;
+}
+
 .attraction-detail-container {
-  position: relative; /* relative로 변경 */
+  position: relative;
+  /* relative로 변경 */
   background-color: white;
   border-radius: 2%;
   width: 100%;
-  height: 100%; /* 높이를 절반으로 설정 */
+  height: 100%;
+  /* 높이를 절반으로 설정 */
   overflow-y: auto;
-  margin-top: 10px; /* map_wrap 아래에 약간의 여백 추가 */
+  margin-top: 10px;
+  /* map_wrap 아래에 약간의 여백 추가 */
+}
+
+.bookmark {
+  position: absolute;
+  top: -1px;
+  width: 70px;
 }

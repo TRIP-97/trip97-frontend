@@ -17,6 +17,16 @@ const naverLogin = () => {
 
     window.location.href = auth_url;
 }
+
+const kakaoLogin = () => {
+
+    const redirect_uri = 'http://localhost:5173/kakao/callback';
+    const clientId = 'b2240391a7cf9244a35289b7633cab62';
+    const auth_url = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirect_uri}&scope=profile_nickname account_email`;
+
+    window.location.href = auth_url;
+}
+
 </script>
 
 <template>
@@ -31,7 +41,7 @@ const naverLogin = () => {
             <div class="col-lg-3 login-container">
                 <p class="login-message">간편 로그인으로 쉽고 빠르게 시작하세요!</p>
                 <img class="login-button naver-btn" src="../assets/images/naverLoginBtn.png" @click="naverLogin" width="200" />
-                <img class="login-button kakao-btn" src="../assets/images/kakaoLoginBtn.png" width="200" />
+                <img class="login-button kakao-btn" src="../assets/images/kakaoLoginBtn.png" @click="kakaoLogin" width="200" />
             </div>
         </div>
     </div>
