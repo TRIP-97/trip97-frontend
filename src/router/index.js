@@ -36,6 +36,19 @@ const router = createRouter({
       name: "profile",
       component: ProfileView,
       meta : { showHeader : true },
+      redirect: { name: "profileDetail" },
+      children: [
+        {
+          path: "/detail",
+          name: "profileDetail",
+          component: () => import("../components/profile/ProfileDetail.vue"),
+        },
+        {
+          path: "/modify",
+          name: "profileModify",
+          component: () => import("../components/profile/ProfileModify.vue"),
+        }
+      ]
     },
     {
       path: "/hotplace",
