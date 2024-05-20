@@ -138,7 +138,8 @@
         </div>
       </div>
     </div>
-    <Modal :attraction-id="selectedAttractionId" v-model="isModalVisible">
+    <Modal :attraction-id="selectedAttractionId" :is-book-mark-tf="isBookMarkTF" v-model="isModalVisible"
+        @addEmit="addBookMark" @removeEmit="removeBookMark">
     </Modal>
   </div>
 </template>
@@ -155,8 +156,8 @@ import axios from "axios";
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member";
 
-import offBookmark from '@/assets/images/BookMark.png';
-import onBookmark from '@/assets/images/BookMarkNo.png';
+import onBookmark from '@/assets/images/BookMark.png';
+import offBookmark from '@/assets/images/BookMarkNo.png';
 
 const memberStore = useMemberStore();
 const { isLogin, userInfo } = storeToRefs(memberStore);
@@ -190,6 +191,7 @@ const openModal = () => {
   isModalVisible.value = true;
 };
 
+// 북마크 이미지 hover 모션
 const toggleBookmark = (isHovered) => {
   if (bookMarkSrc.value === onBookmark) {
     bookMarkSrc.value = isHovered ? offBookmark : onBookmark;
@@ -201,6 +203,31 @@ const toggleBookmark = (isHovered) => {
   }
 }
 
+// 북마크 추가
+function addBookMark(value){
+
+  isBookMarkTF.value = value;
+
+  if (isBookMarkTF.value === true) {
+        bookMarkSrc.value = onBookmark;
+      } else {
+        bookMarkSrc.value = offBookmark;
+      }
+
+}
+
+function removeBookMark(value){
+
+  isBookMarkTF.value = value;
+  
+  if (isBookMarkTF.value === true) {
+        bookMarkSrc.value = onBookmark;
+      } else {
+        bookMarkSrc.value = offBookmark;
+      }
+
+}
+
 // 북마크 여부 확인
 async function isBookmark(attractionId) {
   console.log("??", attractionId);
@@ -209,13 +236,12 @@ async function isBookmark(attractionId) {
     attractionId,
     userInfo.value.id,
     (res) => {
-      console.log("결과값임당", res.data);
+      if(res.data.attractionId===attractionId){
         isBookMarkTF.value = true;
-       if(sidos.value===55) {
+      }else{
         isBookMarkTF.value = false;
       }
-      console.log("북마크값은", isBookMarkTF.value);
-      if (isBookMarkTF === true) {
+      if (isBookMarkTF.value === true) {
         bookMarkSrc.value = onBookmark;
       } else {
         bookMarkSrc.value = offBookmark;

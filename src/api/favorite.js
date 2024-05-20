@@ -13,8 +13,8 @@ function registerFavorite(token, favorite, success, fail) {
 
 
 // 즐겨찾기 삭제
-function removeFavorite(token, id, success, fail) {
-  local.delete(`/favorite/${id}`, {
+function removeFavorite(token, attractionId, memberId, success, fail) {
+  local.delete(`/favorite?attractionId=${attractionId}&memberId=${memberId}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -31,8 +31,8 @@ function selectFavorites(token, memberId, success, fail) {
 }
 
 // 즐겨찾기 관광지 하나 조회
-function selectFavorite(token, id, memberId, success, fail) {
-  local.get(`/favorite?id=${id}&memberId=${memberId}`, {
+function selectFavorite(token, attractionId, memberId, success, fail) {
+  local.get(`/favorite/attraction?attractionId=${attractionId}&memberId=${memberId}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }

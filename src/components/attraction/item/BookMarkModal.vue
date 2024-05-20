@@ -1,10 +1,19 @@
 <template>
   <div v-if="visible" class="modal-overlay" @click.self="closeModal">
     <div class="modal-content">
-      <h2>즐겨찾기에 추가하시겠어요?</h2>
-      <div class="d-flex flex-direction-row">
-        <button class="addBtn" @click="addBookMark">추가</button>
-        <button class="cancelBtn" @click="closeModal">취소</button>
+      <div v-if="isBookMarkTf === false">
+        <h2>즐겨찾기에 추가하시겠어요?</h2>
+        <div class="d-flex flex-direction-row">
+          <button class="addBtn" @click="addBookMark">추가</button>
+          <button class="cancelBtn" @click="closeModal">취소</button>
+        </div>
+      </div>
+      <div v-if="isBookMarkTf === true">
+        <h2>즐겨찾기에서 삭제하시겠어요?</h2>
+        <div class="d-flex flex-direction-row">
+          <button class="removeBtn" @click="removeBookMark">삭제</button>
+          <button class="cancelBtn" @click="closeModal">취소</button>
+        </div>
       </div>
     </div>
   </div>
@@ -23,6 +32,7 @@ const { userInfo } = storeToRefs(memberStore);
 // Define properties that can be passed to the component
 const props = defineProps({
   attractionId: [String, Number],
+  isBookMarkTf: Boolean, 
   modelValue: Boolean,
 });
 
@@ -50,6 +60,7 @@ async function addBookMark() {
     favorite,
     (response) => {
       console.log("추가 완료");
+      emit("addEmit",true);
       closeModal();
     },
     (error) => {
@@ -58,17 +69,35 @@ async function addBookMark() {
   );
 }
 
+async function removeBookMark() {
+  removeFavorite(
+    sessionStorage.getItem("accessToken"),
+    props.attractionId,
+    userInfo.value.id,
+    (response) => {
+      console.log("삭제 완료");
+      emit("removeEmit",false);
+      closeModal();
+    },
+    (error) => {
+      console.log("즐겨찾기 삭제 실패");
+    }
+  );
+}
+
 // Emit an event to notify the parent component about the change in visible state
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue","removeEmit","addEmit"]);
 const closeModal = () => {
   visible.value = false;
   emit("update:modelValue", false);
 };
+
 </script>
 
 <style scoped>
 .addBtn,
-.cancelBtn {
+.cancelBtn,
+.removeBtn {
   width: 100px;
   height: 38px;
   background-color: #8280dd;
@@ -79,7 +108,8 @@ const closeModal = () => {
 }
 
 .addBtn:hover,
-.cancelBtn:hover {
+.cancelBtn:hover,
+.removeBtn:hover {
   background-color: #6867b1;
 }
 
@@ -107,4 +137,5 @@ const closeModal = () => {
   position: relative;
   align-items: center;
 }
+
 </style>
