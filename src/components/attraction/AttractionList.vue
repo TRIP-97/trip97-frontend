@@ -43,14 +43,14 @@
                   <p class="infoRating mr-2">{{ place.attraction.rating }}</p>
                   <div v-if="place.attraction.rating !== undefined && place.attraction.rating !== null">
                     <img
-                      v-for="n in (place.attraction.rating%5)"
+                      v-for="n in Math.round(place.attraction.rating)"
                       :key="'star' + n"
                       class="infoStar"
                       src="@/assets/images/RaitingStar.png"
                       alt="Star"
                     />
                     <img
-                      v-for="n in (5 - (place.attraction.rating%5))"
+                      v-for="n in (5 - Math.round(place.attraction.rating))"
                       :key="'noStar' + n"
                       class="infoStar"
                       src="@/assets/images/RaitingNoStar.png"

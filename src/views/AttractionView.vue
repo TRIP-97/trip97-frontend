@@ -23,7 +23,7 @@ onMounted(() => {
   }
 });
 
-import VHeadingNavbar from "../components/layout/VHeadingNavbar.vue";
+import VHeadingNavbar from "../components/layout/VHeadingNavbarWhite.vue";
 // const waveGif = ref(waveGifSrc);
 </script>
 

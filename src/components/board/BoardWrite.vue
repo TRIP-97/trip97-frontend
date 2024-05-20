@@ -25,7 +25,6 @@ import { storeToRefs } from "pinia";
 
 const title = ref("");
 const selectedFiles = ref([]); // 선택된 파일을 저장하는 배열
-const token = ref("your-token-here"); // 사용자의 토큰을 적절히 설정
 
 const memberStore = useMemberStore();
 const { userInfo } = storeToRefs(memberStore);
@@ -121,7 +120,9 @@ const saveHandler = async () => {
   console.log(board.value);
 
   try {
-    await registBoard(token.value, board.value);
+    await registBoard(
+      sessionStorage.getItem("accessToken"), 
+      board.value);
     console.log("Content saved successfully");
   } catch (error) {
     console.error("Error saving content:", error);

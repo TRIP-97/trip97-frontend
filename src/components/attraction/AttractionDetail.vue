@@ -16,14 +16,14 @@
         <div class="d-flex flex-direction-row">
           <div v-if="attraction.rating !== undefined && attraction.rating !== null">
             <img
-              v-for="n in Math.floor(attraction.rating)"
+              v-for="n in Math.round(attraction.rating)"
               :key="'star' + n"
               class="infoStar"
               src="@/assets/images/RaitingStar.png"
               alt="Star"
             />
             <img
-              v-for="n in 5 - Math.floor(attraction.rating)"
+              v-for="n in 5 - Math.round(attraction.rating)"
               :key="'noStar' + n"
               class="infoStar"
               src="@/assets/images/RaitingNoStar.png"

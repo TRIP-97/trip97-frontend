@@ -24,25 +24,23 @@ const router = createRouter({
       path: "/login",
       name: "login",
       component: LoginView,
-      meta : { showHeader : true },
+      meta : { showHeader : "white" },
     },
     {
       path: "/naver/callback",
       name: "naverCallBack",
       component: NaverCallBack,
-      meta : { showHeader : true },
     },
     {
       path : "/kakao/callback",
       name : "kakaoCallBack",
       component : KakaoCallBack,
-      meta : {showHeader : true},
     },
     {
       path: "/profile",
       name: "profile",
       component: ProfileView,
-      meta : { showHeader : true },
+      meta : { showHeader : "white" },
       redirect: { name: "profileDetail" },
       children: [
         {
@@ -61,7 +59,7 @@ const router = createRouter({
       path: "/hotplace",
       name: "hotPlace",
       component: HotPlaceView,
-      meta : { showHeader : true },
+      meta : { showHeader : "white" },
       redirect: { name: "hotPlaceList" },
       children: [
         {
@@ -91,7 +89,7 @@ const router = createRouter({
       name: "group",
       component: GroupView,
       redirect: { name: "groupList" },
-      meta : { showHeader : true },
+      meta : { showHeader : "white" },
       children: [
         {
           path: "list",
@@ -139,13 +137,13 @@ const router = createRouter({
       path: "/group/:groupId/plan/:planId",
       name: "plan",
       component: PlanView,
-      meta : { showHeader : true },
+      meta : { showHeader : "white" },
     },
     {
       path: "/board",
       name: "board",
       component: BoardView,
-      meta : { showHeader : true },
+      meta : { showHeader : "white" },
       redirect: { name: "boardList" },
       children: [
         {
@@ -174,7 +172,7 @@ const router = createRouter({
       path: "/attraction",
       name: "attraction",
       component: AttractionView,
-      meta : { showHeader : true },
+      meta : { showHeader : "black" },
       redirect: { name: "attractionList" },
       children: [
         {
@@ -188,7 +186,7 @@ const router = createRouter({
       path: "/friend",
       name: "friend",
       component: FriendView,
-      meta : { showHeader : true },
+      meta : { showHeader : "white" },
       redirect: { name: "friendList" },
       children: [
         {
