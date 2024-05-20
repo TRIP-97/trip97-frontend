@@ -347,7 +347,7 @@
                 {{ hotPlace.writerIntroduction }}
               </p>
               <p v-else class="writer-introduction">
-                "자기소개를 아직 작성하지 않았어요."
+                자기소개를 아직 작성하지 않았어요.
               </p>
             </div>
             <h5 class="location-info-label mb-2">여행 장소</h5>

@@ -51,7 +51,7 @@
     if (group.value.maxMemberCount === group.value.currentMemberCount) {
       isFullMember.value = true;
     }
-  }
+  };
 
   // 모임 게시글 조회하는 함수
   async function getGroup() {
@@ -119,7 +119,7 @@
       groupId: groupId.value,
       memberId: memberId.value,
     };
-    
+
     requested.value = true;
 
     requestGroupMember(
@@ -154,7 +154,9 @@
               <div class="d-flex justify-content-end align-items-center group-info">
                 <div class="d-flex">
                   <i class="fa-solid fa-users"></i>
-                  <p class="member-count card-text">{{ group.currentMemberCount }} / {{ group.maxMemberCount }}</p>
+                  <p class="member-count card-text">
+                    {{ group.currentMemberCount }} / {{ group.maxMemberCount }}
+                  </p>
                 </div>
               </div>
               <span class="date-text">작성일: {{ group.createdDate }}</span>
@@ -221,15 +223,16 @@
                   alt="Author"
                   class="img-fluid rounded-circle profile-image mr-3"
                 />
-                
+
                 <p class="writer-nickname">{{ group.creatorNickname }}</p>
               </div>
-              <p v-if="group.creatorIntroduction !== null && group.creatorIntroduction !== ''" class="writer-introduction">
+              <p
+                v-if="group.creatorIntroduction !== null && group.creatorIntroduction !== ''"
+                class="writer-introduction"
+              >
                 {{ group.creatorIntroduction }}
               </p>
-              <p v-else class="writer-introduction">
-                "자기소개를 아직 작성하지 않았어요."
-              </p>
+              <p v-else class="writer-introduction">자기소개를 아직 작성하지 않았어요.</p>
             </div>
           </div>
         </div>

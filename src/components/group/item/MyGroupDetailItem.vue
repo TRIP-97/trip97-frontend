@@ -1,7 +1,14 @@
 <script setup>
-  import { ref, onMounted} from "vue";
+  import { ref, onMounted } from "vue";
   import { useRoute, useRouter } from "vue-router";
-  import { detailGroup, deleteGroup, checkGroupMember, requestGroupMember, listGroupMembers, refuseRequest } from "@/api/group";
+  import {
+    detailGroup,
+    deleteGroup,
+    checkGroupMember,
+    requestGroupMember,
+    listGroupMembers,
+    refuseRequest,
+  } from "@/api/group";
   import { useMemberStore } from "@/stores/member";
   import { storeToRefs } from "pinia";
 
@@ -136,22 +143,23 @@
         console.log("모임 참가 인원 조회중 에러 발생!");
         console.dir(error);
       }
-    )
-  }
+    );
+  };
 
   const kickGroupMember = (memberId) => {
     refuseRequest(
-    groupId.value, memberId,
-    () => {
-      getGroup();
-      console.log("모임 멤버 내보내기 성공!");
-    },
-    (error) => {
-      console.log("모임 멤버 내보내기중 에러 발생!");
-      console.dir(error);
-    }
-  )
-  }
+      groupId.value,
+      memberId,
+      () => {
+        getGroup();
+        console.log("모임 멤버 내보내기 성공!");
+      },
+      (error) => {
+        console.log("모임 멤버 내보내기중 에러 발생!");
+        console.dir(error);
+      }
+    );
+  };
 
   defineExpose({ getGroup });
 
@@ -206,9 +214,7 @@
         <div class="d-flex justify-content-between w-100">
           <div class="flex-grow-1">
             <div v-show="!isGroupMember">
-              <button class="btn btn-primary request-btn" @click="requestGroup">
-                참가 신청
-              </button>
+              <button class="btn btn-primary request-btn" @click="requestGroup">참가 신청</button>
             </div>
           </div>
           <button class="btn btn-primary list-btn" @click="goMyGroupList">목록으로</button>
@@ -226,52 +232,60 @@
             alt="Author"
             class="img-fluid rounded-circle profile-image mr-3"
           />
-          <img v-else 
-          :src="group.creatorProfileImage"
-          class="img-fluid rounded-circle profile-image mr-3"
+          <img
+            v-else
+            :src="group.creatorProfileImage"
+            class="img-fluid rounded-circle profile-image mr-3"
           />
           <p class="writer-nickname">{{ group.creatorNickname }}</p>
         </div>
-        <p v-if="group.creatorIntroduction !== null && group.creatorIntroduction !== ''" class="writer-introduction">
+        <p
+          v-if="group.creatorIntroduction !== null && group.creatorIntroduction !== ''"
+          class="writer-introduction"
+        >
           {{ group.creatorIntroduction }}
         </p>
-        <p v-else class="writer-introduction">
-          "자기소개를 아직 작성하지 않았어요."
-        </p>
+        <p v-else class="writer-introduction">자기소개를 아직 작성하지 않았어요.</p>
       </div>
 
       <h5 class="group-members-info-label mb-2">모임 멤버</h5>
       <div class="group-members-info-box">
         <div class="d-flex justify-content-end align-items-center group-info">
-        <div class="d-flex">
-          <i class="fa-solid fa-users"></i>
-          <p class="member-count card-text">{{ group.currentMemberCount }} / {{ group.maxMemberCount }}</p>
+          <div class="d-flex">
+            <i class="fa-solid fa-users"></i>
+            <p class="member-count card-text">
+              {{ group.currentMemberCount }} / {{ group.maxMemberCount }}
+            </p>
+          </div>
         </div>
-      </div>
-      <template v-for="(groupMember, index) in groupMembers" :key="groupMember.id">
-  <div class="d-flex justify-content-between align-items-center mb-1">
-    <div class="d-flex align-items-center">
-      <img
-        v-if="groupMember.memberProfileImage === null"
-        src="@/assets/images/profile.png"
-        alt="Author"
-        class="img-fluid rounded-circle mr-3"
-        style="width: 40px; height: 40px"
-      />
-      <p class="writer-nickname">{{ groupMember.memberNickname }}</p>
-    </div>
-    <button v-if="isWriter && group.creatorId !== groupMember.memberId" class="btn kick-btn" @click.prevent="kickGroupMember(groupMember.memberId)">내보내기</button>
-  </div>
-  <hr v-if="index !== groupMembers.length - 1">
-</template>
-
+        <template v-for="(groupMember, index) in groupMembers" :key="groupMember.id">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <div class="d-flex align-items-center">
+              <img
+                v-if="groupMember.memberProfileImage === null"
+                src="@/assets/images/profile.png"
+                alt="Author"
+                class="img-fluid rounded-circle mr-3"
+                style="width: 40px; height: 40px"
+              />
+              <p class="writer-nickname">{{ groupMember.memberNickname }}</p>
+            </div>
+            <button
+              v-if="isWriter && group.creatorId !== groupMember.memberId"
+              class="btn kick-btn"
+              @click.prevent="kickGroupMember(groupMember.memberId)"
+            >
+              내보내기
+            </button>
+          </div>
+          <hr v-if="index !== groupMembers.length - 1" />
+        </template>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-
   .title,
   .schedule-label,
   .content-label {
@@ -370,7 +384,8 @@
     border-radius: 5px;
   }
 
-  .traveler-info-label, .group-members-info-label {
+  .traveler-info-label,
+  .group-members-info-label {
     font-family: NanumSquareRoundExtraBold;
     font-size: 19px;
     color: #333;
@@ -414,7 +429,6 @@
     color: gray;
   }
 
-  
   .group-info {
     color: gray;
     font-size: 16px;
@@ -430,21 +444,21 @@
   }
 
   .btn {
-  padding: 5px 10px;
-  border: none;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
+    padding: 5px 10px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
 
-.kick-btn {
-  background-color: #f9d6ac; 
-  font-size: 14px;
-  position: relative;
-  top: -5px;
-}
+  .kick-btn {
+    background-color: #f9d6ac;
+    font-size: 14px;
+    position: relative;
+    top: -5px;
+  }
 
-.kick-btn:hover {
-  background-color: #e5b97a; 
-}
+  .kick-btn:hover {
+    background-color: #e5b97a;
+  }
 </style>
