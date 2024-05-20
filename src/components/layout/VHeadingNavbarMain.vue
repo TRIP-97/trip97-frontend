@@ -108,6 +108,7 @@ onUnmounted(() => {
             </li>
             <li class="nav-item menu-item">
               <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'hotPlace' }">
+                <i class="fa-solid fa-martini-glass-citrus"></i>
                 HOTPLACE
               </RouterLink>
             </li>
@@ -133,7 +134,7 @@ onUnmounted(() => {
                   @mouseout="toggleDropdownIcon(false)"
                 >
                   <img
-                    src="@/assets/images/profile.png"
+                    :src="userInfo.profileImage"
                     alt="프로필 이미지"
                     class="profile-image"
                   />
