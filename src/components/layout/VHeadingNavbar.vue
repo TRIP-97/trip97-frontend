@@ -1,19 +1,19 @@
 <script setup>
-
-import { ref,onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 import { getMemberProfile } from "@/api/member";
 import { useMemberStore } from "@/stores/member";
 import { storeToRefs } from "pinia";
 
-import blackIcon from '@/assets/images/profileDropBlack.png';
-import whiteIcon from '@/assets/images/profileDropWhite.png';
+import blackIcon from "@/assets/images/profileDropBlack.png";
+import whiteIcon from "@/assets/images/profileDropWhite.png";
 
 const router = useRouter();
 
 const memberStore = useMemberStore();
 
 const dropdownIconSrc = ref(blackIcon);
+const isScrolled = ref(false);
 
 const toggleDropdownIcon = (isHovered) => {
   dropdownIconSrc.value = isHovered ? whiteIcon : blackIcon;
@@ -40,29 +40,43 @@ const fetchProfile = async () => {
         isLogin.value = true;
         userInfo.value = response.data;
       }
-      } catch (error) {
-        console.error("프로필 정보 조회 실패:", error);
-        logout(); // 토큰이 유효하지 않은 경우 로그아웃 처리
-      }
+    } catch (error) {
+      console.error("프로필 정보 조회 실패:", error);
+      logout(); // 토큰이 유효하지 않은 경우 로그아웃 처리
     }
-  };
+  }
+};
 
-  const handleRouteChange = () => {
-    fetchProfile();
-  };
+const handleScroll = () => {
+  isScrolled.value = window.scrollY >= 444;
+};
 
-  onMounted(() => {
-    document.addEventListener("route-changed", handleRouteChange);
-  });
+const handleRouteChange = () => {
+  fetchProfile();
+};
 
-  onUnmounted(() => {
-    document.removeEventListener("route-changed", handleRouteChange);
-  });
+onMounted(() => {
+  document.addEventListener("route-changed", handleRouteChange);
+  window.addEventListener("scroll", handleScroll);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("route-changed", handleRouteChange);
+  window.removeEventListener("scroll", handleScroll);
+});
 </script>
 
 <template>
   <div>
-    <header class="navbar navbar-expand-md bg-transparent-custom navbar-light fixed-top">
+    <header
+      :class="[
+        'navbar',
+        'navbar-expand-md',
+        'navbar-light',
+        'fixed-top',
+        { 'bg-white': isScrolled, 'bg-transparent-custom': !isScrolled },
+      ]"
+    >
       <div class="container-fluid">
         <RouterLink class="navbar-brand logo text-primary fw-bold" :to="{ name: 'main' }">
           Trip 97
@@ -91,6 +105,7 @@ const fetchProfile = async () => {
             </li>
             <li class="nav-item menu-item">
               <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'hotPlace' }">
+                <i class="fa-solid fa-martini-glass-citrus"></i>
                 HOTPLACE
               </RouterLink>
             </li>
@@ -115,16 +130,9 @@ const fetchProfile = async () => {
                   @mouseover="toggleDropdownIcon(true)"
                   @mouseout="toggleDropdownIcon(false)"
                 >
-                  <img
-                    src="@/assets/images/profile.png"
-                    alt="프로필 이미지"
-                    class="profile-image"
-                  />
+                  <img :src="userInfo.profileImage" alt="프로필 이미지" class="profile-image" />
                   {{ userInfo.nickname }}
-                  <img 
-                  :src="dropdownIconSrc"
-                  alt = "드롭다운 아이콘"
-                  class="profile-drop"/>
+                  <img :src="dropdownIconSrc" alt="드롭다운 아이콘" class="profile-drop" />
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                   <li class="dropdown-item">
@@ -156,7 +164,13 @@ const fetchProfile = async () => {
 @import "@/assets/css/style.css";
 
 .bg-transparent-custom {
-  background-color: rgb(255, 255, 255,0); /* 배경을 반투명하게 설정 */
+  background-color: rgba(255, 255, 255, 0); /* 배경을 반투명하게 설정 */
+  transition: background-color 0.3s ease; /* 배경색 전환 효과 */
+}
+
+.bg-white {
+  background-color: rgb(255, 255, 255); /* 배경을 흰색으로 설정 */
+  transition: background-color 0.3s ease; /* 배경색 전환 효과 */
 }
 
 .navbar-nav .nav-item .nav-link {
@@ -195,7 +209,7 @@ const fetchProfile = async () => {
   background-color: rgba(255, 255, 255, 0.9); /* 드롭다운 메뉴 배경 반투명하게 설정 */
 }
 
-.dropdown-item:hover{
+.dropdown-item:hover {
   background-color: rgba(0, 0, 0, 0.1); /* 드롭다운 항목 호버 시 배경색 */
 }
 
@@ -213,11 +227,11 @@ const fetchProfile = async () => {
 }
 
 .profile-drop {
-  height : 20px;
+  height: 20px;
 }
 
 .member-menu {
-  width : 200px;
+  width: 200px;
 }
 
 .navbar-brand.logo {
