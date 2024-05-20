@@ -11,8 +11,7 @@ function getDropdownGugun(sidoCode, success, fail) {
 }
 
 function getAttractions(content, sido, gugun, ha, qa, oa, pa, title, success, fail) {
-  const url = `/attraction?contentType=${content}&sidoCode=${sido}&gugunCode=${gugun}
-  &ha=${ha}&qa=${qa}&oa=${oa}&pa=${pa}&title=${title}`;
+  const url = `/attraction?contentType=${content}&sidoCode=${sido}&gugunCode=${gugun}&ha=${ha}&qa=${qa}&oa=${oa}&pa=${pa}&title=${title}`;
   local.get(url).then(success).catch(fail);
 }
 
