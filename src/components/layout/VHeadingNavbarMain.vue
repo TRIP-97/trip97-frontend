@@ -1,50 +1,54 @@
 <script setup>
+  import { ref, onMounted, onUnmounted } from "vue";
+  import { RouterLink, useRouter } from "vue-router";
+  import { getMemberProfile } from "@/api/member";
+  import { useMemberStore } from "@/stores/member";
+  import { storeToRefs } from "pinia";
 
-import { ref,onMounted, onUnmounted } from "vue";
-import { RouterLink, useRouter } from "vue-router";
-import { getMemberProfile } from "@/api/member";
-import { useMemberStore } from "@/stores/member";
-import { storeToRefs } from "pinia";
+  import blackIcon from "@/assets/images/profileDropGray.png";
+  import whiteIcon from "@/assets/images/profileDropWhite.png";
 
-import blackIcon from '@/assets/images/profileDropGray.png';
-import whiteIcon from '@/assets/images/profileDropWhite.png';
+  const router = useRouter();
 
-const router = useRouter();
+  const memberStore = useMemberStore();
+  const isScrolled = ref(false);
 
-const memberStore = useMemberStore();
+  const dropdownIconSrc = ref(whiteIcon);
 
-const dropdownIconSrc = ref(whiteIcon);
+  const toggleDropdownIcon = (isHovered) => {
+    dropdownIconSrc.value = isHovered ? blackIcon : whiteIcon;
+  };
 
-const toggleDropdownIcon = (isHovered) => {
-  dropdownIconSrc.value = isHovered ? blackIcon : whiteIcon;
-};
+  const { isLogin, userInfo } = storeToRefs(memberStore);
 
-const { isLogin, userInfo } = storeToRefs(memberStore);
+  const logout = () => {
+    // 세션 스토리지에서 accessToken 삭제
+    sessionStorage.removeItem("accessToken");
+    isLogin.value = false;
+    userInfo.value = null;
+    router.push({ name: "main" });
+  };
 
-const logout = () => {
-  // 세션 스토리지에서 accessToken 삭제
-  sessionStorage.removeItem("accessToken");
-  isLogin.value = false;
-  userInfo.value = null;
-  router.push({ name: "main" });
-};
+  const fetchProfile = async () => {
+    const token = sessionStorage.getItem("accessToken");
 
-const fetchProfile = async () => {
-  const token = sessionStorage.getItem("accessToken");
+    if (token) {
+      try {
+        const response = await getMemberProfile(token);
 
-  if (token) {
-    try {
-      const response = await getMemberProfile(token);
-
-      if (response.data) {
-        isLogin.value = true;
-        userInfo.value = response.data;
-      }
+        if (response.data) {
+          isLogin.value = true;
+          userInfo.value = response.data;
+        }
       } catch (error) {
         console.error("프로필 정보 조회 실패:", error);
         logout(); // 토큰이 유효하지 않은 경우 로그아웃 처리
       }
     }
+  };
+
+  const handleScroll = () => {
+    isScrolled.value = window.scrollY >= 444;
   };
 
   const handleRouteChange = () => {
@@ -53,16 +57,29 @@ const fetchProfile = async () => {
 
   onMounted(() => {
     document.addEventListener("route-changed", handleRouteChange);
+    window.addEventListener("scroll", handleScroll);
   });
 
   onUnmounted(() => {
     document.removeEventListener("route-changed", handleRouteChange);
+    window.removeEventListener("scroll", handleScroll);
   });
 </script>
 
 <template>
   <div>
-    <header class="navbar navbar-expand-md bg-transparent-custom navbar-light fixed-top">
+    <header
+      :class="[
+        'navbar',
+        'navbar-expand-md',
+        'navbar-light',
+        'fixed-top',
+        {
+          'bg-custom': isScrolled,
+          'bg-transparent-custom': !isScrolled,
+        },
+      ]"
+    >
       <div class="container-fluid">
         <!-- <RouterLink class="navbar-brand logo text-primary fw-bold" :to="{ name: 'main' }">
           Trip 97
@@ -91,7 +108,6 @@ const fetchProfile = async () => {
             </li>
             <li class="nav-item menu-item">
               <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'hotPlace' }">
-                <i class="fa-solid fa-martini-glass-citrus"></i>
                 HOTPLACE
               </RouterLink>
             </li>
@@ -117,15 +133,12 @@ const fetchProfile = async () => {
                   @mouseout="toggleDropdownIcon(false)"
                 >
                   <img
-                    :src="userInfo.profileImage"
+                    src="@/assets/images/profile.png"
                     alt="프로필 이미지"
                     class="profile-image"
                   />
                   {{ userInfo.nickname }}
-                  <img 
-                  :src="dropdownIconSrc"
-                  alt = "드롭다운 아이콘"
-                  class="profile-drop"/>
+                  <img :src="dropdownIconSrc" alt="드롭다운 아이콘" class="profile-drop" />
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                   <li class="dropdown-item">
@@ -154,91 +167,96 @@ const fetchProfile = async () => {
 </template>
 
 <style scoped>
-@import "@/assets/css/style.css";
+  @import "@/assets/css/style.css";
 
-.navbar {
-    padding : 8px;
-    margin-top : 10px;
-}
+  .navbar {
+    padding: 15px;
+  }
 
-.bg-transparent-custom {
-  background-color: rgb(255, 255, 255,0); /* 배경을 반투명하게 설정 */
-}
+  .bg-transparent-custom {
+    background-color: rgba(0, 0, 0, 0); /* 배경을 반투명하게 설정 */
+    transition: background-color 0.3s ease; /* 배경색 전환 효과 */
+  }
 
-.navbar-nav .nav-item .nav-link {
-  color: white; /* 네비게이션 링크 색상 */
-  padding: 10px 15px; /* 패딩 추가 */
-  text-align: center; /* 텍스트 가운데 정렬 */
-}
+  .bg-custom {
+    background-color: rgb(125, 105, 201); /* 배경을 흰색으로 설정 */
+    transition: background-color 0.3s ease; /* 배경색 전환 효과 */
+  }
 
-.nav-item {
-  font-size: 23px;
-  /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); */
-  width: 343px;
-}
+  .navbar-nav .nav-item .nav-link {
+    color: white; /* 네비게이션 링크 색상 */
+    padding: 10px 15px; /* 패딩 추가 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+  }
 
-.navbar-nav {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+  .nav-item {
+    font-size: 23px;
+    /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); */
+    width: 343px;
+  }
 
-.navbar-nav .nav-item .nav-link:hover {
-  color: #ccc; /* 링크 호버 시 색상 */
-}
+  .navbar-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-.profile-image {
-  height: 30px;
-  margin-right: 5px;
-  border-radius: 50%; /* 프로필 이미지 둥글게 설정 */
-}
+  .navbar-nav .nav-item .nav-link:hover {
+    color: #ccc; /* 링크 호버 시 색상 */
+  }
 
-.header-dropdown {
-  color: black; /* 드롭다운 링크 색상 */
-}
+  .profile-image {
+    height: 30px;
+    margin-right: 5px;
+    border-radius: 50%; /* 프로필 이미지 둥글게 설정 */
+  }
 
-.dropdown-menu {
-  background-color: rgba(255, 255, 255, 0.9); /* 드롭다운 메뉴 배경 반투명하게 설정 */
-}
+  .header-dropdown {
+    color: black; /* 드롭다운 링크 색상 */
+  }
 
-.dropdown-item:hover{
-  background-color: rgba(0, 0, 0, 0.1); /* 드롭다운 항목 호버 시 배경색 */
-}
+  .dropdown-menu {
+    background-color: rgba(255, 255, 255, 0.9); /* 드롭다운 메뉴 배경 반투명하게 설정 */
+  }
 
-.nav-link.dropdown-toggle::after {
-  display: none;
-}
+  .dropdown-item:hover {
+    background-color: rgba(0, 0, 0, 0.1); /* 드롭다운 항목 호버 시 배경색 */
+  }
 
-.nav-link.dropdown-toggle {
-  display: flex;
-  align-items: center;
-}
+  .nav-link.dropdown-toggle::after {
+    display: none;
+  }
 
-.nickname {
-  margin-right: 5px;
-}
+  .nav-link.dropdown-toggle {
+    display: flex;
+    align-items: center;
+  }
 
-.profile-drop {
-  height : 20px;
-}
+  .nickname {
+    margin-right: 5px;
+  }
 
-.member-menu {
-  width : 200px;
-}
+  .profile-drop {
+    height: 20px;
+  }
 
-.navbar-brand.logo {
-  margin-left: 40px;
-  color: black !important;
-  font-weight: bold;
-  font-family: "PassionOneBold", sans-serif;
-  font-size: 40px; /* 로고 텍스트 크기 */
-}
+  .member-menu {
+    width: 200px;
+  }
 
-.navbar-brand.logo:hover {
-  color: #ccc; /* 로고 텍스트 호버 시 색상 */
-}
+  .navbar-brand.logo {
+    margin-left: 40px;
+    color: black !important;
+    font-weight: bold;
+    font-family: "PassionOneBold", sans-serif;
+    font-size: 40px; /* 로고 텍스트 크기 */
+  }
 
-.text-primary {
-  color: inherit; /* 기본 색상을 상속 */
-}
+  .navbar-brand.logo:hover {
+    color: #ccc; /* 로고 텍스트 호버 시 색상 */
+  }
+
+  .text-primary {
+    color: inherit; /* 기본 색상을 상속 */
+  }
 </style>
