@@ -12,8 +12,9 @@ const board = ref("");
 const no = route.params.id;
 // const no = route.params.no;
 
-async function getBoard(){
-  detailBoard(no,
+async function getBoard() {
+  detailBoard(
+    no,
     (response) => {
       board.value = response.data;
     },
@@ -21,10 +22,10 @@ async function getBoard(){
       console.log("Board 불러오는 중 에러 발생");
       console.dir(error);
     }
-  )
+  );
 }
 
-async function removeBoard(){
+async function removeBoard() {
   deleteBoard(
     no,
     (response) => {
@@ -34,7 +35,7 @@ async function removeBoard(){
       console.log("Board 삭제중 에러");
       console.dir(error);
     }
-  )
+  );
 }
 
 const moveList = () => {
@@ -44,28 +45,29 @@ const moveList = () => {
 };
 
 const moveModify = () => {
-  router.push({name:"boardModify"});
-}
+  router.push({ name: "boardModify" });
+};
 
 const moveDelete = () => {
   removeBoard();
-}
+};
 
-onMounted(()=>{
+onMounted(() => {
   getBoard();
 });
 </script>
 
 <template>
-  <div>
-    <h2>게시판 상세</h2>
+  <div class="d-flex flex-column justify-content-center">
     <h2>제목 : {{ board.title }}</h2>
     <p>번호 : {{ board.id }}</p>
     <h2>내용</h2>
     <p>{{ board.content }}</p>
-    <button @click="moveList">목록</button>
-    <button @click="moveModify">수정</button>
-    <button @click="moveDelete">삭제</button>
+    <div class="d-flex flex-row">
+      <button @click="moveList">목록</button>
+      <button @click="moveModify">수정</button>
+      <button @click="moveDelete">삭제</button>
+    </div>
   </div>
 </template>
 

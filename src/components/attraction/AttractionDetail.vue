@@ -1,21 +1,44 @@
 <template>
   <div class="childBox d-flex flex-column">
     <div class="attract d-flex flex-row">
-      <img class="infoImage" :src="attraction.firstImage" />
+      <div v-if="attraction && attraction.firstImage != ''">
+        <img class="infoImage" :src="attraction.firstImage" />
+      </div>
+      <div v-else>
+        <img class="infoImage" src="@/assets/images/no_image.png" />
+      </div>
       <div class="infoText">
-        <div class="first">
+        <div class="first mb-2">
           <p class="title">{{ attraction.title }}</p>
-          <p class="contentType ms-2">{{ props.attractionContent }}</p>
+          <p class="contentType mt-3 ms-2">{{ props.attractionContent }}</p>
           <button @click="close" class="closeBtn">Close</button>
         </div>
-        <p class="rating">평점: {{ attraction.rating }}</p>
-        <p class="reviewCount">리뷰 수: {{ attraction.reviewCount }}</p>
+        <div class="d-flex flex-direction-row">
+          <div v-if="attraction.rating !== undefined && attraction.rating !== null">
+            <img
+              v-for="n in Math.floor(attraction.rating)"
+              :key="'star' + n"
+              class="infoStar"
+              src="@/assets/images/RaitingStar.png"
+              alt="Star"
+            />
+            <img
+              v-for="n in 5 - Math.floor(attraction.rating)"
+              :key="'noStar' + n"
+              class="infoStar"
+              src="@/assets/images/RaitingNoStar.png"
+              alt="No Star"
+            />
+          </div>
+          <p class="reviewCount ml-5">리뷰 {{ attraction.reviewCount }}</p>
+        </div>
         <p class="address">{{ attraction.address }}</p>
         <p class="overview">{{ attraction.overview }}</p>
       </div>
     </div>
 
     <hr />
+
     <div class="reviewContainer">
       <div class="header d-flex justify-content-between">
         <h1>리뷰</h1>

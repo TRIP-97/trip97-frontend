@@ -32,15 +32,31 @@
           >
             <div class="info">
               <div class="infoTop">
-                <h5>{{ place.attraction.title }}</h5>
+                <h4 class="infoTitle">{{ place.attraction.title }}</h4>
                 <p class="infoType">
                   {{ categories.find((category) => category.code === parseInt(contentTypeId))?.name }}
                 </p>
               </div>
-              <div class="infoBottom">
-                <span>{{ place.attraction.address }}</span>
-                <p class="infoRating">평점 : {{ place.attraction.rating }}</p>
-                <p class="infoReview">리뷰수 : {{ place.attraction.reviewCount }}</p>
+              <div class="infoBottom d-flex flex-column">
+                <p class="infoAddress">{{ place.attraction.address }}</p>
+                <div class = "mt-0 d-flex flex-row">
+                  <p class="infoRating mr-2">{{ place.attraction.rating }}</p>
+                  <img
+                    v-for="n in (place.attraction.rating%5)"
+                    :key="'star' + n"
+                    class="infoStar"
+                    src="@/assets/images/RaitingStar.png"
+                    alt="Star"
+                  />
+                  <img
+                    v-for="n in (5 - (place.attraction.rating%5))"
+                    :key="'noStar' + n"
+                    class="infoStar"
+                    src="@/assets/images/RaitingNoStar.png"
+                    alt="No Star"
+                  />
+                  <p class="infoReview">리뷰 {{ place.attraction.reviewCount }}</p>
+                </div>
               </div>
               <img
                 class="infoImg"
@@ -104,9 +120,10 @@
             </ul>
           </div>
         </div>
-        <div ref="section">
+        <div class="child" ref="section">
           <transition name="slide">
             <div v-if="selectedAttractionId" class="attraction-detail-container">
+              <img class="bookmark" src="@/assets/images/BookMark.png" @click="showModal = true"/>
               <AttarctionDetail :attraction-id="selectedAttractionId" :attraction-content="selectedAttractionContent" @close="closeAttractionDetail"/>
             </div>
           </transition>
@@ -120,8 +137,15 @@
 import { onMounted, watch, ref, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getAttractions, getDropdownContentSido, getDropdownGugun } from "@/api/attraction.js";
+import { registerFavorite, removeFavorite, selectFavorite } from "@/api/favorite.js";
 import AttarctionDetail from "@/components/attraction/AttractionDetail.vue";
 import axios from "axios";
+
+import { storeToRefs } from "pinia";
+import { useMemberStore } from "@/stores/member";
+
+const memberStore = useMemberStore();
+const { userInfo } = storeToRefs(memberStore);
 
 // 라우터 및 라우트 사용
 const route = useRoute();
@@ -142,6 +166,8 @@ const infowindows = ref([]);
 const selectedAttractionId = ref(""); // 자식에게 보낼 id 값
 const selectedAttractionContent = ref(""); // 자식에게 보낼 관광지 타입 값 
 const section = ref(null);
+
+
 
 // 자식 컴포넌트에 보낼 파라미터 값 
 const showAttractionDetail = (attractionId,contentTypeId) => {

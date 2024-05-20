@@ -6,7 +6,7 @@ import { getMemberProfile } from "@/api/member";
 import { useMemberStore } from "@/stores/member";
 import { storeToRefs } from "pinia";
 
-import blackIcon from '@/assets/images/profileDropBlack.png';
+import blackIcon from '@/assets/images/profileDropGray.png';
 import whiteIcon from '@/assets/images/profileDropWhite.png';
 
 const router = useRouter();
