@@ -333,13 +333,21 @@
                   v-if="hotPlace.writerProfileImage === null"
                   src="@/assets/images/profile.png"
                   alt="Author"
-                  class="img-fluid rounded-circle mr-3"
-                  style="width: 40px; height: 40px"
+                  class="img-fluid rounded-circle profile-image mr-3"
+                />
+                <img
+                  v-else
+                  :src="hotPlace.writerProfileImage"
+                  alt="Author"
+                  class="img-fluid rounded-circle profile-image mr-3"
                 />
                 <p class="writer-nickname">{{ hotPlace.writerNickname }}</p>
               </div>
-              <p v-if="hotPlace.writerIntroduction === null" class="writer-introduction">
-                {{ "자기소개를 아직 작성하지 않았어요." }}
+              <p v-if="hotPlace.writerIntroduction !== null && hotPlace.writerIntroduction !== ''" class="writer-introduction">
+                {{ hotPlace.writerIntroduction }}
+              </p>
+              <p v-else class="writer-introduction">
+                자기소개를 아직 작성하지 않았어요.
               </p>
             </div>
             <h5 class="location-info-label mb-2">여행 장소</h5>
@@ -524,6 +532,12 @@
 
   img.rounded-circle {
     margin-right: 15px;
+  }
+
+  .profile-image {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
   }
 
   .writer-nickname {

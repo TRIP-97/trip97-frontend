@@ -70,7 +70,7 @@ onMounted(() => {
           <img v-else src="@/assets/images/profile.png" class="profile-image" />
           <div class="member-text">
             <h2 class="nickname">{{ request.memberNickname }}</h2>
-            <p v-if="request.memberIntroduction === null" class="introduction">자기소개를 아직 작성하지 않았어요.</p>
+            <p v-if="request.memberIntroduction !== null && request.memberIntroduction !== ''" class="introduction">자기소개를 아직 작성하지 않았어요.</p>
             <p v-else class="introduction">{{ request.memberIntroduction }}</p>
           </div>
         </div>

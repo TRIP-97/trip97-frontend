@@ -48,9 +48,9 @@
         <img
           v-if="friend.profileImage === null"
           src="@/assets/images/profile.png"
-          style="width: 60px"
+          class="profile_image"
         />
-        <img v-else :src="friend.profileImage" style="width: 60px" />
+        <img v-else :src="friend.profileImage" class="profile_image"/>
       </div>
       <div class="friend-header">
         <h3 class="text-center">{{ friend.nickname }}</h3>
@@ -63,7 +63,7 @@
       </div>
     </div>
     <div class="friend-introduction">
-      <p v-if="friend.introduction === null">자기소개를 아직 작성하지 않았어요</p>
+      <p v-if="friend.introduction !== null && friend.introduction !== ''">자기소개를 아직 작성하지 않았어요</p>
       <p v-else>{{ friend.introduction }}</p>
     </div>
   </div>
@@ -116,6 +116,12 @@
     align-items: center;
     justify-content: center;
     margin-left: 10px;
+  }
+
+  .profile_image {
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
   }
 
   .dropdown-container {
