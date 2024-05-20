@@ -14,19 +14,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useEditor, EditorContent } from '@tiptap/vue-3';
+import { ref } from "vue";
+import { useEditor, EditorContent } from "@tiptap/vue-3";
 import { registBoard } from "@/api/board.js";
 import { useMemberStore } from "@/stores/member";
-import StarterKit from '@tiptap/starter-kit';
-import Image from '@tiptap/extension-image';
-import axios from 'axios';
+import StarterKit from "@tiptap/starter-kit";
+import Image from "@tiptap/extension-image";
+import axios from "axios";
 import { storeToRefs } from "pinia";
 
-
-const title = ref('');
+const title = ref("");
 const selectedFiles = ref([]); // 선택된 파일을 저장하는 배열
-const token = ref('your-token-here'); // 사용자의 토큰을 적절히 설정
+const token = ref("your-token-here"); // 사용자의 토큰을 적절히 설정
 
 const memberStore = useMemberStore();
 const { userInfo } = storeToRefs(memberStore);
@@ -41,29 +40,33 @@ const editor = useEditor({
           alt: {},
           title: {},
           width: {
-            default: 'auto',
+            default: "auto",
           },
           height: {
-            default: 'auto',
+            default: "auto",
           },
         };
       },
     }),
   ],
-  content: '',
+  content: "",
   editable: true,
 });
 
 const handleFileSelection = (event) => {
   const files = Array.from(event.target.files);
-  files.forEach(file => {
+  files.forEach((file) => {
     const reader = new FileReader();
     reader.onload = (e) => {
-      editor.value.chain().focus().setImage({ 
-        src: e.target.result,
-        width : 500,
-        height : 500,
-      }).run();
+      editor.value
+        .chain()
+        .focus()
+        .setImage({
+          src: e.target.result,
+          width: 500,
+          height: 500,
+        })
+        .run();
     };
     reader.readAsDataURL(file);
   });
@@ -72,20 +75,20 @@ const handleFileSelection = (event) => {
 
 const uploadImage = async (file) => {
   const formData = new FormData();
-  formData.append('file', file);
+  formData.append("file", file);
 
   try {
-    const response = await axios.post('/board/upload', formData, {
+    const response = await axios.post("/board/upload", formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
 
     const url = response.data.fileUrl; // 업로드된 이미지의 URL이 반환된다고 가정
-    console.log('Uploaded Image URL:', url); // URL이 올바르게 반환되는지 확인
+    console.log("Uploaded Image URL:", url); // URL이 올바르게 반환되는지 확인
     return url;
   } catch (error) {
-    console.error('Error uploading file:', error);
+    console.error("Error uploading file:", error);
     return null;
   }
 };
@@ -103,31 +106,33 @@ const saveHandler = async () => {
         contentJson = replaceBase64WithUrl(contentJson, file, url);
       }
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.error("Error uploading image:", error);
       return;
     }
   }
 
-  const board = {
-    writerId : userInfo.value.id,
+  const board = ref({
+    writerId: userInfo.value.id,
     title: title.value,
     content: JSON.stringify(contentJson),
-    writerNickname : userInfo.value.nickname,
-  };
+    writerNickname: userInfo.value.nickname,
+  });
+
+  console.log(board.value);
 
   try {
-    await registBoard(token.value, board);
-    console.log('Content saved successfully');
+    await registBoard(token.value, board.value);
+    console.log("Content saved successfully");
   } catch (error) {
-    console.error('Error saving content:', error);
+    console.error("Error saving content:", error);
   }
 };
 
 // base64 이미지를 실제 업로드된 URL로 교체하는 함수
 const replaceBase64WithUrl = (contentJson, file, url) => {
   if (Array.isArray(contentJson.content)) {
-    contentJson.content.forEach(node => {
-      if (node.type === 'image' && node.attrs.src === URL.createObjectURL(file)) {
+    contentJson.content.forEach((node) => {
+      if (node.type === "image" && node.attrs.src === URL.createObjectURL(file)) {
         node.attrs.src = url;
       }
     });
