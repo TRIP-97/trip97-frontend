@@ -42,7 +42,7 @@
     <div class="body-color">
       <RouterView />
     </div>
-    <div class="empty-div" style="height: 300px"></div>
+    <div class="empty-div" style="height: 1500px"></div>
   </div>
 </template>
 
