@@ -58,12 +58,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="d-flex flex-column justify-content-center">
-    <h2>제목 : {{ board.title }}</h2>
-    <p>번호 : {{ board.id }}</p>
-    <h2>내용</h2>
-    <p>{{ board.content }}</p>
-    <div class="d-flex flex-row">
+  <div class="body d-flex flex-column align-items-center">
+    <div class="content d-flex flex-column justify-content-center">
+      <h2>{{ board.id }}. {{ board.title }}</h2>
+      <p>번호 : {{ board.id }}</p>
+      <h2>내용</h2>
+      <p>{{ board.content }}</p>
+    </div>
+    <div class="btn">
       <button @click="moveList">목록</button>
       <button @click="moveModify">수정</button>
       <button @click="moveDelete">삭제</button>
@@ -71,4 +73,20 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.content {
+  width: 500px;
+  background-color: white;
+  border-radius: 15px;
+  padding: 50px;
+}
+
+.btn button {
+  background-color: white;
+  width: 60px;
+  height: 40px;
+  border-radius: 15px;
+  margin: 3px;
+  font-size: 20px;
+}
+</style>

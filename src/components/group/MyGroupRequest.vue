@@ -22,12 +22,13 @@ const getListWaitingRequest = () => {
       console.dir(error);
     }
   );
-}
+};
 
 // 참가 신청을 취소하는 함수
 const cancleRequestFunc = (groupId) => {
   refuseRequest(
-    groupId, userInfo.value.id,
+    groupId,
+    userInfo.value.id,
     () => {
       getListWaitingRequest();
       console.log("모임 참가 신청 취소!");
@@ -36,13 +37,12 @@ const cancleRequestFunc = (groupId) => {
       console.log("모임 참가 신청 취소중 에러 발생!");
       console.dir(error);
     }
-  )
-}
+  );
+};
 
 onMounted(() => {
   getListWaitingRequest();
-})
-
+});
 </script>
 
 <template>
@@ -50,7 +50,12 @@ onMounted(() => {
     <template v-for="request in groupRequests" :key="request.requestId">
       <div class="row request">
         <div class="col-lg-9 member-info d-flex align-items-center">
-          <img v-if="request.creatorProfileImage !== null" :src="request.creatorProfileImage" alt="Profile Image" class="profile-image">
+          <img
+            v-if="request.creatorProfileImage !== null"
+            :src="request.creatorProfileImage"
+            alt="Profile Image"
+            class="profile-image"
+          />
           <img v-else src="@/assets/images/profile.png" class="profile-image" />
           <div class="member-text">
             <h2 class="nickname">{{ request.creatorNickname }}</h2>
@@ -59,7 +64,9 @@ onMounted(() => {
         </div>
 
         <div class="col-lg-3 request-btn d-flex flex-column justify-content-center">
-          <button class="btn cancle-btn" @click.prevent="cancleRequestFunc(request.groupId)">신청 취소</button>
+          <button class="btn cancle-btn" @click.prevent="cancleRequestFunc(request.groupId)">
+            신청 취소
+          </button>
         </div>
       </div>
     </template>
@@ -76,8 +83,8 @@ onMounted(() => {
   color: #333;
   padding: 20px;
   border: 1px solid rgb(201, 201, 201);
-    border-radius: 10px;
-    box-shadow: 5px 5px 5px #ebebeb;
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px #ebebeb;
 }
 
 .center-content {
@@ -87,12 +94,12 @@ onMounted(() => {
 }
 
 .empty-request {
-  color: #888;  /* 회색 텍스트 */
+  color: #888; /* 회색 텍스트 */
   font-size: 16px;
 }
 
 .request {
-  background-color: aliceblue;
+  background-color: #f1f1ff;
   margin: 10px;
   padding: 15px;
   border-radius: 8px;
@@ -115,16 +122,17 @@ onMounted(() => {
 }
 
 .member-text {
-  transform: translateY(5px); 
+  transform: translateY(5px);
 }
 
-.member-info h2, .member-info p {
-  font-size: 14px;  
+.member-info h2,
+.member-info p {
+  font-size: 14px;
   color: #666;
 }
 
 .member-info h2 {
-  color: #007BFF; 
+  color: #8280dd;
   margin-bottom: 3px;
 }
 
@@ -137,11 +145,10 @@ onMounted(() => {
 }
 
 .cancle-btn {
-  background-color: #f9d6ac; 
+  background-color: #8280dd;
 }
 
 .cancle-btn:hover {
-  background-color: #e5b97a; 
+  background-color: #7270c2;
 }
 </style>
-

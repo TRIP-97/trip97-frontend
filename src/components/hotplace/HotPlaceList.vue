@@ -120,7 +120,6 @@ onMounted(() => {
         </div>
       </div>
       <div class="row mt-3 justify-content-end">
-
         <button class="btn btn-primary write-btn" @click="goWriteForm">글 작성</button>
       </div>
       <PageNavigation
@@ -165,17 +164,19 @@ onMounted(() => {
 }
 
 .search-form button {
-  background-color: #a3d8f4; 
+  background-color: #8280dd;
   color: white;
-  border: none; 
+  border: none;
 }
 
 .search-form button:hover {
-  background-color: #91c7e1; 
+  background-color: #6b6ab8;
 }
 
 .write-btn {
   width: fit-content;
+  background-color: #8280dd;
+  border: 1px solid #8280dd;
   margin-top: 20px;
   margin-bottom: 30px;
   margin-right: 30px;

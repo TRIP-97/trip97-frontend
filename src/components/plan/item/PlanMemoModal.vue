@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineProps, defineEmits, watch } from 'vue';
+import { ref, defineProps, defineEmits, watch } from "vue";
 
 const props = defineProps({
   isActive: Boolean,
@@ -8,7 +8,7 @@ const props = defineProps({
   dayPlanItemsLength: Number,
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(["close"]);
 
 const memo = ref({
   dayPlanId: props.dayPlanId,
@@ -22,14 +22,17 @@ const memo = ref({
   order: props.dayPlanItemsLength + 1,
 });
 
-watch(() => [props.dayPlanId, props.dayPlanItemsLength], () => {
-  memo.value.dayPlanId = props.dayPlanId;
-  memo.value.order = props.dayPlanItemsLength + 1;
-});
+watch(
+  () => [props.dayPlanId, props.dayPlanItemsLength],
+  () => {
+    memo.value.dayPlanId = props.dayPlanId;
+    memo.value.order = props.dayPlanItemsLength + 1;
+  }
+);
 
 const closeModal = () => {
   memo.value.content = "";
-  emit('close');
+  emit("close");
 };
 
 const saveMemo = () => {
@@ -74,7 +77,7 @@ const saveMemo = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; 
+  z-index: 1000;
 }
 
 .modal-background {
@@ -83,17 +86,17 @@ const saveMemo = () => {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.3); 
-  z-index: -1; 
+  background: rgba(0, 0, 0, 0.3);
+  z-index: -1;
 }
 
 .modal-content {
   background: white;
   padding: 20px;
   border-radius: 8px;
-  width: 500px; 
-  max-width: 90%; 
-  z-index: 1001; 
+  width: 500px;
+  max-width: 90%;
+  z-index: 1001;
 }
 
 .box {
@@ -135,7 +138,7 @@ const saveMemo = () => {
 }
 
 .button.is-link {
-  background-color: #4285cc;
+  background-color: #8280dd;
   color: white;
   border-radius: 15px;
 }
@@ -146,5 +149,3 @@ const saveMemo = () => {
   border-radius: 15px;
 }
 </style>
-
-

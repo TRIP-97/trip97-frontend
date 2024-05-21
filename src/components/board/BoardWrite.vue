@@ -1,14 +1,16 @@
 <template>
   <div class="writeContent">
-    <div>
+    <div class="body">
       <h2>제목</h2>
       <input class="title" type="text" v-model="title" />
       <h2>내용</h2>
       <div class="editor">
         <EditorContent :editor="editor" />
       </div>
-      <input type="file" @change="handleFileSelection" multiple />
-      <button @click="saveHandler">글쓰기</button>
+      <div class="btn">
+        <input type="file" @change="handleFileSelection" multiple />
+        <button @click="saveHandler">글쓰기</button>
+      </div>
     </div>
   </div>
 </template>
@@ -25,7 +27,6 @@ import { storeToRefs } from "pinia";
 
 const title = ref("");
 const selectedFiles = ref([]); // 선택된 파일을 저장하는 배열
-const token = ref("your-token-here"); // 사용자의 토큰을 적절히 설정
 
 const memberStore = useMemberStore();
 const { userInfo } = storeToRefs(memberStore);
@@ -121,7 +122,7 @@ const saveHandler = async () => {
   console.log(board.value);
 
   try {
-    await registBoard(token.value, board.value);
+    await registBoard(sessionStorage.getItem("accessToken"), board.value);
     console.log("Content saved successfully");
   } catch (error) {
     console.error("Error saving content:", error);
@@ -144,6 +145,9 @@ const replaceBase64WithUrl = (contentJson, file, url) => {
 <style lang="scss">
 .title {
   width: 640px;
+  border: 1px solid black;
+  margin: 10px;
+  height: 30px;
 }
 
 .writeContent {
@@ -160,6 +164,22 @@ const replaceBase64WithUrl = (contentJson, file, url) => {
     background-color: rgba(#616161, 0.1);
     color: #616161;
   }
+}
+
+.body {
+  background-color: white;
+  border-radius: 20px;
+  padding: 15px;
+}
+
+.editor {
+  border: 1px solid black;
+  margin: 10px;
+  height: 500px;
+}
+
+.btn {
+  padding: 5px;
 }
 
 .content {
