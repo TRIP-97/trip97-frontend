@@ -39,6 +39,7 @@ const fetchProfile = async () => {
       if (response.data) {
         isLogin.value = true;
         userInfo.value = response.data;
+        console.log(userInfo.value, "fetchprofile");
       }
     } catch (error) {
       console.error("프로필 정보 조회 실패:", error);
@@ -133,11 +134,7 @@ onUnmounted(() => {
                   @mouseover="toggleDropdownIcon(true)"
                   @mouseout="toggleDropdownIcon(false)"
                 >
-                  <img
-                    :src="userInfo.profileImage"
-                    alt="프로필 이미지"
-                    class="profile-image"
-                  />
+                  <img :src="userInfo.profileImage" alt="프로필 이미지" class="profile-image" />
                   {{ userInfo.nickname }}
                   <img :src="dropdownIconSrc" alt="드롭다운 아이콘" class="profile-drop" />
                 </a>

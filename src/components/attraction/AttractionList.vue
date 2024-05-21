@@ -264,7 +264,7 @@ const showAttractionDetail = (attractionId,contentTypeId) => {
     section.value.scrollIntoView({behavior : 'smooth'});
     selectedAttractionId.value = attractionId;
     selectedAttractionContent.value = categories.value.find((category) => category.code === parseInt(contentTypeId))?.name;
-    if (isLogin) {
+    if (userInfo.value.id!=null) {
       isBookmark(attractionId);
     } else {
       bookMarkSrc.value = offBookmark;

@@ -18,13 +18,13 @@ const router = createRouter({
       path: "/",
       name: "main",
       component: MainView,
-      meta : { showHeader : false},
+      meta: { showHeader: false },
     },
     {
       path: "/login",
       name: "login",
       component: LoginView,
-      meta : { showHeader : "white" },
+      meta: { showHeader: "white" },
     },
     {
       path: "/naver/callback",
@@ -32,15 +32,15 @@ const router = createRouter({
       component: NaverCallBack,
     },
     {
-      path : "/kakao/callback",
-      name : "kakaoCallBack",
-      component : KakaoCallBack,
+      path: "/kakao/callback",
+      name: "kakaoCallBack",
+      component: KakaoCallBack,
     },
     {
       path: "/profile",
       name: "profile",
       component: ProfileView,
-      meta : { showHeader : "white" },
+      meta: { showHeader: "white" },
       redirect: { name: "profileDetail" },
       children: [
         {
@@ -59,7 +59,7 @@ const router = createRouter({
       path: "/hotplace",
       name: "hotPlace",
       component: HotPlaceView,
-      meta : { showHeader : "white" },
+      meta: { showHeader: "white" },
       redirect: { name: "hotPlaceList" },
       children: [
         {
@@ -89,7 +89,7 @@ const router = createRouter({
       name: "group",
       component: GroupView,
       redirect: { name: "groupList" },
-      meta : { showHeader : "white" },
+      meta: { showHeader: "white" },
       children: [
         {
           path: "list",
@@ -137,13 +137,13 @@ const router = createRouter({
       path: "/group/:groupId/plan/:planId",
       name: "plan",
       component: PlanView,
-      meta : { showHeader : "white" },
+      meta: { showHeader: "white" },
     },
     {
       path: "/board",
       name: "board",
       component: BoardView,
-      meta : { showHeader : "white" },
+      meta: { showHeader: "white" },
       redirect: { name: "boardList" },
       children: [
         {
@@ -172,7 +172,7 @@ const router = createRouter({
       path: "/attraction",
       name: "attraction",
       component: AttractionView,
-      meta : { showHeader : "black" },
+      meta: { showHeader: "black" },
       redirect: { name: "attractionList" },
       children: [
         {
@@ -186,7 +186,7 @@ const router = createRouter({
       path: "/friend",
       name: "friend",
       component: FriendView,
-      meta : { showHeader : "white" },
+      meta: { showHeader: "white" },
       redirect: { name: "friendList" },
       children: [
         {

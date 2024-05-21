@@ -130,11 +130,7 @@ onUnmounted(() => {
                   @mouseover="toggleDropdownIcon(true)"
                   @mouseout="toggleDropdownIcon(false)"
                 >
-                  <img
-                    :src="userInfo.profileImage"
-                    alt="프로필 이미지"
-                    class="profile-image"
-                  />
+                  <img :src="userInfo.profileImage" alt="프로필 이미지" class="profile-image" />
                   {{ userInfo.nickname }}
                   <img :src="dropdownIconSrc" alt="드롭다운 아이콘" class="profile-drop" />
                 </a>

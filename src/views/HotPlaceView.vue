@@ -22,7 +22,6 @@ onMounted(() => {
     videoPlayer.value.play();
   }
 });
-
 </script>
 
 <template>
@@ -54,6 +53,7 @@ onMounted(() => {
 
 .body-color {
   background-color: rgb(251, 251, 255);
+  padding-top: 55px;
 }
 
 .header-image {
@@ -88,7 +88,7 @@ video {
     rgba(0, 0, 0, 0.7) 0%,
     rgba(255, 255, 255, 0.01) 32%,
     rgba(255, 255, 255, 0.01) 80%,
-    rgb(133, 133, 167,0.8) 92%,
+    rgb(133, 133, 167, 0.8) 92%,
     rgb(251, 251, 255) 100%
   );
   pointer-events: none; /* 마우스 이벤트를 통과시켜 비디오 조작 가능 */

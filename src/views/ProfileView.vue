@@ -5,12 +5,12 @@ import { RouterView } from "vue-router";
 <template>
   <div>
     <div class="header-image">
-      <img src="@/assets/images/HotPlacePageLogo.jpg" alt="HotPlace Page Logo">
+      <img src="@/assets/images/HotPlacePageLogo.jpg" alt="HotPlace Page Logo" />
       <div class="overlay">
         <h1>내 정보</h1>
       </div>
     </div>
-    
+
     <RouterView />
   </div>
 </template>
@@ -19,16 +19,16 @@ import { RouterView } from "vue-router";
 .header-image {
   position: relative;
   width: 100%;
-  height: 300px; 
+  height: 300px;
   overflow: hidden;
   margin-bottom: 30px;
 }
 
 .header-image img {
   width: 100%;
-  height: 100%; 
-  object-fit: cover; 
-  object-position: center; 
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .overlay {
@@ -39,9 +39,9 @@ import { RouterView } from "vue-router";
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: center; 
-  justify-content: center; 
+  align-items: center;
+  justify-content: center;
   color: white;
-  font-size: 2rem; 
+  font-size: 2rem;
 }
 </style>
