@@ -85,7 +85,7 @@ a {
 
 .page-item.active .page-link {
   background-color: white;
-  color: #007bff;
+  color: #8280dd;
   border: none;
 }
 </style>

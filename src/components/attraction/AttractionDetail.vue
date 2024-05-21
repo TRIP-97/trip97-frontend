@@ -123,7 +123,7 @@ const getReviewList = () => {
     attraction.value.id,
     ({ data }) => {
       reviews.value = data.map((review) => ({
-        ...review,
+        review,
         createdAt: formatDate(review.createdAt),
       }));
       console.log(data);

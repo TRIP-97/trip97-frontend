@@ -22,8 +22,9 @@ function removeFavorite(token, attractionId, memberId, success, fail) {
 }
 
 // 즐겨찾기 전체 조회
-function selectFavorites(token, memberId, success, fail) {
-  local.get(`/favorite?memberId=${memberId}`, {
+function selectFavorites(token, param, success, fail) {
+  local.get(`/favorite`, {
+    params: param,
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -34,7 +35,7 @@ function selectFavorites(token, memberId, success, fail) {
 function selectFavorite(token, attractionId, memberId, success, fail) {
   local.get(`/favorite/attraction?attractionId=${attractionId}&memberId=${memberId}`, {
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token} `
     }
   }).then(success).catch(fail);
 }
