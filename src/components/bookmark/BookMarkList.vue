@@ -56,6 +56,9 @@ const onPageCount = (val) => {
 };
 
 async function getFavoriteList() {
+
+  console.log(param.value);
+
   selectFavorites(
     sessionStorage.getItem("accessToken"),
     param.value,

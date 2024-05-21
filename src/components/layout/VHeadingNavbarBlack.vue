@@ -40,6 +40,7 @@ const fetchProfile = async () => {
         isLogin.value = true;
         userInfo.value = response.data;
       }
+      
     } catch (error) {
       console.error("프로필 정보 조회 실패:", error);
       logout(); // 토큰이 유효하지 않은 경우 로그아웃 처리

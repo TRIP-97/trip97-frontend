@@ -1,5 +1,6 @@
 <script setup>
-  import { ref } from "vue";
+  import { ref, onMounted } from "vue";
+  import { useRouter } from "vue-router";
   import { useMemberStore } from "@/stores/member";
   import { storeToRefs } from "pinia";
   import { Carousel, Slide, Navigation } from "vue3-carousel";
@@ -9,20 +10,53 @@
   const memberStore = useMemberStore();
   const { userInfo, isLogin } = storeToRefs(memberStore);
 
-  // 더미 데이터
+  import { listFriend } from "@/api/friend";
 
-  const friends = ref([
-    { id: 1, nickname: "철수", profileImage: testProfileImage },
-    { id: 2, nickname: "영희", profileImage: testProfileImage },
-    { id: 3, nickname: "민수", profileImage: testProfileImage },
-    { id: 4, nickname: "지우", profileImage: testProfileImage },
-    { id: 5, nickname: "하늘", profileImage: testProfileImage },
-    { id: 6, nickname: "수지", profileImage: testProfileImage },
-    { id: 7, nickname: "진우", profileImage: testProfileImage },
-    { id: 8, nickname: "성훈", profileImage: testProfileImage },
-    { id: 9, nickname: "은주", profileImage: testProfileImage },
-    { id: 10, nickname: "혜진", profileImage: testProfileImage },
-  ]);
+
+ onMounted (()=>{
+  getFriends();
+ });
+
+ const router = useRouter();
+ const friends = ref([]);
+
+  async function getFriends() {
+    console.log(userInfo.value.id);
+    listFriend (
+      userInfo.value.id,
+      (response) => {
+        friends.value = response.data;
+        console.log(friends.value);
+      },
+      (error) => {
+        console.log("친구목록 조회 실패");
+      }
+    )
+  }
+
+  function gotoMyPage () {
+    router.push({
+      name : "profile"
+    })
+  }
+
+  function gotoComunity () {
+    router.push({
+      name : "board"
+    })
+  }
+
+  function gotoHotplace () {
+    router.push({
+      name : "hotPlace"
+    })
+  }
+
+  function gotoGroup () {
+    router.push({
+      name : "group"
+    })
+  }
 
   const attractions = ref([
     {
@@ -212,7 +246,7 @@
                 <p>{{ userInfo.nickname }}님!</p>
               </div>
             </div>
-            <button class="btn login-btn">내정보 보기</button>
+            <button class="btn login-btn" @click="gotoMyPage">내정보 보기</button>
           </div>
           <div v-else class="col-lg-4 my-profile-info">
             <div class="d-flex profile-header">
@@ -228,9 +262,9 @@
             <div class="group-default-message">
               <h7>예정된 여행 모임이 없어요.</h7>
               <br />
-              <h7>먼저, 여행 모임을 만들어볼까요?</h7>
+                <h7>먼저, 여행 모임을 만들어볼까요?</h7>
             </div>
-            <button class="btn create-group-btn">+</button>
+            <button class="btn create-group-btn" @click="gotoGroup">+</button>
           </div>
         </div>
         <div class="friends-area">
@@ -238,7 +272,7 @@
             <span class="red-dot"></span>
             <div class="friends-text ms-2">
               <p class="main-text">나와 함께 하는 여행자들</p>
-              <p class="sub-text">현재 10명이 함께 하고 있어요!</p>
+              <p class="sub-text">현재 {{friends.length}}명이 함께 하고 있어요!</p>
             </div>
           </div>
           <div class="friends-list">
@@ -250,7 +284,12 @@
             class="friend-slider">
               <slide v-for="friend in friends" :key="friend.id">
                 <div class="friend">
-                  <img :src="friend.profileImage" class="friend-image" alt="Friend Image" />
+                  <img
+                      v-if="friend.profileImage === null"
+                      src="@/assets/images/profile.png"
+                      class="profile-image"
+                    />
+                  <img v-else :src="friend.profileImage" class="profile_image" />
                   <p>{{ friend.nickname }}</p>
                 </div>
               </slide>
@@ -262,7 +301,7 @@
 
       <div class="col-lg-6 move-page-area">
         <div class="row">
-          <div class="col-lg-5 move-community">
+          <div class="col-lg-5 move-community" @click="gotoComunity">
             <img
               src="@/assets/images/mainImages/community.jpg"
               class="move-image"
@@ -272,7 +311,7 @@
               <h2>커뮤니티</h2>
             </div>
           </div>
-          <div class="col-lg-5 move-hotplace">
+          <div class="col-lg-5 move-hotplace" @click="gotoHotplace">
             <img src="@/assets/images/mainImages/hotplace.jpg" class="move-image" alt="Hotplace" />
             <div class="overlay">
               <h2>HOTPLACE</h2>

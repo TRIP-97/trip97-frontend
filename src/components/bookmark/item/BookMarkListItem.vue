@@ -1,6 +1,7 @@
 <script setup>
 import { ref, defineProps, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import detail from '@/components/bookmark/item/BookMarkDetail.vue';
 
 const router = useRouter();
 
@@ -22,10 +23,19 @@ function formatVisitedDate(dateString) {
   const day = date.getDate();
   return `${year}/${month.toString().padStart(2, "0")}/${day.toString().padStart(2, "0")}`;
 }
+
+// 디테일 모달 창 관련
+
+const isModalVisible = ref(false);
+
+const goBookmarkDetail = () => {
+  isModalVisible.value = true;
+}
+
 </script>
 
 <template>
-  <div class="card" style="width: 18rem">
+  <div class="card" @click="goBookmarkDetail" style="width: 18rem">
     <div class="card-header bg-transparent d-flex align-items-center">
       <div class="d-flex align-items-center">
         <p class="writer-nickname mb-0 ms-2">{{ bookmark.title }}</p>
@@ -55,6 +65,8 @@ function formatVisitedDate(dateString) {
       <p class="card-content">{{ bookmark.address }}</p>
     </div>
   </div>
+  <detail :bookmark="bookmark" v-model="isModalVisible">
+  </detail>
 </template>
 
 <style scoped>
