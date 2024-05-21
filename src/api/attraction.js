@@ -19,4 +19,14 @@ function getAttractionId(attractionId, success, fail) {
   local.get(`/attraction/${attractionId}`).then(success).catch(fail);
 }
 
-export { getDropdownContentSido, getDropdownGugun, getAttractions, getAttractionId };
+function getHotAttractions(success, fail) {
+  local.get(`/attraction/hot`).then(success).catch(fail);
+}
+
+export {
+  getDropdownContentSido,
+  getDropdownGugun,
+  getAttractions,
+  getAttractionId,
+  getHotAttractions,
+};
