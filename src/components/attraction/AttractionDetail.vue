@@ -122,6 +122,7 @@
     getReviews(
       attraction.value.id,
       ({ data }) => {
+        console.dir(data);
         reviews.value = data.map((review) => ({
           ...review,
           createdAt: formatDate(review.createdAt),

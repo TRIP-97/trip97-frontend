@@ -17,7 +17,7 @@ function registBoard(token, board) {
   local.post(`/board`, JSON.stringify(board), {
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   });
 }
@@ -27,11 +27,14 @@ function uploadImage(file, success, fail) {
   const formData = new FormData();
   formData.append("file", file);
 
-  local.post(`/board/upload`, formData, {  
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  }).then(success).catch(fail);
+  local
+    .post(`/board/upload`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then(success)
+    .catch(fail);
 }
 
 // 자유게시판 게시물 삭제
@@ -40,8 +43,13 @@ function deleteBoard(boardId, success, fail) {
 }
 
 // 자유게시판 게시물 수정
-function modifyBoard(board, succes, fail) {
+function modifyBoard(board, success, fail) {
   local.put(`/board/${board.id}`, JSON.stringify(board).then(success).catch(fail));
 }
 
-export { listBoard, detailBoard, registBoard, uploadImage, deleteBoard, modifyBoard};
+// 인기 게시글 조회
+function getHotBoards(success, fail) {
+  local.get(`/board/hot`).then(success).catch(fail);
+}
+
+export { listBoard, detailBoard, registBoard, uploadImage, deleteBoard, modifyBoard, getHotBoards };

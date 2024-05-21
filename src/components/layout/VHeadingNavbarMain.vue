@@ -56,6 +56,7 @@
   };
 
   onMounted(() => {
+    fetchProfile();
     document.addEventListener("route-changed", handleRouteChange);
     window.addEventListener("scroll", handleScroll);
   });
@@ -108,6 +109,7 @@
             </li>
             <li class="nav-item menu-item">
               <RouterLink class="nav-link" style="cursor: pointer" :to="{ name: 'hotPlace' }">
+                <i class="fa-solid fa-martini-glass-citrus"></i>
                 HOTPLACE
               </RouterLink>
             </li>
@@ -132,11 +134,7 @@
                   @mouseover="toggleDropdownIcon(true)"
                   @mouseout="toggleDropdownIcon(false)"
                 >
-                  <img
-                    src="@/assets/images/profile.png"
-                    alt="프로필 이미지"
-                    class="profile-image"
-                  />
+                  <img :src="userInfo.profileImage" alt="프로필 이미지" class="profile-image" />
                   {{ userInfo.nickname }}
                   <img :src="dropdownIconSrc" alt="드롭다운 아이콘" class="profile-drop" />
                 </a>

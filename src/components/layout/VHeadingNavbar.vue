@@ -56,6 +56,7 @@
   };
 
   onMounted(() => {
+    fetchProfile();
     document.addEventListener("route-changed", handleRouteChange);
     window.addEventListener("scroll", handleScroll);
   });
