@@ -1,40 +1,40 @@
 <script setup>
-  import { ref, onMounted } from "vue";
-  import { listFriend } from "@/api/friend";
-  import { useMemberStore } from "@/stores/member";
-  import { storeToRefs } from "pinia";
-  import FriendListItem from "./item/FriendListItem.vue";
-  import FriendSearchModal from "./item/FriendSearchModal.vue";
+import { ref, onMounted } from "vue";
+import { listFriend } from "@/api/friend";
+import { useMemberStore } from "@/stores/member";
+import { storeToRefs } from "pinia";
+import FriendListItem from "./item/FriendListItem.vue";
+import FriendSearchModal from "./item/FriendSearchModal.vue";
 
-  const memberStore = useMemberStore();
-  const { userInfo } = storeToRefs(memberStore);
+const memberStore = useMemberStore();
+const { userInfo } = storeToRefs(memberStore);
 
-  const friends = ref([]);
-  const isModalActive = ref(false);
+const friends = ref([]);
+const isModalActive = ref(false);
 
-  // 친구 목록을 조회하는 함수
-  const getFriendList = () => {
-    listFriend(
-      userInfo.value.id,
-      ({ data }) => {
-        friends.value = data;
-        console.log(data);
-      },
-      (error) => {
-        console.log("친구 목록 불러오는 중 에러 발생!");
-        console.dir(error);
-      }
-    );
-  };
+// 친구 목록을 조회하는 함수
+const getFriendList = () => {
+  listFriend(
+    userInfo.value.id,
+    ({ data }) => {
+      friends.value = data;
+      console.log(data);
+    },
+    (error) => {
+      console.log("친구 목록 불러오는 중 에러 발생!");
+      console.dir(error);
+    }
+  );
+};
 
-  // 친구 검색 모달창을 활성화시키는 함수
-  const searchFriend = () => {
-    isModalActive.value = true;
-  };
+// 친구 검색 모달창을 활성화시키는 함수
+const searchFriend = () => {
+  isModalActive.value = true;
+};
 
-  onMounted(() => {
-    getFriendList();
-  });
+onMounted(() => {
+  getFriendList();
+});
 </script>
 
 <template>
@@ -55,49 +55,49 @@
 </template>
 
 <style scoped>
-  .friends {
-    min-height: 500px;
-    color: #333;
-    padding: 20px;
-    border: 1px solid rgb(201, 201, 201);
-    border-radius: 10px;
-    box-shadow: 5px 5px 5px #e6e6e6;
-  }
+.friends {
+  min-height: 500px;
+  color: #333;
+  padding: 20px;
+  border: 1px solid rgb(201, 201, 201);
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px #e6e6e6;
+}
 
-  .center-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
+.center-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
-  .empty-friends {
-    color: #888;
-    font-size: 16px;
-  }
+.empty-friends {
+  color: #888;
+  font-size: 16px;
+}
 
-  .header {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 20px;
-  }
+.header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
 
-  .add-friend-btn {
-    background-color: #88a8c9;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    margin-top: 20px;
-    margin-right: 30px;
-    box-shadow: 5px 5px 5px #e6e6e6;
-  }
+.add-friend-btn {
+  background-color: #8280dd;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin-top: 20px;
+  margin-right: 30px;
+  box-shadow: 5px 5px 5px #e6e6e6;
+}
 
-  .add-friend-btn:hover {
-    background-color: #6986a3;
-    color: white;
-  }
+.add-friend-btn:hover {
+  background-color: #5f5eac;
+  color: white;
+}
 </style>

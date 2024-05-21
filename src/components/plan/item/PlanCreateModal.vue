@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref } from "vue";
+import { useRoute } from "vue-router";
 import { useMemberStore } from "@/stores/member";
 import { storeToRefs } from "pinia";
 
@@ -14,19 +14,19 @@ const props = defineProps({
   onSave: Function,
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(["close"]);
 
 const plan = ref({
   travelGroupId: route.params.id,
   creatorId: userInfo.value.id,
-  title: '',
-  overview: '',
-  startDate: '',
-  endDate: '',
+  title: "",
+  overview: "",
+  startDate: "",
+  endDate: "",
 });
 
 const closeModal = () => {
-  emit('close');
+  emit("close");
 };
 
 const savePlan = () => {
@@ -83,7 +83,7 @@ const savePlan = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; 
+  z-index: 1000;
 }
 
 .modal-background {
@@ -92,17 +92,17 @@ const savePlan = () => {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5); 
-  z-index: -1; 
+  background: rgba(0, 0, 0, 0.5);
+  z-index: -1;
 }
 
 .modal-content {
   background: white;
   padding: 20px;
   border-radius: 8px;
-  width: 500px; 
-  max-width: 90%; 
-  z-index: 1001; 
+  width: 500px;
+  max-width: 90%;
+  z-index: 1001;
 }
 
 .box {
@@ -144,7 +144,7 @@ const savePlan = () => {
 }
 
 .button.is-link {
-  background-color: #4285cc;
+  background-color: #8280dd;
   color: white;
   border-radius: 15px;
 }
@@ -155,5 +155,3 @@ const savePlan = () => {
   border-radius: 15px;
 }
 </style>
-
-

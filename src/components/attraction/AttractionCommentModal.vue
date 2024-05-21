@@ -27,7 +27,7 @@ const closeModal = () => {
 
 const saveReview = () => {
   props.onSave(review.value);
-  
+
   closeModal();
 };
 
@@ -54,7 +54,7 @@ const setRating = (index) => {
               @click="setRating(index - 1)"
             ></i>
           </div>
-          <label class="label review-label">리뷰 내용</label>
+          <label  class="label review-label">리뷰 내용</label>
           <div class="control">
             <input class="input review-content" type="text" v-model="review.content" />
           </div>
@@ -140,7 +140,7 @@ const setRating = (index) => {
 }
 
 .fa-star {
-  color: rgb(224, 213, 109);
+  color: #8280dd;
   cursor: pointer; /* 클릭 가능하도록 포인터 커서 설정 */
 }
 
@@ -163,7 +163,7 @@ const setRating = (index) => {
 }
 
 .button.is-link {
-  background-color: #4285cc;
+  background-color: #8280dd;
   color: white;
   border-radius: 15px;
 }

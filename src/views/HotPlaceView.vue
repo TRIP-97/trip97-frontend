@@ -4,9 +4,6 @@ import { ref, onMounted } from "vue";
 
 import videoFile from "@/assets/images/163123-827112905_medium.mp4";
 
-// 이미지 파일을 import 구문으로 불러옵니다
-// import waveGifSrc from '@/assets/images/ship.gif';
-
 const videoPlayer = ref(null);
 const videoSrc = videoFile;
 
@@ -49,6 +46,9 @@ onMounted(() => {
 <style scoped>
 .pageTitle {
   font-size: 48px;
+  background-color: white;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .body-color {
@@ -67,7 +67,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: 72% 72%;
 }
 
 video {
@@ -101,7 +101,6 @@ video {
   transform: translate(-50%, -10%);
   padding: 10px 20px;
   border-radius: 10px; /* 둥근 모서리 */
-  color: white;
   font-size: 2rem;
   z-index: 2; /* 텍스트를 최상위로 배치 */
 }

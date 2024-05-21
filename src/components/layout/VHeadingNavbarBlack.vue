@@ -56,6 +56,7 @@ const handleRouteChange = () => {
 };
 
 onMounted(() => {
+  fetchProfile();
   document.addEventListener("route-changed", handleRouteChange);
   window.addEventListener("scroll", handleScroll);
 });
@@ -177,6 +178,11 @@ onUnmounted(() => {
   transition: background-color 0.3s ease; /* 배경색 전환 효과 */
 }
 
+.bg-white {
+  background-color: rgb(255, 255, 255); /* 배경을 흰색으로 설정 */
+  transition: background-color 0.3s ease; /* 배경색 전환 효과 */
+}
+
 .navbar-nav .nav-item .nav-link {
   color: black; /* 네비게이션 링크 색상 */
   padding: 10px 15px; /* 패딩 추가 */
@@ -209,8 +215,8 @@ onUnmounted(() => {
   color: black; /* 드롭다운 링크 색상 */
 }
 
-.dropdown-menu {
-  background-color: rgba(255, 255, 255, 0.9); /* 드롭다운 메뉴 배경 반투명하게 설정 */
+.dropdown-item:hover {
+  background-color: rgba(0, 0, 0, 0.1); /* 드롭다운 항목 호버 시 배경색 */
 }
 
 .dropdown-item:hover {
@@ -226,10 +232,6 @@ onUnmounted(() => {
   align-items: center;
 }
 
-.nickname {
-  margin-right: 5px;
-}
-
 .profile-drop {
   height: 20px;
 }
@@ -241,6 +243,14 @@ onUnmounted(() => {
 .navbar-brand.logo {
   margin-left: 40px;
   color: rgb(0, 0, 0) !important;
+  font-weight: bold;
+  font-family: "PassionOneBold", sans-serif;
+  font-size: 40px; /* 로고 텍스트 크기 */
+}
+
+.navbar-brand.logo {
+  margin-left: 40px;
+  color: black !important;
   font-weight: bold;
   font-family: "PassionOneBold", sans-serif;
   font-size: 40px; /* 로고 텍스트 크기 */

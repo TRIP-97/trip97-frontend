@@ -26,12 +26,13 @@ const logout = () => {
   sessionStorage.removeItem("accessToken");
   isLogin.value = false;
   userInfo.value = null;
+  console.log("logout");
   router.push({ name: "main" });
 };
 
 const fetchProfile = async () => {
   const token = sessionStorage.getItem("accessToken");
-
+  console.log("메인 헤더 체크!", token);
   if (token) {
     try {
       const response = await getMemberProfile(token);
@@ -39,7 +40,6 @@ const fetchProfile = async () => {
       if (response.data) {
         isLogin.value = true;
         userInfo.value = response.data;
-        console.log(userInfo.value, "fetchprofile");
       }
     } catch (error) {
       console.error("프로필 정보 조회 실패:", error);
@@ -53,10 +53,12 @@ const handleScroll = () => {
 };
 
 const handleRouteChange = () => {
+  console.log("handleRouteChange Check");
   fetchProfile();
 };
 
 onMounted(() => {
+  fetchProfile();
   document.addEventListener("route-changed", handleRouteChange);
   window.addEventListener("scroll", handleScroll);
 });
@@ -149,6 +151,11 @@ onUnmounted(() => {
                       >내 친구</RouterLink
                     >
                   </li>
+                  <!-- <li class="dropdown-item">
+                    <RouterLink class="header-dropdown" :to="{ name: 'friend' }" v-if="isLogin"
+                      >즐겨찾기</RouterLink
+                    >
+                  </li> -->
                   <li>
                     <a class="header-dropdown dropdown-item" @click="logout" v-if="isLogin"
                       >로그아웃</a
@@ -168,7 +175,11 @@ onUnmounted(() => {
 @import "@/assets/css/style.css";
 
 .navbar {
-  padding: 15px;
+  padding: 10px;
+}
+
+.nav-link {
+  margin-top: 10px;
 }
 
 .bg-transparent-custom {
@@ -177,7 +188,7 @@ onUnmounted(() => {
 }
 
 .bg-custom {
-  background-color: rgb(125, 105, 201); /* 배경을 흰색으로 설정 */
+  background-color: #7c7cc4; /* 배경을 흰색으로 설정 */
   transition: background-color 0.3s ease; /* 배경색 전환 효과 */
 }
 

@@ -5,7 +5,7 @@ import { editHotPlaceComment, deleteHotPlaceComment } from "@/api/hotplace";
 const props = defineProps({
   hotPlaceId: String,
   commentItem: Object,
-  memberId: Number
+  memberId: Number,
 });
 
 const emit = defineEmits(["reloadCommentList"]);
@@ -15,18 +15,17 @@ const comment = ref(props.commentItem);
 const editedComment = ref(comment.value.content);
 const isWriter = ref(false);
 
-
 // 댓글 작성자인지 확인하는 함수
 const checkIsWriter = () => {
   if (comment.value.writerId === props.memberId) {
     isWriter.value = true;
   }
-}
+};
 
 // 댓글의 수정 상태 여부를 바꾸는 함수
 const changeEditStatus = () => {
   isEditing.value = !isEditing.value;
-}
+};
 
 // 댓글을 수정하는 함수
 const editComment = () => {
@@ -39,8 +38,8 @@ const editComment = () => {
     (error) => {
       console.log("댓글 수정 중 에러 발생!", error);
     }
-  )
-}
+  );
+};
 
 // 댓글을 삭제하는 함수
 const deleteComment = () => {
@@ -58,15 +57,20 @@ const deleteComment = () => {
 
 onMounted(() => {
   checkIsWriter();
-})
+});
 </script>
 
 <template>
   <div class="comment-card">
     <template v-if="!isEditing">
       <div class="comment-header">
-        <img v-if="comment.writerProfileImage === null" src="@/assets/images/profile.png" alt="Profile" class="profile-img">
-        <img v-else :src="comment.writerProfileImage" alt="" class="profile-img">
+        <img
+          v-if="comment.writerProfileImage === null"
+          src="@/assets/images/profile.png"
+          alt="Profile"
+          class="profile-img"
+        />
+        <img v-else :src="comment.writerProfileImage" alt="" class="profile-img" />
         <div class="comment-metadata">
           <span class="comment-writer">{{ comment.writerNickname }}</span>
           <span class="comment-date">{{ comment.createdAt }}</span>
@@ -86,8 +90,13 @@ onMounted(() => {
     </template>
     <template v-else>
       <div class="comment-header">
-        <img v-if="comment.writerProfileImage === null" src="@/assets/images/profile.png" alt="Profile" class="profile-img">
-        <img v-else :src="comment.writerProfileImage" alt="" class="profile-img">
+        <img
+          v-if="comment.writerProfileImage === null"
+          src="@/assets/images/profile.png"
+          alt="Profile"
+          class="profile-img"
+        />
+        <img v-else :src="comment.writerProfileImage" alt="" class="profile-img" />
         <div class="comment-metadata">
           <span class="comment-writer">{{ comment.writerNickname }}</span>
           <span class="comment-date">{{ comment.createdAt }}</span>
@@ -102,13 +111,12 @@ onMounted(() => {
         </div>
       </div>
       <div class="comment-body">
-        <input type="text" v-model="editedComment" class="form-control edit-input">
+        <input type="text" v-model="editedComment" class="form-control edit-input" />
       </div>
     </template>
   </div>
 
-
-  <div class="card mt-3"  v-if="isEditing == null">
+  <div class="card mt-3" v-if="isEditing == null">
     <div class="card-header bg-light">
       <i class="bi bi-pencil-square"></i>
       <span class="ml-2">댓글 수정</span>
@@ -159,7 +167,7 @@ onMounted(() => {
   border-radius: 8px;
   padding: 15px;
   margin-top: 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .comment-header {
@@ -201,10 +209,10 @@ onMounted(() => {
   background: none;
   border: none;
   cursor: pointer;
-  color: #689beb; 
+  color: #8280dd;
   font-size: 1rem;
   padding: 5px;
-  margin-right: 15px; 
+  margin-right: 15px;
 }
 
 .comment-body {
@@ -213,7 +221,10 @@ onMounted(() => {
   margin-top: 5px;
 }
 
-.fa-pencil, .fa-trash-can, .fa-check, .fa-times {
+.fa-pencil,
+.fa-trash-can,
+.fa-check,
+.fa-times {
   width: 1px;
 }
 
@@ -221,6 +232,6 @@ onMounted(() => {
   flex-grow: 1;
   margin-right: 10px;
   border: none;
-  border-bottom: 1px solid #ccc; 
+  border-bottom: 1px solid #ccc;
 }
 </style>

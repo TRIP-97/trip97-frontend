@@ -1,74 +1,74 @@
 <script setup>
-  import { ref } from "vue";
-  import { useMemberStore } from "@/stores/member";
-  import { storeToRefs } from "pinia";
-  import { sendFriendRequest, isMemberInFriendships } from "@/api/friend";
-  import { getMemberByFriendCode } from "@/api/member";
+import { ref } from "vue";
+import { useMemberStore } from "@/stores/member";
+import { storeToRefs } from "pinia";
+import { sendFriendRequest, isMemberInFriendships } from "@/api/friend";
+import { getMemberByFriendCode } from "@/api/member";
 
-  const memberStore = useMemberStore();
-  const { userInfo } = storeToRefs(memberStore);
+const memberStore = useMemberStore();
+const { userInfo } = storeToRefs(memberStore);
 
-  const props = defineProps({
-    isActive: Boolean,
-  });
+const props = defineProps({
+  isActive: Boolean,
+});
 
-  const emit = defineEmits(["close"]);
+const emit = defineEmits(["close"]);
 
-  const params = ref({
-    toUserId: "",
-    fromUserId: userInfo.value.id,
-  });
-  const friendCode = ref("");
-  const findMember = ref("");
+const params = ref({
+  toUserId: "",
+  fromUserId: userInfo.value.id,
+});
+const friendCode = ref("");
+const findMember = ref("");
 
-  const searchMemberByFriendCode = () => {
-    getMemberByFriendCode(
-      {
-        friendCode: friendCode.value,
-      },
-      ({ data }) => {
-        findMember.value = data;
-        params.value.toUserId = findMember.value.id;
-        console.log(findMember.value);
-      },
-      (error) => {
-        console.log("친구 코드로 멤버 검색중 오류 발생!");
-        console.dir(error);
+const searchMemberByFriendCode = () => {
+  getMemberByFriendCode(
+    {
+      friendCode: friendCode.value,
+    },
+    ({ data }) => {
+      findMember.value = data;
+      params.value.toUserId = findMember.value.id;
+      console.log(findMember.value);
+    },
+    (error) => {
+      console.log("친구 코드로 멤버 검색중 오류 발생!");
+      console.dir(error);
+    }
+  );
+};
+
+const sendRequest = () => {
+  isMemberInFriendships(
+    userInfo.value.id,
+    ({ data }) => {
+      if (data) {
+        window.alert("이미 친구 요청을 했거나 받았습니다!");
+        return;
       }
-    );
-  };
 
-  const sendRequest = () => {
-    isMemberInFriendships(
-      userInfo.value.id,
-      ({ data }) => {
-        if (data) {
-          window.alert("이미 친구 요청을 했거나 받았습니다!");
-          return;
+      sendFriendRequest(
+        params.value,
+        () => {
+          window.alert("친구 요청 성공!");
+          console.log("친구 요청 보내기 성공!");
+        },
+        (error) => {
+          console.log("친구 요청 보내는 중 에러 발생!");
+          console.dir(error);
         }
+      );
+    },
+    (error) => {
+      console.log("친구 요청 여부 확인 중 에러 발생!");
+      console.dir(error);
+    }
+  );
+};
 
-        sendFriendRequest(
-          params.value,
-          () => {
-            window.alert("친구 요청 성공!");
-            console.log("친구 요청 보내기 성공!");
-          },
-          (error) => {
-            console.log("친구 요청 보내는 중 에러 발생!");
-            console.dir(error);
-          }
-        );
-      },
-      (error) => {
-        console.log("친구 요청 여부 확인 중 에러 발생!");
-        console.dir(error);
-      }
-    );
-  };
-
-  const closeModal = () => {
-    emit("close");
-  };
+const closeModal = () => {
+  emit("close");
+};
 </script>
 <template>
   <div class="modal" :class="{ 'is-active': isActive }">
@@ -113,134 +113,135 @@
 </template>
 
 <style scoped>
-  .modal.is-active {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
+.modal.is-active {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
 
-  .modal-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: -1;
-  }
+.modal-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+}
 
-  .modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 500px;
-    max-width: 90%;
-    z-index: 1001;
-  }
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 500px;
+  max-width: 90%;
+  z-index: 1001;
+}
 
-  .box {
-    padding: 20px;
-  }
+.box {
+  padding: 20px;
+}
 
-  .title {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
+.title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
 
-  .field {
-    margin-bottom: 15px;
-  }
+.field {
+  margin-bottom: 15px;
+}
 
-  .field .label {
-    font-weight: bold;
-  }
+.field .label {
+  font-weight: bold;
+}
 
-  .field .control {
-    box-shadow: 3px 3px 3px #e6e6e6;
-  }
+.field .control {
+  box-shadow: 3px 3px 3px #e6e6e6;
+}
 
-  .field .control.is-flex {
-    display: flex;
-  }
+.field .control.is-flex {
+  display: flex;
+}
 
-  .field .control .input {
-    flex-grow: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px 0 0 4px;
-  }
+.field .control .input {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+}
 
-  .search-button {
-    padding: 10px 20px;
-    background-color: #a0d8ef; /* 파스텔톤 하늘색 */
-    border-radius: 0 4px 4px 0;
-    border: 1px solid #ddd;
-  }
+.search-button {
+  padding: 10px 20px;
+  background-color: #8280dd; /* 파스텔톤 하늘색 */
+  border-radius: 0 4px 4px 0;
+  border: 1px solid #ddd;
+}
 
-  .search-result {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* 가로 중심 정렬 */
-    min-height: 100px;
-    border: 1px solid rgb(187, 187, 187);
-    border-radius: 10px;
-    margin-bottom: 20px;
-    box-shadow: 3px 3px 3px #e6e6e6;
-  }
+.search-result {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 가로 중심 정렬 */
+  min-height: 100px;
+  border: 1px solid rgb(187, 187, 187);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 3px 3px 3px #e6e6e6;
+}
 
-  .empty-result {
-    color: gray;
-    margin: 30px 0px;
-  }
+.empty-result {
+  color: gray;
+  margin: 30px 0px;
+}
 
-  .find-member-info {
-    display: flex;
-    align-items: center; /* 세로 중심 정렬 */
-    background-color: #f5f5f5; /* 부드러운 회색 */
-    padding: 10px;
-    border-radius: 10px;
-    width: calc(100% - 30px);
-    margin: 0 10px; /* 좌우 마진 추가 */
-  }
+.find-member-info {
+  display: flex;
+  align-items: center; /* 세로 중심 정렬 */
+  background-color: #f5f5f5; /* 부드러운 회색 */
+  padding: 10px;
+  border-radius: 10px;
+  width: calc(100% - 30px);
+  margin: 0 10px; /* 좌우 마진 추가 */
+}
 
-  .profile-image {
-    width: 30px;
-    height: 30px;
-    margin-right: 10px;
-  }
+.profile-image {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
 
-  .nickname {
-    flex-grow: 1;
-    margin: 0;
-  }
+.nickname {
+  flex-grow: 1;
+  margin: 0;
+}
 
-  .send-request-button {
-    margin-left: auto;
-    background-color: #4285cc;
-    color: white;
-    border-radius: 15px;
-  }
+.send-request-button {
+  margin-left: auto;
+  background-color: #8280dd;
+  border: 1px solid #8280dd;
+  color: white;
+  border-radius: 15px;
+}
 
-  .field.is-grouped {
-    display: flex;
-    justify-content: flex-end;
-  }
+.field.is-grouped {
+  display: flex;
+  justify-content: flex-end;
+}
 
-  .button {
-    padding: 10px 20px;
-  }
+.button {
+  padding: 10px 20px;
+}
 
-  .button.is-light {
-    background-color: #c2c2c2;
-    color: #333;
-    border: 1px solid rgb(189, 189, 189);
-    border-radius: 15px;
-    box-shadow: 3px 3px 3px #e6e6e6;
-  }
+.button.is-light {
+  background-color: #c2c2c2;
+  color: #333;
+  border: 1px solid rgb(189, 189, 189);
+  border-radius: 15px;
+  box-shadow: 3px 3px 3px #e6e6e6;
+}
 </style>

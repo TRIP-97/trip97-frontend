@@ -61,9 +61,9 @@ const kakaoLogin = () => {
         <h1 class="pageTitle">로그인</h1>
       </div>
     </div>
-    <div class="row justify-content-center">
+    <div class="body-color row justify-content-center">
       <div class="col-lg-3 login-container">
-        <!-- <p class="login-message">TRIP97</p> -->
+        <!-- <p class="login-message">Login</p> -->
         <img
           class="login-button naver-btn"
           src="../assets/images/naverLoginBtn.png"
@@ -87,8 +87,9 @@ const kakaoLogin = () => {
 }
 
 .body-color {
-  background-color: rgb(232, 232, 255);
+  background-color: rgb(255, 255, 255);
   padding-top: 55px;
+  padding-bottom: 100px;
 }
 
 .header-image {

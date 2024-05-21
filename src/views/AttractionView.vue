@@ -70,7 +70,7 @@ import VHeadingNavbar from "../components/layout/VHeadingNavbarWhite.vue";
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: 30% 30%;
 }
 
 video {
@@ -87,7 +87,7 @@ video {
   height: 100%;
   background: linear-gradient(
     to bottom,
-    rgba(119, 119, 156, 0.4) 0%,
+    rgba(85, 85, 85, 0.4) 0%,
     rgba(255, 255, 255, 0.01) 32%,
     rgba(255, 255, 255, 0.01) 80%,
     rgb(133, 133, 167, 0.8) 92%,

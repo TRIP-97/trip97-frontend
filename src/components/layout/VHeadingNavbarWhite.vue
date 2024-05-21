@@ -56,6 +56,7 @@ const handleRouteChange = () => {
 };
 
 onMounted(() => {
+  fetchProfile();
   document.addEventListener("route-changed", handleRouteChange);
   window.addEventListener("scroll", handleScroll);
 });
@@ -133,11 +134,7 @@ onUnmounted(() => {
                   @mouseover="toggleDropdownIcon(true)"
                   @mouseout="toggleDropdownIcon(false)"
                 >
-                  <img
-                    :src="userInfo.profileImage"
-                    alt="프로필 이미지"
-                    class="profile-image"
-                  />
+                  <img :src="userInfo.profileImage" alt="프로필 이미지" class="profile-image" />
                   {{ userInfo.nickname }}
                   <img :src="dropdownIconSrc" alt="드롭다운 아이콘" class="profile-drop" />
                 </a>
@@ -171,7 +168,7 @@ onUnmounted(() => {
 @import "@/assets/css/style.css";
 
 .navbar {
-  padding: 15px;
+  padding: 10px;
 }
 
 .bg-transparent-custom {
@@ -180,7 +177,7 @@ onUnmounted(() => {
 }
 
 .bg-custom {
-  background-color: rgb(125, 105, 201); /* 배경을 흰색으로 설정 */
+  background-color: #7c7cc4; /* 배경을 흰색으로 설정 */
   transition: background-color 0.3s ease; /* 배경색 전환 효과 */
 }
 

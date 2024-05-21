@@ -41,7 +41,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="board-body">
+  <div class="board-body d-flex flex-column align-items-center">
     <div class="board-container d-flex flex-column align-items-center">
       <h1></h1>
       <table class="board-list table table-hover">
@@ -102,7 +102,7 @@ table.board-list td {
   background-color: white;
   border-radius: 15px;
   width: 100px;
-  height: 50px;
+  height: 40px;
 }
 
 .btnBox {

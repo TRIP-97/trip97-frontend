@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
 const router = useRouter();
@@ -20,7 +20,7 @@ function formatVisitedDate(dateString) {
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();
-  return `${year}.${month.toString().padStart(2, '0')}.${day.toString().padStart(2, '0')}`;
+  return `${year}.${month.toString().padStart(2, "0")}.${day.toString().padStart(2, "0")}`;
 }
 
 // 두 날짜 사이의 일수를 계산하는 함수
@@ -39,10 +39,9 @@ const goPlanPage = (planId) => {
     params: {
       groupId: route.params.id,
       planId: planId,
-    }
-  })
+    },
+  });
 };
-
 </script>
 
 <template>
@@ -50,7 +49,10 @@ const goPlanPage = (planId) => {
     <div class="plan-header-container">
       <div class="plan-header">
         <h3>{{ plan.title }}</h3>
-        <p><i class="travel-date-icon fa-solid fa-calendar"></i>{{ plan.startDate }} - {{ plan.endDate }}</p>
+        <p>
+          <i class="travel-date-icon fa-solid fa-calendar"></i>{{ plan.startDate }} -
+          {{ plan.endDate }}
+        </p>
         <p class="default-message">곧 떠날 여행 일정을 확인해보세요!</p>
       </div>
       <div class="plan-day">
@@ -64,7 +66,7 @@ const goPlanPage = (planId) => {
 
 <style scoped>
 .plan-card {
-  background-color: #6bd5b3;
+  background-color: #8280dd;
   border-radius: 15px;
   padding: 20px;
   color: white;
@@ -96,7 +98,7 @@ const goPlanPage = (planId) => {
 
 .plan-day {
   background-color: white;
-  color: #6bd5b3;
+  color: #8280dd;
   border-radius: 50%;
   width: 60px;
   height: 60px;
@@ -119,7 +121,7 @@ const goPlanPage = (planId) => {
 
 .add-plan-btn {
   background-color: white;
-  color: #6bd5b3;
+  color: #8280dd;
   border: none;
   padding: 10px 20px;
   border-radius: 20px;
@@ -130,7 +132,7 @@ const goPlanPage = (planId) => {
 }
 
 .add-plan-btn:hover {
-  background-color: #5bc8a3;
+  background-color: #6d6cbd;
   color: white;
 }
 
@@ -139,6 +141,6 @@ const goPlanPage = (planId) => {
 }
 
 .default-message {
-  color: #b1eac8;
+  color: #1f0e52;
 }
 </style>

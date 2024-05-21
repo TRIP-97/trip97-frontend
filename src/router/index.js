@@ -3,13 +3,15 @@ import MainView from "@/views/MainView.vue";
 import LoginView from "@/views/LoginView.vue";
 import ProfileView from "@/views/ProfileView.vue";
 import NaverCallBack from "@/components/callback/NaverCallBack.vue";
-import KakaoCallBack from '@/components/callback/KakaoCallBack.vue'
+import KakaoCallBack from "@/components/callback/KakaoCallBack.vue";
 import HotPlaceView from "@/views/HotPlaceView.vue";
 import GroupView from "@/views/GroupView.vue";
 import PlanView from "@/views/PlanView.vue";
 import BoardView from "@/views/BoardView.vue";
 import AttractionView from "@/views/AttractionView.vue";
 import FriendView from "@/views/FriendView.vue";
+import NotFound from '@/views/NotFound.vue';
+import ServerError from '@/views/ServerError.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,7 +20,15 @@ const router = createRouter({
       path: "/",
       name: "main",
       component: MainView,
-      meta: { showHeader: false },
+      meta: { showHeader: "main" },
+      redirect: { name: "mainPage" },
+      children: [
+        {
+          path: "home",
+          name: "mainPage",
+          component: () => import("../components/main/MainPage.vue"),
+        },
+      ],
     },
     {
       path: "/login",
@@ -27,13 +37,27 @@ const router = createRouter({
       meta: { showHeader: "white" },
     },
     {
+      path: '/500',
+      name: 'ServerError',
+      component: ServerError,
+      meta: { showHeader: "white" },
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: NotFound,
+      meta: { showHeader: "white" },
+    },
+    {
       path: "/naver/callback",
       name: "naverCallBack",
+      meta: { showHeader: "main" },
       component: NaverCallBack,
     },
     {
       path: "/kakao/callback",
       name: "kakaoCallBack",
+      meta: { showHeader: "main" },
       component: KakaoCallBack,
     },
     {
@@ -52,8 +76,8 @@ const router = createRouter({
           path: "/modify",
           name: "profileModify",
           component: () => import("../components/profile/ProfileModify.vue"),
-        }
-      ]
+        },
+      ],
     },
     {
       path: "/hotplace",
@@ -172,7 +196,7 @@ const router = createRouter({
       path: "/attraction",
       name: "attraction",
       component: AttractionView,
-      meta: { showHeader: "black" },
+      meta: { showHeader: "white" },
       redirect: { name: "attractionList" },
       children: [
         {
@@ -208,6 +232,8 @@ router.beforeEach((to, from) => {
   if (to.name !== from.name) {
     document.dispatchEvent(new CustomEvent("route-changed"));
   }
+
+  console.log("router check!");
 });
 
 export default router;
