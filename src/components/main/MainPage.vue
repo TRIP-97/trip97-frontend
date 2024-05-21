@@ -7,6 +7,7 @@
   import "vue3-carousel/dist/carousel.css";
   import testImage from "@/assets/images/HotPlacePageLogo.jpg";
   import testProfileImage from "@/assets/images/profile.png";
+
   const memberStore = useMemberStore();
   const { userInfo, isLogin } = storeToRefs(memberStore);
 
@@ -37,24 +38,6 @@
   function gotoMyPage () {
     router.push({
       name : "profile"
-    })
-  }
-
-  function gotoComunity () {
-    router.push({
-      name : "board"
-    })
-  }
-
-  function gotoHotplace () {
-    router.push({
-      name : "hotPlace"
-    })
-  }
-
-  function gotoGroup () {
-    router.push({
-      name : "group"
     })
   }
 
@@ -132,11 +115,11 @@
   ]);
 
   const popularPosts = ref([
-    { id: 1, title: '남산타워에서의 일출', author: '홍길동', views: 123, date: '2024-05-01' },
-    { id: 2, title: '제주도 여행 후기', author: '김철수', views: 456, date: '2024-05-02' },
-    { id: 3, title: '부산 해운대 맛집 탐방', author: '이영희', views: 789, date: '2024-05-03' },
-    { id: 4, title: '서울의 숨겨진 명소', author: '박민수', views: 101, date: '2024-05-04' },
-    { id: 5, title: '경복궁 야경 투어', author: '최지우', views: 202, date: '2024-05-05' },
+    { id: 1, title: "남산타워에서의 일출", author: "홍길동", views: 123, date: "2024-05-01" },
+    { id: 2, title: "제주도 여행 후기", author: "김철수", views: 456, date: "2024-05-02" },
+    { id: 3, title: "부산 해운대 맛집 탐방", author: "이영희", views: 789, date: "2024-05-03" },
+    { id: 4, title: "서울의 숨겨진 명소", author: "박민수", views: 101, date: "2024-05-04" },
+    { id: 5, title: "경복궁 야경 투어", author: "최지우", views: 202, date: "2024-05-05" },
   ]);
 
   const hotplaces = ref([
@@ -231,6 +214,38 @@
       likes: 11,
     },
   ]);
+
+  // 로그인하기 버튼 클릭시 로그인 화면으로 이동하는 함수
+  const moveToLoginPage = () => {
+    router.push({
+      name: "login",
+    });
+  };
+
+  // 여행 모임 만들기 + 버튼 클릭시 여행 모임 화면으로 이동하는 함수
+  const moveToGroupPage = () => {
+    if (isLogin.value) {
+      router.push({
+        name: "groupWrite",
+      });
+    } else {
+      window.alert("로그인을 먼저 해주세요!");
+    }
+  };
+
+  // 커뮤니티 카드를 누르면 커뮤니티 화면으로 이동하는 함수
+  const moveToCommunityPage = () => {
+    router.push({
+      name: "board",
+    });
+  };
+
+  // 핫플레이스 카드를 누르면 핫플레이스 화면으로 이동하는 함수
+  const moveToHotPlacePage = () => {
+    router.push({
+      name: "hotPlace",
+    });
+  };
 </script>
 
 <template>
@@ -256,7 +271,7 @@
                 <p>여행자님!</p>
               </div>
             </div>
-            <button class="btn login-btn">로그인하기</button>
+            <button class="btn login-btn" @click="moveToLoginPage">로그인하기</button>
           </div>
           <div class="col-lg-7 my-group-area d-flex justify-content-center align-items-center">
             <div class="group-default-message">
@@ -264,7 +279,7 @@
               <br />
                 <h7>먼저, 여행 모임을 만들어볼까요?</h7>
             </div>
-            <button class="btn create-group-btn" @click="gotoGroup">+</button>
+            <button @click="moveToGroupPage" class="btn create-group-btn">+</button>
           </div>
         </div>
         <div class="friends-area">
@@ -276,12 +291,13 @@
             </div>
           </div>
           <div class="friends-list">
-            <carousel 
-            :items-to-show="5"
-            :wrap-around="true"
-            :transition="1000"
-            :autoplay="300"
-            class="friend-slider">
+            <carousel
+              :items-to-show="5"
+              :wrap-around="true"
+              :transition="1000"
+              :autoplay="300"
+              class="friend-slider"
+            >
               <slide v-for="friend in friends" :key="friend.id">
                 <div class="friend">
                   <img
@@ -293,7 +309,6 @@
                   <p>{{ friend.nickname }}</p>
                 </div>
               </slide>
-
             </carousel>
           </div>
         </div>
@@ -301,7 +316,7 @@
 
       <div class="col-lg-6 move-page-area">
         <div class="row">
-          <div class="col-lg-5 move-community" @click="gotoComunity">
+          <div @click="moveToCommunityPage" class="col-lg-5 move-community">
             <img
               src="@/assets/images/mainImages/community.jpg"
               class="move-image"
@@ -311,7 +326,7 @@
               <h2>커뮤니티</h2>
             </div>
           </div>
-          <div class="col-lg-5 move-hotplace" @click="gotoHotplace">
+          <div @click="moveToHotPlacePage" class="col-lg-5 move-hotplace">
             <img src="@/assets/images/mainImages/hotplace.jpg" class="move-image" alt="Hotplace" />
             <div class="overlay">
               <h2>HOTPLACE</h2>
@@ -327,12 +342,15 @@
       <carousel :items-to-show="3" class="hot-attraction-slider">
         <slide v-for="attraction in attractions" :key="attraction.id">
           <div class="card hot-attraction-card">
-            <img :src="attraction.image" class="hot-card-image" alt="">
+            <img :src="attraction.image" class="hot-card-image" alt="" />
             <div class="overlay">
               <h2>{{ attraction.name }}</h2>
               <div class="review">
                 <i class="fa-solid fa-message"></i>
-                <span><strong class="attraction-review-count">{{ attraction.reviewCount }}</strong>개의 리뷰</span>
+                <span
+                  ><strong class="attraction-review-count">{{ attraction.reviewCount }}</strong
+                  >개의 리뷰</span
+                >
               </div>
               <div clase="rating">
                 <i class="fa-solid fa-star"></i>
@@ -358,7 +376,7 @@
       </div>
 
       <table class="table hot-post-table text-center">
-        <thead class="table-light ">
+        <thead class="table-light">
           <tr>
             <th>제목</th>
             <th>작성자</th>
@@ -389,7 +407,7 @@
       <carousel :items-to-show="3" class="hotplace-slider">
         <slide v-for="hotplace in hotplaces" :key="hotplace.id">
           <div class="card hotplace-card">
-            <img :src="hotplace.image" class="card-image" alt="">
+            <img :src="hotplace.image" class="card-image" alt="" />
             <div class="card-body">
               <div class="location">
                 <div>
@@ -516,7 +534,8 @@
     box-shadow: 0 0 10px red;
   }
 
-  .friends-text, .hot-board-text {
+  .friends-text,
+  .hot-board-text {
     display: flex;
     flex-direction: column;
     margin-left: 10px;
@@ -694,26 +713,26 @@
 
   .fa-message {
     margin-right: 10px; /* 아이콘과 텍스트 간 여백 추가 */
-    color: #88DEBF;
+    color: #88debf;
   }
 
   .fa-star {
     margin-right: 10px;
-    color: #F9AC66;
+    color: #f9ac66;
   }
-  
+
   .attraction-review-count {
-    color: #88DEBF;
+    color: #88debf;
     margin-right: 3px;
   }
-  
+
   .attraction-rating {
-    color: #F9AC66;
+    color: #f9ac66;
   }
 
   .hot-board-header {
     margin-top: 100px;
-    background-color: #EEEEFF;
+    background-color: #eeeeff;
     border-radius: 15px;
     padding-left: 30px;
     padding-bottom: 30px;
@@ -722,7 +741,7 @@
 
   .fa-fire {
     font-size: 25px;
-    color: #DF4242;
+    color: #df4242;
   }
 
   .hot-board-main-text {
@@ -741,7 +760,7 @@
     color: #3431bc;
     font-size: 16px;
   }
-  
+
   .hot-post-table {
     margin-top: 30px;
   }
@@ -749,7 +768,7 @@
   .pick-header {
     margin-top: 100px;
     margin-bottom: 50px;
-    background-color: #EEEEFF;
+    background-color: #eeeeff;
     border-radius: 15px;
     padding-left: 30px;
     padding-bottom: 30px;
@@ -758,7 +777,7 @@
 
   .fa-crown {
     font-size: 25px;
-    color: #613FE9;
+    color: #613fe9;
   }
 
   .pick-main-text {
@@ -788,66 +807,66 @@
   } */
 
   .hotplace-card {
-  width: 300px;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 2px 2px 2px 2px rgba(128, 128, 128, 0.4);
-  position: relative;
-  margin-bottom: 20px;
-}
+    width: 300px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 2px 2px 2px 2px rgba(128, 128, 128, 0.4);
+    position: relative;
+    margin-bottom: 20px;
+  }
 
-.card-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
+  .card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
 
-.card-body {
-  padding: 15px;
-  background-color: white;
-}
+  .card-body {
+    padding: 15px;
+    background-color: white;
+  }
 
-.location {
-  display: flex;
-  justify-content: space-between; /* 두 요소를 양 끝으로 배치 */
-  align-items: center;
-  font-size: 14px;
-  color: #666;
-}
+  .location {
+    display: flex;
+    justify-content: space-between; /* 두 요소를 양 끝으로 배치 */
+    align-items: center;
+    font-size: 14px;
+    color: #666;
+  }
 
-.location .fa-location-dot {
-  color: #613FE9;
-  margin-right: 5px;
-}
+  .location .fa-location-dot {
+    color: #613fe9;
+    margin-right: 5px;
+  }
 
-.title {
-  font-size: 16px;
-  font-weight: bold;
-  margin: 10px 0;
-  color: #333;
-  text-align: left; 
-}
+  .title {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 10px 0;
+    color: #333;
+    text-align: left;
+  }
 
-.writer-info {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: #999;
-}
+  .writer-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #999;
+  }
 
-.writer-info .created-at {
-  font-size: 12px;
-  color: #999;
-}
+  .writer-info .created-at {
+    font-size: 12px;
+    color: #999;
+  }
 
-.like {
-  display: flex;
-  align-items: center;
-  color: rgb(236, 87, 87);
-  font-size: 14px;
-}
+  .like {
+    display: flex;
+    align-items: center;
+    color: rgb(236, 87, 87);
+    font-size: 14px;
+  }
 
-.like i {
-  margin-right: 5px;
-}
+  .like i {
+    margin-right: 5px;
+  }
 </style>
