@@ -3,7 +3,7 @@ import MainView from "@/views/MainView.vue";
 import LoginView from "@/views/LoginView.vue";
 import ProfileView from "@/views/ProfileView.vue";
 import NaverCallBack from "@/components/callback/NaverCallBack.vue";
-import KakaoCallBack from '@/components/callback/KakaoCallBack.vue'
+import KakaoCallBack from "@/components/callback/KakaoCallBack.vue";
 import HotPlaceView from "@/views/HotPlaceView.vue";
 import GroupView from "@/views/GroupView.vue";
 import PlanView from "@/views/PlanView.vue";
@@ -18,31 +18,39 @@ const router = createRouter({
       path: "/",
       name: "main",
       component: MainView,
-      meta : { showHeader : false},
+      meta: { showHeader: false },
+      redirect: { name: "mainPage" },
+      children: [
+        {
+          path: "home",
+          name: "mainPage",
+          component: () => import("../components/main/MainPage.vue"),
+        },
+      ],
     },
     {
       path: "/login",
       name: "login",
       component: LoginView,
-      meta : { showHeader : true },
+      meta: { showHeader: true },
     },
     {
       path: "/naver/callback",
       name: "naverCallBack",
       component: NaverCallBack,
-      meta : { showHeader : true },
+      meta: { showHeader: true },
     },
     {
-      path : "/kakao/callback",
-      name : "kakaoCallBack",
-      component : KakaoCallBack,
-      meta : {showHeader : true},
+      path: "/kakao/callback",
+      name: "kakaoCallBack",
+      component: KakaoCallBack,
+      meta: { showHeader: true },
     },
     {
       path: "/profile",
       name: "profile",
       component: ProfileView,
-      meta : { showHeader : true },
+      meta: { showHeader: true },
       redirect: { name: "profileDetail" },
       children: [
         {
@@ -54,14 +62,14 @@ const router = createRouter({
           path: "/modify",
           name: "profileModify",
           component: () => import("../components/profile/ProfileModify.vue"),
-        }
-      ]
+        },
+      ],
     },
     {
       path: "/hotplace",
       name: "hotPlace",
       component: HotPlaceView,
-      meta : { showHeader : true },
+      meta: { showHeader: true },
       redirect: { name: "hotPlaceList" },
       children: [
         {
@@ -91,7 +99,7 @@ const router = createRouter({
       name: "group",
       component: GroupView,
       redirect: { name: "groupList" },
-      meta : { showHeader : true },
+      meta: { showHeader: true },
       children: [
         {
           path: "list",
@@ -139,13 +147,13 @@ const router = createRouter({
       path: "/group/:groupId/plan/:planId",
       name: "plan",
       component: PlanView,
-      meta : { showHeader : true },
+      meta: { showHeader: true },
     },
     {
       path: "/board",
       name: "board",
       component: BoardView,
-      meta : { showHeader : true },
+      meta: { showHeader: true },
       redirect: { name: "boardList" },
       children: [
         {
@@ -174,7 +182,7 @@ const router = createRouter({
       path: "/attraction",
       name: "attraction",
       component: AttractionView,
-      meta : { showHeader : true },
+      meta: { showHeader: true },
       redirect: { name: "attractionList" },
       children: [
         {
@@ -188,7 +196,7 @@ const router = createRouter({
       path: "/friend",
       name: "friend",
       component: FriendView,
-      meta : { showHeader : true },
+      meta: { showHeader: true },
       redirect: { name: "friendList" },
       children: [
         {
