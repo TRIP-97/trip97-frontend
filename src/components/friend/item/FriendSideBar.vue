@@ -1,11 +1,11 @@
 <script setup>
-  import { RouterLink, useRoute } from "vue-router";
-  import { computed } from "vue";
+import { RouterLink, useRoute } from "vue-router";
+import { computed } from "vue";
 
-  const route = useRoute();
+const route = useRoute();
 
-  const isActiveFriendList = computed(() => route.name === "friendList");
-  const isActiveFriendRequestList = computed(() => route.name === "friendRequestList");
+const isActiveFriendList = computed(() => route.name === "friendList");
+const isActiveFriendRequestList = computed(() => route.name === "friendRequestList");
 </script>
 
 <template>
@@ -41,16 +41,20 @@
 </template>
 
 <style scoped>
-  .nav-item:not(.active) a:hover {
-    background-color: #ebebeb;
-  }
+.nav-item {
+  margin-top: 10px;
+}
 
-  .nav-link.active {
-    background-color: #71b8ff !important;
-    border-color: #dee2e6;
-  }
+.nav-item:not(.active) a:hover {
+  background-color: #e5e4ff;
+}
 
-  .nav-link:not(.active) {
-    color: #6094c9;
-  }
+.nav-link.active {
+  background-color: #8280dd !important;
+  border-color: #dee2e6;
+}
+
+.nav-link:not(.active) {
+  color: #8280dd;
+}
 </style>

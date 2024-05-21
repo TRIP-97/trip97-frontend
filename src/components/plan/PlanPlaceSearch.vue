@@ -4,7 +4,7 @@ import { useRoute } from "vue-router";
 import { getAttractions, getDropdownContentSido, getDropdownGugun } from "@/api/attraction.js";
 
 const route = useRoute();
-const emit = defineEmits(['change-view', 'add-place']);
+const emit = defineEmits(["change-view", "add-place"]);
 
 const groupId = route.params.groupId;
 const planId = route.params.planId;
@@ -36,8 +36,8 @@ const checkedAttractions = ref([]); // 체크된 관광지 상태 관리
 
 // 계획 상세 화면으로 이동하는 함수
 const changeDetailView = () => {
-  emit('change-view');
-}
+  emit("change-view");
+};
 
 // 관광지를 받아오는 함수
 async function getAttractionList() {
@@ -55,7 +55,7 @@ async function getAttractionList() {
       attractions.value = response.data;
       content.value.code = 0;
       content.value.name = "";
-      console.log("관광지 불러오기 성공!")
+      console.log("관광지 불러오기 성공!");
     },
     (error) => {
       console.log("관광지 불러오는 중 에러 발생");
@@ -125,14 +125,18 @@ const moveToAttraction = (attraction) => {
 // 검색된 관광지 체크박스 관리
 const handleCheckAttraction = (e, attractionId) => {
   checkedAttractions.value[attractionId] = e.target.checked;
-}
-
+};
 
 // 장소 추가 기능을 하는 함수
 const handleAddPlace = () => {
   selectedPlaces.value = [];
 
-  if (customChecked.value && customPlaceTitle.value && customLatitude.value && customLongitude.value) {
+  if (
+    customChecked.value &&
+    customPlaceTitle.value &&
+    customLatitude.value &&
+    customLongitude.value
+  ) {
     selectedPlaces.value.push({
       title: customPlaceTitle.value,
       latitude: customLatitude.value,
@@ -143,7 +147,7 @@ const handleAddPlace = () => {
 
   for (const attractionId in checkedAttractions.value) {
     if (checkedAttractions.value[attractionId]) {
-      const attraction = attractions.value.find(a => a.id === parseInt(attractionId));
+      const attraction = attractions.value.find((a) => a.id === parseInt(attractionId));
       if (attraction) {
         selectedPlaces.value.push({
           title: attraction.title,
@@ -154,9 +158,9 @@ const handleAddPlace = () => {
       }
     }
   }
-  emit('add-place', selectedPlaces.value);
-  emit('change-view');
-}
+  emit("add-place", selectedPlaces.value);
+  emit("change-view");
+};
 
 // KAKAO MAP API 시작
 const map = toRefs(null);
@@ -255,7 +259,9 @@ onMounted(() => {
             <i @click="changeDetailView" class="fa-solid fa-chevron-left"></i>
           </div>
           <div class="col-lg-6 d-flex align-items-center justify-content-center position-relative">
-            <p class="position-absolute start-50 translate-middle-x page-title">여행 장소 찾아보기</p>
+            <p class="position-absolute start-50 translate-middle-x page-title">
+              여행 장소 찾아보기
+            </p>
           </div>
           <div class="col-lg-3 d-flex align-items-center justify-content-end">
             <button class="btn btn-primary add-place-btn" @click="handleAddPlace">추가하기</button>
@@ -264,19 +270,28 @@ onMounted(() => {
 
         <!-- 여행 장소 찾기 -->
         <div class="custom-place-inputs d-flex align-items-center mb-3">
-          <input type="text" v-model="customPlaceTitle" placeholder="내가 선택한 장소의 이름을 입력해주세요" class="form-control w-75 custom-place-title">
-          <input type="checkbox" class="ms-2 custom-checkbox" v-model="customChecked">
+          <input
+            type="text"
+            v-model="customPlaceTitle"
+            placeholder="내가 선택한 장소의 이름을 입력해주세요"
+            class="form-control w-75 custom-place-title"
+          />
+          <input type="checkbox" class="ms-2 custom-checkbox" v-model="customChecked" />
         </div>
 
         <div class="drop">
           <div class="select-container">
             <label class="select-label" for="sido">시도</label>
             <select class="sido" id="sido" v-model="sido">
-                <option :value="{ code: 0, name: '' }">전체</option>
-                <option v-for="si in sidos" :value="si">{{ si.name }}</option>
+              <option :value="{ code: 0, name: '' }">전체</option>
+              <option v-for="si in sidos" :value="si">{{ si.name }}</option>
             </select>
             <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-down w-6 h-6">
-              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+              <path
+                fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd"
+              />
             </svg>
           </div>
           <div class="select-container">
@@ -286,35 +301,52 @@ onMounted(() => {
               <option v-for="gu in guguns" :value="gu">{{ gu.name }}</option>
             </select>
             <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-down w-6 h-6">
-              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+              <path
+                fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd"
+              />
             </svg>
           </div>
           <div class="select-container">
             <label class="select-label" for="placeName">장소 이름</label>
-            <input type="text" id="placeName" v-model="searchPlaceTitle" class="form-control place-name-input">
+            <input
+              type="text"
+              id="placeName"
+              v-model="searchPlaceTitle"
+              class="form-control place-name-input"
+            />
           </div>
-          <button class="searchBtn" @click="getAttractionList">
-            검색
-          </button>
+          <button class="searchBtn" @click="getAttractionList">검색</button>
         </div>
 
         <!-- 검색한 관광지 목록 -->
         <div class="attraction-list overflow-auto">
-          <div 
-          class="row attraction-section p-2 mb-2" 
-          v-for="attraction in attractions" 
-          :key="attraction.id" 
-          style="background-color: #f5f5f5; border-radius: 10px;">
+          <div
+            class="row attraction-section p-2 mb-2"
+            v-for="attraction in attractions"
+            :key="attraction.id"
+            style="background-color: #f5f5f5; border-radius: 10px"
+          >
             <div class="col-lg-10 attraction-info d-flex" @click="moveToAttraction(attraction)">
-              <img v-if="attraction.firstImage !== ''" :src="attraction.firstImage" alt="" style="width: 50px;">
-              <img v-else src="@/assets/images/no_image.png" alt="" style="width: 50px;">
+              <img
+                v-if="attraction.firstImage !== ''"
+                :src="attraction.firstImage"
+                alt=""
+                style="width: 50px"
+              />
+              <img v-else src="@/assets/images/no_image.png" alt="" style="width: 50px" />
               <div class="ms-2">
                 <p class="mb-0 attraction-title">{{ attraction.title }}</p>
                 <p class="mb-0 attraction-address">{{ attraction.address }}</p>
               </div>
             </div>
             <div class="col-lg-2 d-flex align-items-center justify-content-end">
-              <input type="checkbox" class="custom-checkbox" @change="(e) => handleCheckAttraction(e, attraction.id)">
+              <input
+                type="checkbox"
+                class="custom-checkbox"
+                @change="(e) => handleCheckAttraction(e, attraction.id)"
+              />
             </div>
           </div>
         </div>
@@ -323,209 +355,209 @@ onMounted(() => {
   </div>
 </template>
 
-
 <style scoped>
-  .plan-container {
-    margin-top: 50px;
-  }
+.plan-container {
+  margin-top: 50px;
+}
 
-  .map-area {
-    margin-right: 30px;
-    border-radius: 15px;
-    box-shadow: 2px 2px 2px 2px rgba(200, 200, 200, 0.8);
-    background-color: rgb(255, 255, 255, 0.6);
-  }
+.map-area {
+  margin-right: 30px;
+  border-radius: 15px;
+  box-shadow: 2px 2px 2px 2px rgba(200, 200, 200, 0.8);
+  background-color: rgb(255, 255, 255, 0.6);
+}
 
-  .map {
-    width: auto;
-    height: 650px;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    border: 1px solid rgb(183, 183, 183);
-    border-radius: 10px;
-  }
+.map {
+  width: auto;
+  height: 650px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  border: 1px solid rgb(183, 183, 183);
+  border-radius: 10px;
+}
 
-  .fa-chevron-left {
-    margin-left: 15px;
-    cursor: pointer;
-  }
+.fa-chevron-left {
+  margin-left: 15px;
+  cursor: pointer;
+}
 
-  .page-title {
-    padding-top: 13px;
-  }
+.page-title {
+  padding-top: 13px;
+}
 
-  .plan-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 15px;
-    border-bottom: 1px solid #ddd;
-  }
+.plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  border-bottom: 1px solid #ddd;
+}
 
-  .custom-place-inputs {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-  }
+.custom-place-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
 
-  .custom-place-title {
-    font-size: 13px;
-    font-family: NanumSquareRound;
-  }
+.custom-place-title {
+  font-size: 13px;
+  font-family: NanumSquareRound;
+}
 
-  .form-control {
-    flex: 1;
-  }
+.form-control {
+  flex: 1;
+}
 
-  .drop {
-    display: flex;
-    align-items: flex-end;
-    gap: 10px;
-  }
+.drop {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
 
-  .select-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-  }
+.select-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
 
-  .select-label {
-    margin-bottom: 5px;
-    font-size: 14px;
-    color: #333;
-  }
+.select-label {
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #333;
+}
 
-  .select-container select,
-  .select-container input {
-    appearance: none;
-    padding: 8px 16px;
-    padding-right: 40px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: white;
-    font-size: 14px;
-    color: #333;
-    cursor: pointer;
-  }
+.select-container select,
+.select-container input {
+  appearance: none;
+  padding: 8px 16px;
+  padding-right: 40px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: white;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+}
 
-  .place-name-input {
-    padding-right: 0;
-  }
+.place-name-input {
+  padding-right: 0;
+}
 
-  .select-container svg {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    pointer-events: none;
-    width: 16px;
-    height: 16px;
-    fill: #333;
-  }
-  
-  .add-place-btn, .searchBtn {
-    border: 1px solid #d8b3de;
-    background-color: #c690ce;
+.select-container svg {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  pointer-events: none;
+  width: 16px;
+  height: 16px;
+  fill: #333;
+}
 
-  }
-  
-  .add-place-btn:hover, .searchBtn:hover {
-    border: 1px solid #be5bab;
-      background-color: #be5bab;
-    }
+.add-place-btn,
+.searchBtn {
+  border: 1px solid #8280dd;
+  background-color: #8280dd;
+}
 
-  .searchBtn {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    padding: 8px 16px;
-    width: 70px;
-    height: 40px; /* 입력창과 버튼의 높이를 맞춥니다 */
-    border-radius: 8px;
-    color: white;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-  }
+.add-place-btn:hover,
+.searchBtn:hover {
+  border: 1px solid #8280dd;
+  background-color: #8280dd;
+}
 
-  .attraction-list {
-    height: 500px;
-    overflow-y: auto;
-    border: 1px solid rgb(214, 214, 214);
-    border-radius: 10px;
-    margin-top: 15px;
-    box-shadow: 2px 2px 2px 2px rgba(200, 200, 200, 0.8);
-    padding: 5px;
-  }
+.searchBtn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+  width: 70px;
+  height: 40px; /* 입력창과 버튼의 높이를 맞춥니다 */
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
 
-  .attraction-section {
-    background-color: #f5f5f5;
-    border-radius: 10px;
-    margin-right: 10px;
-    margin-left: 10px;
-    cursor: pointer;
-  }
+.attraction-list {
+  height: 500px;
+  overflow-y: auto;
+  border: 1px solid rgb(214, 214, 214);
+  border-radius: 10px;
+  margin-top: 15px;
+  box-shadow: 2px 2px 2px 2px rgba(200, 200, 200, 0.8);
+  padding: 5px;
+}
 
-  .attraction-info img {
-    margin-right: 10px;
-  }
+.attraction-section {
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  margin-right: 10px;
+  margin-left: 10px;
+  cursor: pointer;
+}
 
-  .attraction-title {
-    font-size: 16px;
-  }
+.attraction-info img {
+  margin-right: 10px;
+}
 
-  .attraction-address {
-    font-size: 13px;
-    font-family: NanumSquareRound;
-    color: gray;
-  }
+.attraction-title {
+  font-size: 16px;
+}
 
-  .custom-checkbox {
-    width: 20px;
-    height: 20px;
-    border: 2px solid #ddd;
-    border-radius: 4px;
-    appearance: none;
-    cursor: pointer;
-    position: relative;
-    background-color: white;
-  }
+.attraction-address {
+  font-size: 13px;
+  font-family: NanumSquareRound;
+  color: gray;
+}
 
-  .custom-checkbox:checked {
-    background-color: #DCC6E0; /* 파스텔톤 연보라색 */
-    border: 2px solid #DCC6E0; /* 체크박스 테두리도 연보라색으로 */
-  }
+.custom-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  appearance: none;
+  cursor: pointer;
+  position: relative;
+  background-color: white;
+}
 
-  .custom-checkbox:checked::after {
-    content: "✔";
-    color: white;
-    font-size: 15px;
-    display: block;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -42%);
-  }
+.custom-checkbox:checked {
+  background-color: #8280dd; /* 파스텔톤 연보라색 */
+  border: 2px solid #8280dd; /* 체크박스 테두리도 연보라색으로 */
+}
 
-  .attraction-list::-webkit-scrollbar,
-  .attraction-list::-webkit-scrollbar {
-    width: 10px; 
-  }
+.custom-checkbox:checked::after {
+  content: "✔";
+  color: white;
+  font-size: 15px;
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -42%);
+}
 
-  .attraction-list::-webkit-scrollbar-track,
-  .attraction-list::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 5px;
-  }
+.attraction-list::-webkit-scrollbar,
+.attraction-list::-webkit-scrollbar {
+  width: 10px;
+}
 
-  .attraction-list::-webkit-scrollbar-thumb,
-  .attraction-list::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 5px; 
-  }
+.attraction-list::-webkit-scrollbar-track,
+.attraction-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 5px;
+}
 
-  .attraction-list::-webkit-scrollbar-thumb:hover,
-  .attraction-list::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
+.attraction-list::-webkit-scrollbar-thumb,
+.attraction-list::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+.attraction-list::-webkit-scrollbar-thumb:hover,
+.attraction-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
 </style>

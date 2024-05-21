@@ -5,30 +5,30 @@
         <div class="searchDiv">
           <button class="searchBtn" @click="getAttractionList">
           <i class="fa fa-search searchIcon"></i>
-        </button>
+          </button>
           <input 
-          type="text" 
-          class="form-search" 
-          v-model="title"
-          placeholder="장소명을 입력해주세요"
-          @keyup.enter="getAttractionList">
-        </input>
+            type="text" 
+            class="form-search" 
+            v-model="title"
+            placeholder="장소명을 입력해주세요"
+            @keyup.enter="getAttractionList">
+          </input>
         <!-- <button class="searchBtn" @click="getAttractionList">
         </button> -->
-      </div>
-      <ul
+        </div>
+          <ul
           v-for="(list, contentTypeId) in listsByContentTypeId"
           :key="contentTypeId"
           :id="'placesList_' + contentTypeId"
           class="placesList"
-        >
+         >
           <li
             v-for="place in list"
             :key="place"
             class="item"
-            @mouseover="() => windowOnOff(place.marker, place.attraction,'on')"
-            @mouseout="() => windowOnOff(place.marker, place.attraction, 'off')"
-            @click="showAttractionDetail(place.attraction.id,contentTypeId)"
+            @mouseover="windowOnOff(place.marker, place.attraction, 'on')"
+            @mouseout="windowOnOff(place.marker, place.attraction, 'off')"
+            @click="() => showAttractionDetail(place.attraction.id, contentTypeId)"
           >
             <div class="info">
               <div class="infoTop">
@@ -41,20 +41,22 @@
                 <p class="infoAddress">{{ place.attraction.address }}</p>
                 <div class = "mt-0 d-flex flex-row">
                   <p class="infoRating mr-2">{{ place.attraction.rating }}</p>
-                  <img
-                    v-for="n in Math.floor(place.attraction.rating)"
-                    :key="'star' + n"
-                    class="infoStar"
-                    src="@/assets/images/RaitingStar.png"
-                    alt="Star"
+                  <div v-if="place.attraction.rating !== undefined && place.attraction.rating !== null">
+                    <img
+                      v-for="n in Math.round(place.attraction.rating)"
+                      :key="'star' + n"
+                      class="infoStar"
+                      src="@/assets/images/RaitingStar.png"
+                      alt="Star"
+                    />
+                    <img
+                      v-for="n in (5 - Math.round(place.attraction.rating))"
+                      :key="'noStar' + n"
+                      class="infoStar"
+                      src="@/assets/images/RaitingNoStar.png"
+                      alt="No Star"
                   />
-                  <img
-                    v-for="n in (5 - Math.floor(place.attraction.rating))"
-                    :key="'noStar' + n"
-                    class="infoStar"
-                    src="@/assets/images/RaitingNoStar.png"
-                    alt="No Star"
-                  />
+                  </div>
                   <p class="infoReview">리뷰 {{ place.attraction.reviewCount }}</p>
                 </div>
               </div>
@@ -123,13 +125,22 @@
         <div class="child" ref="section">
           <transition name="slide">
             <div v-if="selectedAttractionId" class="attraction-detail-container">
-              <img class="bookmark" src="@/assets/images/BookMark.png" @click="showModal = true"/>
+              <img 
+              class="bookmark" 
+              :src="bookMarkSrc" 
+              @click="openModal"
+              @mouseover="toggleBookmark(true)"
+              @mouseout="toggleBookmark(false)"
+              />
               <AttarctionDetail :attraction-id="selectedAttractionId" :attraction-content="selectedAttractionContent" @close="closeAttractionDetail"/>
             </div>
           </transition>
         </div>
       </div>
     </div>
+    <Modal :attraction-id="selectedAttractionId" :is-book-mark-tf="isBookMarkTF" v-model="isModalVisible"
+        @addEmit="addBookMark" @removeEmit="removeBookMark">
+    </Modal>
   </div>
 </template>
 
@@ -139,13 +150,22 @@ import { useRoute, useRouter } from "vue-router";
 import { getAttractions, getDropdownContentSido, getDropdownGugun } from "@/api/attraction.js";
 import { registerFavorite, removeFavorite, selectFavorite } from "@/api/favorite.js";
 import AttarctionDetail from "@/components/attraction/AttractionDetail.vue";
+import Modal from '@/components/attraction/item/BookMarkModal.vue';
 import axios from "axios";
 
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member";
 
+import onBookmark from '@/assets/images/BookMark.png';
+import offBookmark from '@/assets/images/BookMarkNo.png';
+
 const memberStore = useMemberStore();
-const { userInfo } = storeToRefs(memberStore);
+const { isLogin, userInfo } = storeToRefs(memberStore);
+
+// 북마크
+const isBookMarkTF = ref("");
+const bookMarkSrc = ref("");
+const isModalVisible = ref(false);
 
 // 라우터 및 라우트 사용
 const route = useRoute();
@@ -167,7 +187,73 @@ const selectedAttractionId = ref(""); // 자식에게 보낼 id 값
 const selectedAttractionContent = ref(""); // 자식에게 보낼 관광지 타입 값 
 const section = ref(null);
 
+const openModal = () => {
+  isModalVisible.value = true;
+};
 
+// 북마크 이미지 hover 모션
+const toggleBookmark = (isHovered) => {
+  if (bookMarkSrc.value === onBookmark) {
+    bookMarkSrc.value = isHovered ? offBookmark : onBookmark;
+  } else {
+    bookMarkSrc.value = isHovered ? onBookmark : offBookmark;
+  }
+  if (isHovered === false) {
+    bookMarkSrc.value = isBookMarkTF.value ? onBookmark : offBookmark;
+  }
+}
+
+// 북마크 추가
+function addBookMark(value){
+
+  isBookMarkTF.value = value;
+
+  if (isBookMarkTF.value === true) {
+        bookMarkSrc.value = onBookmark;
+      } else {
+        bookMarkSrc.value = offBookmark;
+      }
+
+}
+
+function removeBookMark(value){
+
+  isBookMarkTF.value = value;
+  
+  if (isBookMarkTF.value === true) {
+        bookMarkSrc.value = onBookmark;
+      } else {
+        bookMarkSrc.value = offBookmark;
+      }
+
+}
+
+// 북마크 여부 확인
+async function isBookmark(attractionId) {
+  console.log("??", attractionId);
+  selectFavorite(
+    sessionStorage.getItem("accessToken"),
+    attractionId,
+    userInfo.value.id,
+    (res) => {
+      if(res.data.attractionId===attractionId){
+        isBookMarkTF.value = true;
+      }else{
+        isBookMarkTF.value = false;
+      }
+      if (isBookMarkTF.value === true) {
+        bookMarkSrc.value = onBookmark;
+      } else {
+        bookMarkSrc.value = offBookmark;
+      }
+      console.log(bookMarkSrc.value);
+    },
+    (error) => {
+      console.log("북마크 불러오는 중 실패");
+      console.dir(error);
+    }
+  );
+}
 
 // 자식 컴포넌트에 보낼 파라미터 값 
 const showAttractionDetail = (attractionId,contentTypeId) => {
@@ -178,6 +264,11 @@ const showAttractionDetail = (attractionId,contentTypeId) => {
     section.value.scrollIntoView({behavior : 'smooth'});
     selectedAttractionId.value = attractionId;
     selectedAttractionContent.value = categories.value.find((category) => category.code === parseInt(contentTypeId))?.name;
+    if (userInfo.value.id!=null) {
+      isBookmark(attractionId);
+    } else {
+      bookMarkSrc.value = offBookmark;
+    }
   }
 };
 

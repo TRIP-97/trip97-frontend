@@ -181,26 +181,26 @@ onMounted(() => {
             <div class="form-group">
               <label class="form-heading">방문 날짜</label>
               <div class="date-field">
-                  <label for="startDate">시작일</label>
-                  <input
-                    type="date"
-                    class="form-control"
-                    id="startDate"
-                    name="startDate"
-                    v-model="hotPlace.startDate"
-                    required
-                  />
+                <label for="startDate">시작일</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="startDate"
+                  name="startDate"
+                  v-model="hotPlace.startDate"
+                  required
+                />
               </div>
               <div class="date-field">
-                  <label for="endDate">종료일</label>
-                  <input
-                    type="date"
-                    class="form-control"
-                    id="endDate"
-                    name="endDate"
-                    v-model="hotPlace.endDate"
-                    required
-                  />
+                <label for="endDate">종료일</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="endDate"
+                  name="endDate"
+                  v-model="hotPlace.endDate"
+                  required
+                />
               </div>
             </div>
             <div class="form-group">
@@ -228,7 +228,7 @@ onMounted(() => {
                 </textarea
               >
             </div>
-            
+
             <div class="text-right">
               <button @click.prevent="updateHotPlace" class="btn btn-primary btn-block write-btn">
                 수정하기
@@ -246,7 +246,7 @@ onMounted(() => {
   margin-right: 30px;
   border-radius: 15px;
   box-shadow: 2px 2px 2px 2px rgba(200, 200, 200, 0.8);
-  background-color: rgb(255, 255, 255, 0.6); 
+  background-color: rgb(255, 255, 255, 0.6);
 }
 
 .map {
@@ -263,9 +263,9 @@ label {
   font-weight: bold;
   margin-top: 10px;
   margin-bottom: 10px;
-  background-color: #f8f9fa; 
-  padding: 5px 10px; 
-  border-radius: 5px; 
+  background-color: #f3f3ff;
+  padding: 5px 10px;
+  border-radius: 5px;
 }
 
 .date-field {
@@ -280,7 +280,7 @@ label {
 }
 
 .form-control {
-  flex-grow: 1; 
+  flex-grow: 1;
 }
 
 .file-upload-btn {

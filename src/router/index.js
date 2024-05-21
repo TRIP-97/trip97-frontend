@@ -10,6 +10,8 @@ import PlanView from "@/views/PlanView.vue";
 import BoardView from "@/views/BoardView.vue";
 import AttractionView from "@/views/AttractionView.vue";
 import FriendView from "@/views/FriendView.vue";
+import NotFound from '@/views/NotFound.vue';
+import ServerError from '@/views/ServerError.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,7 +20,7 @@ const router = createRouter({
       path: "/",
       name: "main",
       component: MainView,
-      meta: { showHeader: false },
+      meta: { showHeader: "main" },
       redirect: { name: "mainPage" },
       children: [
         {
@@ -32,25 +34,37 @@ const router = createRouter({
       path: "/login",
       name: "login",
       component: LoginView,
-      meta: { showHeader: true },
+      meta: { showHeader: "white" },
+    },
+    {
+      path: '/500',
+      name: 'ServerError',
+      component: ServerError,
+      meta: { showHeader: "white" },
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: NotFound,
+      meta: { showHeader: "white" },
     },
     {
       path: "/naver/callback",
       name: "naverCallBack",
+      meta: { showHeader: "main" },
       component: NaverCallBack,
-      meta: { showHeader: true },
     },
     {
       path: "/kakao/callback",
       name: "kakaoCallBack",
+      meta: { showHeader: "main" },
       component: KakaoCallBack,
-      meta: { showHeader: true },
     },
     {
       path: "/profile",
       name: "profile",
       component: ProfileView,
-      meta: { showHeader: true },
+      meta: { showHeader: "white" },
       redirect: { name: "profileDetail" },
       children: [
         {
@@ -69,7 +83,7 @@ const router = createRouter({
       path: "/hotplace",
       name: "hotPlace",
       component: HotPlaceView,
-      meta: { showHeader: true },
+      meta: { showHeader: "white" },
       redirect: { name: "hotPlaceList" },
       children: [
         {
@@ -99,7 +113,7 @@ const router = createRouter({
       name: "group",
       component: GroupView,
       redirect: { name: "groupList" },
-      meta: { showHeader: true },
+      meta: { showHeader: "white" },
       children: [
         {
           path: "list",
@@ -147,13 +161,13 @@ const router = createRouter({
       path: "/group/:groupId/plan/:planId",
       name: "plan",
       component: PlanView,
-      meta: { showHeader: true },
+      meta: { showHeader: "white" },
     },
     {
       path: "/board",
       name: "board",
       component: BoardView,
-      meta: { showHeader: true },
+      meta: { showHeader: "white" },
       redirect: { name: "boardList" },
       children: [
         {
@@ -182,7 +196,7 @@ const router = createRouter({
       path: "/attraction",
       name: "attraction",
       component: AttractionView,
-      meta: { showHeader: true },
+      meta: { showHeader: "white" },
       redirect: { name: "attractionList" },
       children: [
         {
@@ -196,7 +210,7 @@ const router = createRouter({
       path: "/friend",
       name: "friend",
       component: FriendView,
-      meta: { showHeader: true },
+      meta: { showHeader: "white" },
       redirect: { name: "friendList" },
       children: [
         {
@@ -218,6 +232,8 @@ router.beforeEach((to, from) => {
   if (to.name !== from.name) {
     document.dispatchEvent(new CustomEvent("route-changed"));
   }
+
+  console.log("router check!");
 });
 
 export default router;
