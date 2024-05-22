@@ -10,8 +10,9 @@ import PlanView from "@/views/PlanView.vue";
 import BoardView from "@/views/BoardView.vue";
 import AttractionView from "@/views/AttractionView.vue";
 import FriendView from "@/views/FriendView.vue";
-import NotFound from '@/views/NotFound.vue';
-import ServerError from '@/views/ServerError.vue';
+import BookMarkView from "@/views/BookMarkView.vue";
+import NotFound from "@/views/NotFound.vue";
+import ServerError from "@/views/ServerError.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,14 +38,14 @@ const router = createRouter({
       meta: { showHeader: "white" },
     },
     {
-      path: '/500',
-      name: 'ServerError',
+      path: "/500",
+      name: "ServerError",
       component: ServerError,
       meta: { showHeader: "white" },
     },
     {
-      path: '/:pathMatch(.*)*',
-      name: 'NotFound',
+      path: "/:pathMatch(.*)*",
+      name: "NotFound",
       component: NotFound,
       meta: { showHeader: "white" },
     },
@@ -68,12 +69,12 @@ const router = createRouter({
       redirect: { name: "profileDetail" },
       children: [
         {
-          path: "/detail",
+          path: "detail",
           name: "profileDetail",
           component: () => import("../components/profile/ProfileDetail.vue"),
         },
         {
-          path: "/modify",
+          path: "modify",
           name: "profileModify",
           component: () => import("../components/profile/ProfileModify.vue"),
         },
@@ -171,22 +172,22 @@ const router = createRouter({
       redirect: { name: "boardList" },
       children: [
         {
-          path: "/",
+          path: "list",
           name: "boardList",
           component: () => import("../components/board/BoardList.vue"),
         },
         {
-          path: "/:id",
+          path: "detail/:id",
           name: "boardDetail",
           component: () => import("../components/board/BoardDetail.vue"),
         },
         {
-          path: "/",
+          path: "write",
           name: "boardWrite",
           component: () => import("../components/board/BoardWrite.vue"),
         },
         {
-          path: "/:id",
+          path: "modify/:id",
           name: "boardModify",
           component: () => import("../components/board/BoardModify.vue"),
         },
@@ -200,7 +201,7 @@ const router = createRouter({
       redirect: { name: "attractionList" },
       children: [
         {
-          path: "/",
+          path: "list",
           name: "attractionList",
           component: () => import("../components/attraction/AttractionList.vue"),
         },
@@ -219,9 +220,23 @@ const router = createRouter({
           component: () => import("../components/friend/FriendList.vue"),
         },
         {
-          path: "/request/list",
+          path: "request/list",
           name: "friendRequestList",
           component: () => import("../components/friend/FriendRequestList.vue"),
+        },
+      ],
+    },
+    {
+      path: "/bookmark",
+      name: "bookmark",
+      component: BookMarkView,
+      meta: { showHeader: "white" },
+      redirect: { name: "bookmarkList" },
+      children: [
+        {
+          path: "list",
+          name: "bookmarkList",
+          component: () => import("../components/bookmark/BookMarkList.vue"),
         },
       ],
     },
@@ -232,8 +247,7 @@ router.beforeEach((to, from) => {
   if (to.name !== from.name) {
     document.dispatchEvent(new CustomEvent("route-changed"));
   }
-
-  console.log("router check!");
 });
 
 export default router;
+

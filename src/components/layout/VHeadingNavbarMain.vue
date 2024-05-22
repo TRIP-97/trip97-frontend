@@ -151,11 +151,11 @@ onUnmounted(() => {
                       >내 친구</RouterLink
                     >
                   </li>
-                  <!-- <li class="dropdown-item">
-                    <RouterLink class="header-dropdown" :to="{ name: 'friend' }" v-if="isLogin"
+                  <li class="dropdown-item">
+                    <RouterLink class="header-dropdown" :to="{ name: 'bookmark' }" v-if="isLogin"
                       >즐겨찾기</RouterLink
                     >
-                  </li> -->
+                  </li>
                   <li>
                     <a class="header-dropdown dropdown-item" @click="logout" v-if="isLogin"
                       >로그아웃</a

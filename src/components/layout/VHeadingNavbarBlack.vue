@@ -40,6 +40,7 @@ const fetchProfile = async () => {
         isLogin.value = true;
         userInfo.value = response.data;
       }
+      
     } catch (error) {
       console.error("프로필 정보 조회 실패:", error);
       logout(); // 토큰이 유효하지 않은 경우 로그아웃 처리
@@ -144,6 +145,11 @@ onUnmounted(() => {
                   <li class="dropdown-item">
                     <RouterLink class="header-dropdown" :to="{ name: 'friend' }" v-if="isLogin"
                       >내 친구</RouterLink
+                    >
+                  </li>
+                  <li class="dropdown-item">
+                    <RouterLink class="header-dropdown" :to="{ name: 'bookmark' }" v-if="isLogin"
+                      >즐겨찾기</RouterLink
                     >
                   </li>
                   <li>
