@@ -46,9 +46,11 @@
       </div>
 
       <div class="review-list" v-for="review in reviews" :key="review.id">
-        <div class="review-info">
-          <img :src="review.writerProfileImage" class="writer-profile-image" alt="" />
-          <p class="review-name">{{ review.writerNickname }}</p>
+        <div class="review-info d-flex flex-column">
+          <div class="d-flex align-items-center mb-2">
+            <img :src="review.writerProfileImage" class="writer-profile-image" alt="" />
+            <p class="review-name ml-3">{{ review.writerNickname }}</p>
+          </div>
 
           <!-- 평점 별 아이콘 표시 -->
           <div class="rating">
@@ -92,76 +94,75 @@
   const reviews = ref([]);
   const isModalActive = ref(false);
 
-async function getAttract(id) {
-  getAttractionId(
-    id,
-    // 125266,
-    (response) => {
-      attraction.value = response.data;
-      console.log(props.attractionContent);
-      getReviewList();
-    },
-    (error) => {
-      console.log("관광지 불러오는 중 에러 발생");
-      console.dir(error);
-    }
-  );
-}
-
-// 날짜 포맷 변경 함수
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  return `${year}.${month.toString().padStart(2, "0")}.${day.toString().padStart(2, "0")}`;
-}
-
-// 관광지의 리뷰 목록을 조회하는 함수
-const getReviewList = () => {
-  getReviews(
-    attraction.value.id,
-    ({ data }) => {
-      reviews.value = data.map((review) => ({
-        review,
-        createdAt: formatDate(review.createdAt),
-      }));
-      console.log(data);
-    },
-    (error) => {
-      console.log("리뷰 목록 불러오는 중 에러 발생!");
-      console.dir(error);
-    }
-  );
-};
-
-// 리뷰 모달창 여부를 바꾸는 함수
-const addReview = () => {
-  isModalActive.value = true;
-};
-
-// 리뷰를 저장하는 함수
-const saveReview = (newReview) => {
-  registerReview(
-    newReview,
-    () => {
-      getAttract(props.attractionId);
-      getReviewList();
-    },
-    (error) => {
-      console.log("리뷰 저장 중 에러 발생!");
-      console.dir(error);
-    }
-  );
-};
-
-watch(
-  () => props.attractionId,
-  (newId) => {
-    getAttract(newId);
+  async function getAttract(id) {
+    getAttractionId(
+      id,
+      // 125266,
+      (response) => {
+        attraction.value = response.data;
+        console.log(props.attractionContent);
+        getReviewList();
+      },
+      (error) => {
+        console.log("관광지 불러오는 중 에러 발생");
+        console.dir(error);
+      }
+    );
   }
-);
 
+  // 날짜 포맷 변경 함수
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year}.${month.toString().padStart(2, "0")}.${day.toString().padStart(2, "0")}`;
+  }
+
+  // 관광지의 리뷰 목록을 조회하는 함수
+  const getReviewList = () => {
+    getReviews(
+      attraction.value.id,
+      ({ data }) => {
+        reviews.value = data.map((review) => ({
+          ...review,
+          createdAt: formatDate(review.createdAt),
+        }));
+        console.log(data);
+      },
+      (error) => {
+        console.log("리뷰 목록 불러오는 중 에러 발생!");
+        console.dir(error);
+      }
+    );
+  };
+
+  // 리뷰 모달창 여부를 바꾸는 함수
+  const addReview = () => {
+    isModalActive.value = true;
+  };
+
+  // 리뷰를 저장하는 함수
+  const saveReview = (newReview) => {
+    registerReview(
+      newReview,
+      () => {
+        getAttract(props.attractionId);
+        getReviewList();
+      },
+      (error) => {
+        console.log("리뷰 저장 중 에러 발생!");
+        console.dir(error);
+      }
+    );
+  };
+
+  watch(
+    () => props.attractionId,
+    (newId) => {
+      getAttract(newId);
+    }
+  );
 
   watch(
     () => props.attractionId,
@@ -253,6 +254,16 @@ watch(
     background-color: #e4e3ff;
     border-radius: 10px;
     width: 99%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ml-3 {
+    margin-left: 1rem; /* profileImage와 review-name 사이의 간격을 위해 추가 */
+  }
+
+  .mb-2 {
+    margin-bottom: 0.5rem; /* 프로필 이미지와 별점 사이의 간격을 위해 추가 */
   }
 
   .writer-profile-image {

@@ -1,6 +1,6 @@
 <script setup>
   import { ref, onMounted, toRefs, defineEmits } from "vue";
-  import { selectFavorites } from "@/api/favorite.js";
+  import { selectFavoritesByMemberId } from "@/api/favorite.js";
 
   import { storeToRefs } from "pinia";
   import { useMemberStore } from "@/stores/member";
@@ -22,8 +22,7 @@
 
   // 즐겨찾기한 관광지를 받아오는 함수
   async function getFavoriteList() {
-    selectFavorites(
-      sessionStorage.getItem("accessToken"),
+    selectFavoritesByMemberId(
       userInfo.value.id,
       (response) => {
         attractions.value = response.data;
