@@ -433,9 +433,9 @@
 
             const polyline = new kakao.maps.Polyline({
               path: detailRoads,
-              strokeWeight: 6,
+              strokeWeight: 7,
               strokeColor: "#8181F7",
-              strokeOpacity: 0.8,
+              strokeOpacity: 0.9,
               strokeStyle: "solid",
             });
 
@@ -566,8 +566,8 @@
           polyline = new kakao.maps.Polyline({
             map: mapInstance,
             path: lineArray,
-            strokeWeight: 6,
-            strokeOpacity: 0.8,
+            strokeWeight: 7,
+            strokeOpacity: 0.9,
             strokeColor: "#0D347F",
             strokeStyle: "solid",
           });
@@ -575,8 +575,8 @@
           polyline = new kakao.maps.Polyline({
             map: mapInstance,
             path: lineArray,
-            strokeWeight: 6,
-            strokeOpacity: 0.8,
+            strokeWeight: 7,
+            strokeOpacity: 0.9,
             strokeColor: "#3B9F37",
             strokeStyle: "solid",
           });
@@ -584,8 +584,8 @@
           polyline = new kakao.maps.Polyline({
             map: mapInstance,
             path: lineArray,
-            strokeWeight: 6,
-            strokeOpacity: 0.8,
+            strokeWeight: 7,
+            strokeOpacity: 0.9,
             strokeColor: "#fc4c02",
             strokeStyle: "solid",
           });
@@ -593,8 +593,8 @@
           polyline = new kakao.maps.Polyline({
             map: mapInstance,
             path: lineArray,
-            strokeWeight: 6,
-            strokeOpacity: 0.8,
+            strokeWeight: 7,
+            strokeOpacity: 0.9,
             strokeColor: "#3165A8",
             strokeStyle: "solid",
           });
@@ -602,8 +602,8 @@
           polyline = new kakao.maps.Polyline({
             map: mapInstance,
             path: lineArray,
-            strokeWeight: 6,
-            strokeOpacity: 0.8,
+            strokeWeight: 7,
+            strokeOpacity: 0.9,
             strokeColor: "#a05eb5",
             strokeStyle: "solid",
           });
@@ -611,8 +611,8 @@
           polyline = new kakao.maps.Polyline({
             map: mapInstance,
             path: lineArray,
-            strokeWeight: 6,
-            strokeOpacity: 0.8,
+            strokeWeight: 7,
+            strokeOpacity: 0.9,
             strokeColor: "#904D23",
             strokeStyle: "solid",
           });
@@ -620,8 +620,8 @@
           polyline = new kakao.maps.Polyline({
             map: mapInstance,
             path: lineArray,
-            strokeWeight: 6,
-            strokeOpacity: 0.8,
+            strokeWeight: 7,
+            strokeOpacity: 0.9,
             strokeColor: "#5B692E",
             strokeStyle: "solid",
           });
@@ -629,8 +629,8 @@
           polyline = new kakao.maps.Polyline({
             map: mapInstance,
             path: lineArray,
-            strokeWeight: 6,
-            strokeOpacity: 0.8,
+            strokeWeight: 7,
+            strokeOpacity: 0.9,
             strokeColor: "#e31c79",
             strokeStyle: "solid",
           });
@@ -638,8 +638,8 @@
           polyline = new kakao.maps.Polyline({
             map: mapInstance,
             path: lineArray,
-            strokeWeight: 6,
-            strokeOpacity: 0.8,
+            strokeWeight: 7,
+            strokeOpacity: 0.9,
             strokeColor: "#B39627",
             strokeStyle: "solid",
           });
@@ -648,8 +648,8 @@
           polyline = new kakao.maps.Polyline({
             map: mapInstance,
             path: lineArray,
-            strokeWeight: 6,
-            strokeOpacity: 0.8,
+            strokeWeight: 7,
+            strokeOpacity: 0.9,
             strokeColor: "#3673dd",
             strokeStyle: "solid",
           });
@@ -750,8 +750,8 @@
     polyline = new kakao.maps.Polyline({
       path: arrPoint,
       strokeColor: "#585858",
-      strokeWeight: 6,
-      strokeOpacity: 0.8,
+      strokeWeight: 7,
+      strokeOpacity: 0.9,
       map: map.value,
     });
 
