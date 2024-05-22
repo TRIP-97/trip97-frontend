@@ -8,7 +8,7 @@
       <div class="container">
         <div class="row justify-content-between align-items-center" style="height: 3vh">
           <div class="col-md-6">
-            <p>© SSAFY | 대전7반 10팀 - 강세현 | 김문희</p>
+            <p>© SSAFY | 대전7반 11팀 - 강세현 | 김문희</p>
           </div>
           <div class="col-md-6 text-md-right text-center">
             <p>개인정보 처리방침 | 이용약관</p>
@@ -20,8 +20,8 @@
 </template>
 
 <style scoped>
-.footer-line {
-  margin-top: 0px;
-  margin-bottom: 50px;
-}
+  .footer-line {
+    margin-top: 0px;
+    margin-bottom: 50px;
+  }
 </style>

@@ -64,6 +64,30 @@ function getRecommendPlanRoute(places, success, fail) {
   ).then(success).catch(fail);
 }
 
+// 오디세이 API에서 대중교통 경로를 받아오는 함수
+function getPublicPlanRoute(params, success, fail) {
+  axios.get(`https://api.odsay.com/v1/api/searchPubTransPath?SX=${params.sx}&SY=${params.sy}&EX=${params.ex}&EY=${params.ey}&apiKey=A%2BJ7R5YMqJMq5LZmH77cV9UUK7ALlhCNTvcISRlDBg0`)
+  .then(success).catch(fail);
+}
+
+// 노선 그래픽 데이터를 호출하는 함수
+function getPublicRouteGraphicData(mapObj, success, fail) {
+  axios.post(`https://api.odsay.com/v1/api/loadLane?mapObject=0:0@${mapObj}&apiKey=A%2BJ7R5YMqJMq5LZmH77cV9UUK7ALlhCNTvcISRlDBg0`)
+  .then(success).catch(fail);
+}
+
+// T Map API에서 보도 경로를 받아오는 함수
+function getWalkPlanRoute(data, success, fail) {
+  axios.post(`https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&format=json&callback=result`,
+    data,
+    {
+      headers: {
+        "appKey": "vUWoLVNYPf7xvU9zJGLlT7vV4095dwei7sidJ5U1",
+      },
+    },
+  ).then(success).catch(fail);
+}
+
 export {
   getPlans,
   createPlan,
@@ -73,4 +97,7 @@ export {
   deleteDayPlanItemById,
   updateDayPlanItemOrder,
   getRecommendPlanRoute,
+  getPublicPlanRoute,
+  getPublicRouteGraphicData,
+  getWalkPlanRoute,
 };

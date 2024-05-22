@@ -1,146 +1,146 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { detailGroup, deleteGroup, checkGroupMember, requestGroupMember } from "@/api/group";
-import { useMemberStore } from "@/stores/member";
-import { storeToRefs } from "pinia";
+  import { ref, onMounted } from "vue";
+  import { useRoute, useRouter } from "vue-router";
+  import { detailGroup, deleteGroup, checkGroupMember, requestGroupMember } from "@/api/group";
+  import { useMemberStore } from "@/stores/member";
+  import { storeToRefs } from "pinia";
 
-const route = useRoute();
-const router = useRouter();
+  const route = useRoute();
+  const router = useRouter();
 
-const memberStore = useMemberStore();
-const { userInfo } = storeToRefs(memberStore);
+  const memberStore = useMemberStore();
+  const { userInfo } = storeToRefs(memberStore);
 
-const groupId = ref(route.params.id);
-const group = ref("");
-const memberId = ref("");
-const isWriter = ref(false);
-const isGroupMember = ref(false);
-const isFullMember = ref(false);
-const requested = ref(false);
+  const groupId = ref(route.params.id);
+  const group = ref("");
+  const memberId = ref("");
+  const isWriter = ref(false);
+  const isGroupMember = ref(false);
+  const isFullMember = ref(false);
+  const requested = ref(false);
 
-// 모임 게시글 작성자인지 확인하는 함수
-const checkIsWriter = () => {
-  if (group.value.creatorId === memberId.value) {
-    isWriter.value = true;
-  }
-};
-
-// 모임 참가자거나 신청자인지 확인하는 함수
-const checkIsGroupMemberOrApplicant = () => {
-  const param = {
-    memberId: userInfo.value.id,
-    groupId: groupId.value,
+  // 모임 게시글 작성자인지 확인하는 함수
+  const checkIsWriter = () => {
+    if (group.value.creatorId === memberId.value) {
+      isWriter.value = true;
+    }
   };
-  checkGroupMember(
-    param,
-    ({ data }) => {
-      if (data == 1) {
-        isGroupMember.value = true;
+
+  // 모임 참가자거나 신청자인지 확인하는 함수
+  const checkIsGroupMemberOrApplicant = () => {
+    const param = {
+      memberId: userInfo.value.id,
+      groupId: groupId.value,
+    };
+    checkGroupMember(
+      param,
+      ({ data }) => {
+        if (data == 1) {
+          isGroupMember.value = true;
+        }
+      },
+      (error) => {
+        console.log("Group 참가/신청자 여부 확인 중 에러 발생!");
+        console.dir(error);
       }
-    },
-    (error) => {
-      console.log("Group 참가/신청자 여부 확인 중 에러 발생!");
-      console.dir(error);
-    }
-  );
-};
-
-// 모임 인원수가 모두 차있는지 확인하는 함수
-const checkIsFullMember = () => {
-  if (group.value.maxMemberCount === group.value.currentMemberCount) {
-    isFullMember.value = true;
-  }
-};
-
-// 모임 게시글 조회하는 함수
-async function getGroup() {
-  detailGroup(
-    groupId.value,
-    (response) => {
-      group.value = response.data;
-      console.log("Group 게시글 로딩 성공!", group.value);
-
-      group.value.startDate = formatVisitedDate(group.value.startDate);
-      group.value.endDate = formatVisitedDate(group.value.endDate);
-
-      checkIsWriter();
-      checkIsGroupMemberOrApplicant();
-      checkIsFullMember();
-    },
-    (error) => {
-      console.log("HotPlace 게시글 불러오는 중 에러 발생!");
-      console.dir(error);
-    }
-  );
-}
-
-// 날짜 포맷 변경 함수
-function formatVisitedDate(dateString) {
-  const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
-}
-
-// 모임 목록으로 이동하는 함수
-function goGroupList() {
-  router.push({ name: "groupList" });
-}
-
-// 모임 수정 화면으로 이동하는 함수
-function goGroupModify() {
-  router.push({
-    name: "groupModify",
-    params: { id: group.value.id },
-  });
-}
-
-// 모임 삭제하는 함수
-function removeGroup() {
-  deleteGroup(
-    groupId.value,
-    () => {
-      router.replace({
-        name: "groupList",
-      });
-    },
-    (error) => {
-      console.log("Group 게시글 삭제하는 중 에러 발생!");
-      console.dir(error);
-    }
-  );
-}
-
-// 모임 참가 신청하는 함수
-const requestGroup = () => {
-  const request = {
-    groupId: groupId.value,
-    memberId: memberId.value,
+    );
   };
 
-  requested.value = true;
-
-  requestGroupMember(
-    request,
-    () => {
-      window.alert("모임 참가 신청을 했습니다!");
-      router.push({ name: "groupDetail" });
-    },
-    (error) => {
-      console.log("Group 참가 신청하는 중 에러 발생!");
-      console.dir(error);
+  // 모임 인원수가 모두 차있는지 확인하는 함수
+  const checkIsFullMember = () => {
+    if (group.value.maxMemberCount === group.value.currentMemberCount) {
+      isFullMember.value = true;
     }
-  );
-};
+  };
 
-onMounted(() => {
-  if (userInfo.value !== null) {
-    memberId.value = userInfo.value.id;
+  // 모임 게시글 조회하는 함수
+  async function getGroup() {
+    detailGroup(
+      groupId.value,
+      (response) => {
+        group.value = response.data;
+        console.log("Group 게시글 로딩 성공!");
+
+        group.value.startDate = formatVisitedDate(group.value.startDate);
+        group.value.endDate = formatVisitedDate(group.value.endDate);
+
+        checkIsWriter();
+        checkIsGroupMemberOrApplicant();
+        checkIsFullMember();
+      },
+      (error) => {
+        console.log("HotPlace 게시글 불러오는 중 에러 발생!");
+        console.dir(error);
+      }
+    );
   }
-  getGroup();
-});
+
+  // 날짜 포맷 변경 함수
+  function formatVisitedDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
+  }
+
+  // 모임 목록으로 이동하는 함수
+  function goGroupList() {
+    router.push({ name: "groupList" });
+  }
+
+  // 모임 수정 화면으로 이동하는 함수
+  function goGroupModify() {
+    router.push({
+      name: "groupModify",
+      params: { id: group.value.id },
+    });
+  }
+
+  // 모임 삭제하는 함수
+  function removeGroup() {
+    deleteGroup(
+      groupId.value,
+      () => {
+        router.replace({
+          name: "groupList",
+        });
+      },
+      (error) => {
+        console.log("Group 게시글 삭제하는 중 에러 발생!");
+        console.dir(error);
+      }
+    );
+  }
+
+  // 모임 참가 신청하는 함수
+  const requestGroup = () => {
+    const request = {
+      groupId: groupId.value,
+      memberId: memberId.value,
+    };
+
+    requested.value = true;
+
+    requestGroupMember(
+      request,
+      () => {
+        window.alert("모임 참가 신청을 했습니다!");
+        router.push({ name: "groupDetail" });
+      },
+      (error) => {
+        console.log("Group 참가 신청하는 중 에러 발생!");
+        console.dir(error);
+      }
+    );
+  };
+
+  onMounted(() => {
+    if (userInfo.value !== null) {
+      memberId.value = userInfo.value.id;
+    }
+    getGroup();
+  });
 </script>
 
 <template>
@@ -242,154 +242,154 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.container {
-  max-width: 1200px;
-}
+  .container {
+    max-width: 1200px;
+  }
 
-.title,
-.schedule-label,
-.content-label {
-  font-family: NanumSquareRoundExtraBold;
-}
+  .title,
+  .schedule-label,
+  .content-label {
+    font-family: NanumSquareRoundExtraBold;
+  }
 
-.schedule-label,
-.content-label {
-  font-size: 20px;
-  margin-top: 50px;
-}
+  .schedule-label,
+  .content-label {
+    font-size: 20px;
+    margin-top: 50px;
+  }
 
-.content {
-  color: #3e4143;
-}
+  .content {
+    color: #3e4143;
+  }
 
-.info-text {
-  font-size: 0.9rem;
-  color: #6c757d;
-}
+  .info-text {
+    font-size: 0.9rem;
+    color: #6c757d;
+  }
 
-.custom-vr {
-  display: inline;
-  border-left: 1px solid lightgray;
-  align-self: center;
-}
+  .custom-vr {
+    display: inline;
+    border-left: 1px solid lightgray;
+    align-self: center;
+  }
 
-.stat-text {
-  margin-right: 5px;
-}
+  .stat-text {
+    margin-right: 5px;
+  }
 
-.date-text {
-  text-align: right;
-}
+  .date-text {
+    text-align: right;
+  }
 
-.edit-actions {
-  color: #6c757d;
-  font-size: 0.8rem;
-}
+  .edit-actions {
+    color: #6c757d;
+    font-size: 0.8rem;
+  }
 
-.action-text {
-  cursor: pointer;
-}
+  .action-text {
+    cursor: pointer;
+  }
 
-.schedule-box {
-  color: gray;
-  background-color: #f8f9fa;
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+  .schedule-box {
+    color: gray;
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-.image-list {
-  margin-top: 50px;
-  margin-bottom: 50px;
-}
+  .image-list {
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
 
-.list-button-section {
-  display: flex;
-  flex-direction: column;
-}
+  .list-button-section {
+    display: flex;
+    flex-direction: column;
+  }
 
-.list-button-section .request-btn {
-  background-color: #8280dd;
-  border-color: #8280dd;
-  color: white;
-}
+  .list-button-section .request-btn {
+    background-color: #8280dd;
+    border-color: #8280dd;
+    color: white;
+  }
 
-.list-button-section .list-btn {
-  background-color: #8280dd;
-  border-color: #8280dd;
-  color: white;
-}
+  .list-button-section .list-btn {
+    background-color: #8280dd;
+    border-color: #8280dd;
+    color: white;
+  }
 
-hr {
-  width: 100%;
-  border: 0;
-  height: 1px;
-  background-color: #575555;
-  margin-top: 5px;
-}
+  hr {
+    width: 100%;
+    border: 0;
+    height: 1px;
+    background-color: #575555;
+    margin-top: 5px;
+  }
 
-.input-group .form-control {
-  border-right: 0;
-  font-size: 13px;
-}
+  .input-group .form-control {
+    border-right: 0;
+    font-size: 13px;
+  }
 
-.input-group .input-group-append .btn {
-  background-color: transparent;
-  color: #8280dd;
-  border: 0;
-}
+  .input-group .input-group-append .btn {
+    background-color: transparent;
+    color: #8280dd;
+    border: 0;
+  }
 
-.input-group {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
+  .input-group {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
 
-.traveler-info-label {
-  font-family: NanumSquareRoundExtraBold;
-  font-size: 19px;
-  color: #333;
-  margin-top: 50px;
-}
+  .traveler-info-label {
+    font-family: NanumSquareRoundExtraBold;
+    font-size: 19px;
+    color: #333;
+    margin-top: 50px;
+  }
 
-.author-info-box {
-  background-color: #f1f1f1;
-  padding: 1px 15px 1px 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+  .author-info-box {
+    background-color: #f1f1f1;
+    padding: 1px 15px 1px 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-img.rounded-circle {
-  margin-right: 15px;
-}
+  img.rounded-circle {
+    margin-right: 15px;
+  }
 
-.profile-image {
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-}
+  .profile-image {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+  }
 
-.writer-nickname {
-  font-family: NanumSquareRound;
-  margin-top: 13px;
-  font-size: 16px;
-}
+  .writer-nickname {
+    font-family: NanumSquareRound;
+    margin-top: 13px;
+    font-size: 16px;
+  }
 
-.writer-introduction {
-  font-family: NanumSquareRound;
-  font-size: 13px;
-  color: gray;
-}
+  .writer-introduction {
+    font-family: NanumSquareRound;
+    font-size: 13px;
+    color: gray;
+  }
 
-.group-info {
-  color: gray;
-  font-size: 16px;
-}
+  .group-info {
+    color: gray;
+    font-size: 16px;
+  }
 
-.member-count {
-  margin-left: 5px;
-}
+  .member-count {
+    margin-left: 5px;
+  }
 
-.fa-users {
-  margin-top: 3px;
-}
+  .fa-users {
+    margin-top: 3px;
+  }
 </style>
