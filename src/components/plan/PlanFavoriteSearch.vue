@@ -1,31 +1,17 @@
 <script setup>
-  import { ref, onMounted, toRefs, defineEmits, watch } from "vue";
-  import { getAttractions, getDropdownContentSido, getDropdownGugun } from "@/api/attraction.js";
+  import { ref, onMounted, toRefs, defineEmits } from "vue";
+  import { selectFavoritesByMemberId } from "@/api/favorite.js";
+
+  import { storeToRefs } from "pinia";
+  import { useMemberStore } from "@/stores/member";
+
+  const memberStore = useMemberStore();
+  const { userInfo } = storeToRefs(memberStore);
 
   const emit = defineEmits(["change-view", "add-place"]);
 
   const attractions = ref([]); // 불러온 관광지 목록들
-  const categories = ref([]); // 콘텐츠 목록
-  const sidos = ref([]); // 드롭다운 메뉴
-  const guguns = ref([]);
-  const searchPlaceTitle = ref("");
-  const content = ref({
-    code: 0,
-    name: "",
-  });
-  const sido = ref({
-    code: 0,
-    name: "",
-  });
-  const gugun = ref({
-    code: 0,
-    name: "",
-  });
   // 사용자가 지도를 클릭해서 선택한 장소 이름, 좌표
-  const customPlaceTitle = ref("");
-  const customLatitude = ref(null);
-  const customLongitude = ref(null);
-  const customChecked = ref(false);
   const selectedPlaces = ref([]); // 선택된 장소들
   const checkedAttractions = ref([]); // 체크된 관광지 상태 관리
 
@@ -34,80 +20,20 @@
     emit("change-view");
   };
 
-  // 관광지를 받아오는 함수
-  async function getAttractionList() {
-    const bound = map.value.getBounds();
-    getAttractions(
-      content.value.code,
-      sido.value.code,
-      gugun.value.code,
-      bound.ha,
-      bound.qa,
-      bound.oa,
-      bound.pa,
-      searchPlaceTitle.value,
+  // 즐겨찾기한 관광지를 받아오는 함수
+  async function getFavoriteList() {
+    selectFavoritesByMemberId(
+      userInfo.value.id,
       (response) => {
         attractions.value = response.data;
-        content.value.code = 0;
-        content.value.name = "";
-        console.log("관광지 불러오기 성공!");
+        console.log(attractions.value);
+        console.log("즐겨찾기한 관광지 불러오기 성공!");
       },
       (error) => {
-        console.log("관광지 불러오는 중 에러 발생");
+        console.log("즐겨찾기한 관광지 불러오는 중 에러 발생");
         console.dir(error);
       }
     );
-  }
-
-  // 드롭다운 데이터 가져오기
-  async function getDropdownCS() {
-    getDropdownContentSido(
-      (response) => {
-        categories.value = response.data.content;
-        sidos.value = response.data.sido;
-      },
-      (error) => {
-        console.log("시도 드롭다운 불러오는 중 실패");
-        console.dir(error);
-      }
-    );
-  }
-
-  async function getDropdownG() {
-    getDropdownGugun(
-      sido.value.code,
-      (response) => {
-        guguns.value = response.data;
-      },
-      (error) => {
-        console.log("구군 드롭다운 불러오는 중 실패");
-        console.dir(error);
-      }
-    );
-  }
-
-  // 시도 선택 변경 시 구군 데이터 가져오기
-  watch(sido, () => {
-    const ps = new kakao.maps.services.Places();
-    ps.keywordSearch(sido.value.name, placesSearchCB);
-    getDropdownG();
-  });
-
-  // 구군 선택 변경 시 데이터 가져오기
-  watch(gugun, () => {
-    const ps = new kakao.maps.services.Places();
-    ps.keywordSearch(`${sido.value.name} ${gugun.value.name}`, placesSearchCB);
-  });
-
-  // 키워드 검색 완료 시 호출되는 콜백함수
-  function placesSearchCB(data, status) {
-    if (status === kakao.maps.services.Status.OK) {
-      const bounds = new kakao.maps.LatLngBounds();
-      data.forEach((item) => {
-        bounds.extend(new kakao.maps.LatLng(item.y, item.x));
-      });
-      map.value.setBounds(bounds);
-    }
   }
 
   // 관광지를 클릭하면 마커가 생기고 맵 중심이 이동하게 하는 함수
@@ -122,28 +48,9 @@
     checkedAttractions.value[attractionId] = e.target.checked;
   };
 
-  // 즐겨찾기한 관광지 목록 화면으로 가는 함수
-  const moveToFavoriteSearch = () => {
-    emit("change-favorite");
-  };
-
   // 장소 추가 기능을 하는 함수
   const handleAddPlace = () => {
     selectedPlaces.value = [];
-
-    if (
-      customChecked.value &&
-      customPlaceTitle.value &&
-      customLatitude.value &&
-      customLongitude.value
-    ) {
-      selectedPlaces.value.push({
-        title: customPlaceTitle.value,
-        latitude: customLatitude.value,
-        longitude: customLongitude.value,
-        contentTypeId: 0,
-      });
-    }
 
     for (const attractionId in checkedAttractions.value) {
       if (checkedAttractions.value[attractionId]) {
@@ -184,15 +91,6 @@
     // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
     let zoomControl = new kakao.maps.ZoomControl();
     map.value.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
-
-    // map 객체가 초기화된 이후에 이벤트 리스너를 추가
-    kakao.maps.event.addListener(map.value, "click", function (mouseEvent) {
-      var latlng = mouseEvent.latLng;
-      customLatitude.value = latlng.getLat();
-      customLongitude.value = latlng.getLng();
-
-      addMarkerAndRemovePrevious(latlng, "");
-    });
   };
 
   var marker;
@@ -239,7 +137,7 @@
       document.head.appendChild(script);
     }
 
-    getDropdownCS();
+    getFavoriteList();
   });
 </script>
 
@@ -255,75 +153,18 @@
       <div class="col-lg-5">
         <!-- 헤더 -->
         <div class="row plan-header text-center">
-          <div class="col-lg-1 d-flex align-items-center justify-content-start">
+          <div class="col-lg-3 d-flex align-items-center justify-content-start">
             <i @click="changeDetailView" class="fa-solid fa-chevron-left"></i>
           </div>
           <div class="col-lg-6 d-flex align-items-center justify-content-center position-relative">
-            <p class="position-absolute start-50 translate-middle-x page-title">
-              여행 장소 찾아보기
-            </p>
+            <p class="position-absolute start-50 translate-middle-x page-title">내 즐겨찾기</p>
           </div>
-          <div class="col-lg-2">
-            <button class="btn go-favorite-btn" @click="moveToFavoriteSearch">즐겨찾기</button>
-          </div>
-          <div class="col-lg-2">
-            <button class="btn add-place-btn" @click="handleAddPlace">추가하기</button>
+          <div class="col-lg-3 d-flex align-items-center justify-content-end">
+            <button class="btn btn-primary add-place-btn" @click="handleAddPlace">추가하기</button>
           </div>
         </div>
 
-        <!-- 여행 장소 찾기 -->
-        <div class="custom-place-inputs d-flex align-items-center mb-3">
-          <input
-            type="text"
-            v-model="customPlaceTitle"
-            placeholder="내가 선택한 장소의 이름을 입력해주세요"
-            class="form-control w-75 custom-place-title"
-          />
-          <input type="checkbox" class="ms-2 custom-checkbox" v-model="customChecked" />
-        </div>
-
-        <div class="drop">
-          <div class="select-container">
-            <label class="select-label" for="sido">시도</label>
-            <select class="sido" id="sido" v-model="sido">
-              <option :value="{ code: 0, name: '' }">전체</option>
-              <option v-for="si in sidos" :key="si.code" :value="si">{{ si.name }}</option>
-            </select>
-            <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-down w-6 h-6">
-              <path
-                fill-rule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </div>
-          <div class="select-container">
-            <label class="select-label" for="gugun">구군</label>
-            <select class="gugun" id="gugun" v-model="gugun">
-              <option :value="{ code: 0, name: '' }">전체</option>
-              <option v-for="gu in guguns" :key="gu.code" :value="gu">{{ gu.name }}</option>
-            </select>
-            <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-down w-6 h-6">
-              <path
-                fill-rule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </div>
-          <div class="select-container">
-            <label class="select-label" for="placeName">장소 이름</label>
-            <input
-              type="text"
-              id="placeName"
-              v-model="searchPlaceTitle"
-              class="form-control place-name-input"
-            />
-          </div>
-          <button class="searchBtn" @click="getAttractionList">검색</button>
-        </div>
-
-        <!-- 검색한 관광지 목록 -->
+        <!-- 내가 즐겨찾기한 관광지 목록 -->
         <div class="attraction-list overflow-auto">
           <div
             class="row attraction-section p-2 mb-2"
@@ -396,117 +237,28 @@
     border-bottom: 1px solid #ddd;
   }
 
-  .custom-place-inputs {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-  }
-
-  .custom-place-title {
-    font-size: 13px;
-    font-family: NanumSquareRound;
-  }
-
-  .form-control {
-    flex: 1;
-  }
-
-  .drop {
-    display: flex;
-    align-items: flex-end;
-    gap: 10px;
-  }
-
-  .select-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .select-label {
-    margin-bottom: 5px;
-    font-size: 14px;
-    color: #333;
-  }
-
-  .select-container select,
-  .select-container input {
-    appearance: none;
-    padding: 8px 16px;
-    padding-right: 40px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: white;
-    font-size: 14px;
-    color: #333;
-    cursor: pointer;
-  }
-
-  .place-name-input {
-    padding-right: 0;
-  }
-
-  .select-container svg {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    pointer-events: none;
-    width: 16px;
-    height: 16px;
-    fill: #333;
-  }
-
-  .add-place-btn,
-  .go-favorite-btn {
+  .add-place-btn {
     font-size: 14px;
     width: 80px;
     color: white;
   }
 
-  .go-favorite-btn {
-    border: 1px solid #819edd;
-    background-color: #819edd;
-  }
-
-  .go-favorite-btn:hover {
-    border: 1px solid #819edd;
-    background-color: #819edd;
-    color: white;
-  }
-
-  .add-place-btn,
-  .searchBtn {
+  .add-place-btn {
     border: 1px solid #8280dd;
     background-color: #8280dd;
   }
 
-  .add-place-btn:hover,
-  .searchBtn:hover {
+  .add-place-btn:hover {
     border: 1px solid #8280dd;
     background-color: #8280dd;
-  }
-
-  .searchBtn {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    padding: 8px 16px;
-    width: 70px;
-    height: 40px; /* 입력창과 버튼의 높이를 맞춥니다 */
-    border-radius: 8px;
-    color: white;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
   }
 
   .attraction-list {
-    height: 500px;
+    height: 595px;
     overflow-y: auto;
     border: 1px solid rgb(214, 214, 214);
     border-radius: 10px;
-    margin-top: 15px;
+    margin-top: 30px;
     box-shadow: 2px 2px 2px 2px rgba(200, 200, 200, 0.8);
     padding: 5px;
   }

@@ -240,7 +240,7 @@ onMounted(() => {
     <div class="row justify-content-center">
       <div class="col-sm-11">
         <div class="row">
-          <div class="col-lg-8 mt-4">
+          <div class="col-lg-8 mt-4 mb-5">
             <h3 class="title">{{ hotPlace.title }}</h3>
             <div class="d-flex justify-content-between mt-3 my-2 info-text">
               <div>
