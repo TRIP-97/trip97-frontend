@@ -2,6 +2,9 @@
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { detailBoard, deleteBoard } from "@/api/board.js";
+import { useEditor, EditorContent } from "@tiptap/vue-3";
+import StarterKit from "@tiptap/starter-kit";
+import Image from "@tiptap/extension-image";
 
 import axios from "axios";
 
@@ -12,17 +15,67 @@ const board = ref("");
 const no = route.params.id;
 // const no = route.params.no;
 
+const editor = useEditor({
+  extensions: [
+    StarterKit,
+    Image.extend({
+      addAttributes() {
+        return {
+          src: {},
+          alt: {},
+          title: {},
+          width: {
+            default: "auto",
+          },
+          height: {
+            default: "auto",
+          },
+        };
+      },
+    }),
+  ],
+  content: "",
+  editable: true,
+});
+
 async function getBoard() {
   detailBoard(
     no,
     (response) => {
       board.value = response.data;
+
+      // JSON 형태의 콘텐츠를 TipTap 에디터에 설정
+      if (board.value.content) {
+        const content = JSON.parse(board.value.content);
+
+        // 이미지 경로를 웹 접근 가능한 URL로 변환
+        convertLocalImagePaths(content);
+
+        editor.value.commands.setContent(content);
+      }
     },
     (error) => {
       console.log("Board 불러오는 중 에러 발생");
       console.dir(error);
     }
   );
+}
+
+function convertLocalImagePaths(content) {
+  const baseUrl = "http://192.168.120.61:8080/"; // 실제 웹 서버 URL로 변경
+
+  function traverseNodes(node) {
+    if (node.type === "image" && node.attrs.src.startsWith("C:/trip97/board/")) {
+      const fileName = node.attrs.src.split("/").pop();
+      node.attrs.src = baseUrl + fileName;
+    }
+
+    if (node.content && Array.isArray(node.content)) {
+      node.content.forEach(traverseNodes);
+    }
+  }
+
+  traverseNodes(content);
 }
 
 async function removeBoard() {
@@ -36,6 +89,7 @@ async function removeBoard() {
       console.dir(error);
     }
   );
+  router.push({ name: "boardList" });
 }
 
 const moveList = () => {
@@ -63,7 +117,9 @@ onMounted(() => {
       <h2>{{ board.id }}. {{ board.title }}</h2>
       <p>번호 : {{ board.id }}</p>
       <h2>내용</h2>
-      <p>{{ board.content }}</p>
+      <div class="editor">
+        <EditorContent :editor="editor" class="custom-editor" />
+      </div>
     </div>
     <div class="btn">
       <button @click="moveList">목록</button>

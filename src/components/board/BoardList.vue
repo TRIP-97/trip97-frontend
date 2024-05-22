@@ -1,25 +1,81 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { listBoard } from "@/api/board.js";
 
 import axios from "axios";
+import PageNavigation from "../common/PageNavigation.vue";
+import VSelect from "../common/VSelect.vue";
 
 const router = useRouter();
 
 const boards = ref([]);
 
+const currentPage = ref(1);
+const totalPage = ref(0);
+const { VITE_BOARD_LIST_SIZE } = import.meta.env;
+
+const param = ref({
+  pgno: currentPage.value,
+  spp: VITE_BOARD_LIST_SIZE,
+  key: "",
+  word: "",
+  filter: "newest",
+});
+
+const selectOption = ref([
+  { text: "검색조건", value: "" },
+  { text: "제목", value: "title" },
+  { text: "내용", value: "content" },
+  { text: "작성자", value: "writer" },
+]);
+
+const changeKey = (val) => {
+  console.log("즐겨찾기에서 선택한 조건 : " + val);
+  param.value.key = val;
+  getBoardList();
+};
+
+const setFilter = (filter) => {
+  param.value.filter = filter;
+  getBoardList();
+};
+
+const onPageChange = (val) => {
+  currentPage.value = val;
+  param.value.pgno = val;
+  getBoardList();
+};
+
 async function getBoardList() {
   listBoard(
-    (response) => {
-      boards.value = response.data;
+    param.value,
+    ({ data }) => {
+      boards.value = data.list;
+      currentPage.value = data.currentPage;
+      totalPage.value = data.totalPageCount;
+      console.log("게시물들");
       console.log(boards.value);
+      if (Array.isArray(boards.value)) {
+        for (let board of boards.value) {
+          board.createdAt = formatVisitedDate(board.createdAt);
+        }
+      }
     },
     (error) => {
       console.log("BoardList 불러오는 중 에러 발생");
       console.dir(error);
     }
   );
+}
+
+// 날짜 포맷 변경 함수
+function formatVisitedDate(dateString) {
+  const [datePart, timePart] = dateString.split("T");
+  const [year, month, day] = datePart.split("-");
+  const [hour, minute] = timePart.split(":");
+
+  return `${year}년 ${month}월 ${day}일 ${hour}시 ${minute}분`;
 }
 
 function goDetail(no) {
@@ -38,12 +94,45 @@ function goWrite() {
 onMounted(() => {
   getBoardList();
 });
+
+watch([currentPage, param], () => {
+  getBoardList();
+});
 </script>
 
 <template>
   <div class="board-body d-flex flex-column align-items-center">
     <div class="board-container d-flex flex-column align-items-center">
-      <h1></h1>
+      <div class="filter-search-container d-flex justify-content-between mb-3">
+        <div class="filters">
+          <div
+            :class="{ 'filter-selected': param.filter === 'newest' }"
+            class="filter-option"
+            @click="setFilter('newest')"
+          >
+            최신 순
+          </div>
+          <div
+            :class="{ 'filter-selected': param.filter === 'oldest' }"
+            class="filter-option"
+            @click="setFilter('oldest')"
+          >
+            오래된 순
+          </div>
+        </div>
+        <form class="search-form d-flex" @submit.prevent="getBoardList">
+          <VSelect :selectOption="selectOption" @onKeySelect="changeKey" />
+          <div class="input-group input-group-sm">
+            <input
+              type="text"
+              class="form-control"
+              v-model="param.word"
+              placeholder="검색어를 입력해주세요."
+            />
+            <button class="btn btn-dark" type="button" @click="getBoardList">검색</button>
+          </div>
+        </form>
+      </div>
       <table class="board-list table table-hover">
         <thead>
           <tr class="text-center">
@@ -78,6 +167,11 @@ onMounted(() => {
         </tbody>
       </table>
     </div>
+    <PageNavigation
+      :current-page="currentPage"
+      :total-page="totalPage"
+      @pageChange="onPageChange"
+    ></PageNavigation>
   </div>
   <div class="btnBox">
     <button class="writeBox" @click="goWrite">글작성</button>
@@ -91,8 +185,51 @@ table.board-list td {
   background-color: transparent;
 }
 
+.filter-search-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-option {
+  font-size: 14px;
+  font-family: NanumSquareRound;
+  padding: 8px 16px;
+  background-color: #8280dd;
+  color: rgb(255, 255, 255);
+  border-radius: 8px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+}
+
+.filter-selected {
+  background-color: #615fac;
+  color: white;
+}
+
+.search-form {
+  display: flex;
+  gap: 10px;
+}
+
+.search-form button {
+  background-color: #8280dd;
+  color: white;
+  border: none;
+}
+
+.search-form button:hover {
+  background-color: #6b6ab8;
+}
+
 .board-container {
   width: 98%;
+  padding: 15px;
+  margin-bottom: 20px;
   justify-content: center;
   border-radius: 20px;
   background-color: white;

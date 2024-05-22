@@ -4,8 +4,8 @@
       <h2>제목</h2>
       <input class="title" type="text" v-model="title" />
       <h2>내용</h2>
-      <div class="editor">
-        <EditorContent :editor="editor" />
+      <div id="editor-container" class="editor-container">
+        <EditorContent :editor="editor" class="custom-editor" />
       </div>
       <div class="btn">
         <input type="file" @change="handleFileSelection" multiple />
@@ -16,13 +16,12 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useEditor, EditorContent } from "@tiptap/vue-3";
-import { registBoard } from "@/api/board.js";
+import { registBoard, uploadImage } from "@/api/board.js";
 import { useMemberStore } from "@/stores/member";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
-import axios from "axios";
 import { storeToRefs } from "pinia";
 
 const title = ref("");
@@ -54,6 +53,13 @@ const editor = useEditor({
   editable: true,
 });
 
+onMounted(() => {
+  const editorElement = document.querySelector(".custom-editor");
+  if (editorElement) {
+    editorElement.style.border = "none";
+  }
+});
+
 const handleFileSelection = (event) => {
   const files = Array.from(event.target.files);
   files.forEach((file) => {
@@ -74,26 +80,6 @@ const handleFileSelection = (event) => {
   selectedFiles.value = files; // 선택된 파일을 배열에 저장
 };
 
-const uploadImage = async (file) => {
-  const formData = new FormData();
-  formData.append("file", file);
-
-  try {
-    const response = await axios.post("/board/upload", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-
-    const url = response.data.fileUrl; // 업로드된 이미지의 URL이 반환된다고 가정
-    console.log("Uploaded Image URL:", url); // URL이 올바르게 반환되는지 확인
-    return url;
-  } catch (error) {
-    console.error("Error uploading file:", error);
-    return null;
-  }
-};
-
 const saveHandler = async () => {
   // 에디터 콘텐츠를 JSON으로 변환
   let contentJson = editor.value.getJSON();
@@ -102,9 +88,10 @@ const saveHandler = async () => {
   for (const file of selectedFiles.value) {
     try {
       const url = await uploadImage(file);
+      console.log("Received URL:", url); // URL이 제대로 받아와지는지 확인하기 위해 로그 추가
       if (url) {
         // base64 이미지 URL을 실제 업로드된 이미지 URL로 교체
-        contentJson = replaceBase64WithUrl(contentJson, file, url);
+        contentJson = await replaceBase64WithUrl(contentJson, file, url);
       }
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -112,17 +99,17 @@ const saveHandler = async () => {
     }
   }
 
-  const board = ref({
+  const board = {
     writerId: userInfo.value.id,
     title: title.value,
     content: JSON.stringify(contentJson),
     writerNickname: userInfo.value.nickname,
-  });
+  };
 
-  console.log(board.value);
+  console.log(board);
 
   try {
-    await registBoard(sessionStorage.getItem("accessToken"), board.value);
+    await registBoard(sessionStorage.getItem("accessToken"), board);
     console.log("Content saved successfully");
   } catch (error) {
     console.error("Error saving content:", error);
@@ -130,19 +117,27 @@ const saveHandler = async () => {
 };
 
 // base64 이미지를 실제 업로드된 URL로 교체하는 함수
-const replaceBase64WithUrl = (contentJson, file, url) => {
+const replaceBase64WithUrl = async (contentJson, file, url) => {
+  const fileReader = new FileReader();
+  const base64String = await new Promise((resolve, reject) => {
+    fileReader.onload = (e) => resolve(e.target.result);
+    fileReader.onerror = (error) => reject(error);
+    fileReader.readAsDataURL(file);
+  });
+
   if (Array.isArray(contentJson.content)) {
     contentJson.content.forEach((node) => {
-      if (node.type === "image" && node.attrs.src === URL.createObjectURL(file)) {
+      if (node.type === "image" && node.attrs.src === base64String) {
         node.attrs.src = url;
       }
     });
   }
+
   return contentJson;
 };
 </script>
 
-<style lang="scss">
+<style scoped>
 .title {
   width: 640px;
   border: 1px solid black;
@@ -155,52 +150,24 @@ const replaceBase64WithUrl = (contentJson, file, url) => {
   justify-content: center;
 }
 
-.tiptap {
-  > * + * {
-    margin-top: 0.75em;
-  }
-
-  code {
-    background-color: rgba(#616161, 0.1);
-    color: #616161;
-  }
-}
-
 .body {
   background-color: white;
   border-radius: 20px;
   padding: 15px;
 }
 
-.editor {
+.editor-container {
   border: 1px solid black;
   margin: 10px;
   height: 500px;
+  display: flex;
+  flex-direction: column;
 }
 
-.btn {
-  padding: 5px;
-}
-
-.content {
-  padding: 1rem 0 0;
-
-  h3 {
-    margin: 1rem 0 0.5rem;
-  }
-
-  pre {
-    border-radius: 5px;
-    color: #333;
-  }
-
-  code {
-    display: block;
-    white-space: pre-wrap;
-    font-size: 0.8rem;
-    padding: 0.75rem 1rem;
-    background-color: #e9ecef;
-    color: #495057;
-  }
+#editor-container .custom-editor {
+  min-height: 500px;
+  max-height: 500px;
+  padding: 10px;
+  overflow-y: scroll;
 }
 </style>
