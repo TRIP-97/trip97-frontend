@@ -433,7 +433,7 @@
 
             const polyline = new kakao.maps.Polyline({
               path: detailRoads,
-              strokeWeight: 5,
+              strokeWeight: 6,
               strokeColor: "#8181F7",
               strokeOpacity: 0.8,
               strokeStyle: "solid",
@@ -452,10 +452,12 @@
     );
   };
 
-
-  const sxArr = ref([]), syArr = ref([]);
-  const exArr = ref([]), eyArr = ref([]);
-  const startArrIdx = ref(0), endArrIdx = ref(0);
+  const sxArr = ref([]),
+    syArr = ref([]);
+  const exArr = ref([]),
+    eyArr = ref([]);
+  const startArrIdx = ref(0),
+    endArrIdx = ref(0);
 
   // 오디세이 API, 티맵 API를 활용해서 대중교통 경로를 생성하는 함수
   const createPlanPublicRoute = (dayPlanId) => {
@@ -482,19 +484,28 @@
     }
 
     for (let i = 0; i < items.length - 1; i++) {
-      searchPubTransRoute(items[i].longitude, items[i].latitude, items[i + 1].longitude, items[i + 1].latitude);
+      searchPubTransRoute(
+        items[i].longitude,
+        items[i].latitude,
+        items[i + 1].longitude,
+        items[i + 1].latitude
+      );
     }
 
     for (let i = 0; i < items.length; i++) {
-      addNumberMarker(map.value, new kakao.maps.LatLng(items[i].latitude, items[i].longitude), i, "");
+      addNumberMarker(
+        map.value,
+        new kakao.maps.LatLng(items[i].latitude, items[i].longitude),
+        i,
+        ""
+      );
     }
 
     centerMap(items[0].latitude, items[0].longitude);
-  }
+  };
 
   // 대중교통 길찾기 지도에 표시하는 함수
   const searchPubTransRoute = (sx, sy, ex, ey) => {
-
     getPublicPlanRoute(
       {
         sx: sx,
@@ -512,145 +523,143 @@
         console.log("대중교통 길찾기 API 호출 중 에러 발생!");
         console.dir(error);
       }
-    )
-
-    
-  }
+    );
+  };
 
   // 노선 그래픽 데이터를 호출하는 함수
   const callPublicRouteGraphicData = (mabObj) => {
     getPublicRouteGraphicData(
-        mabObj,
+      mabObj,
       ({ data }) => {
         console.log("노선 그래픽 데이터 호출 성공!");
 
-        //즉시 실행 함수로 closure 발생 방지
-        (function () {
-            //도보 경로 표시와 시간 맞추기
-            setTimeout(function () {
-                drawPublicKakaoPolyLine(data);
-            }, 1000);
-        }());
+        drawPublicKakaoPolyLine(data);
       },
       (error) => {
         console.log("노선 그래픽 데이터 호출중 에러 발생!");
         console.dir(error);
       }
-    )
-  }
+    );
+  };
 
   // 노선그래픽 데이터를 이용하여 지도위 폴리라인 그려주는 함수
   const drawPublicKakaoPolyLine = (data) => {
     const mapInstance = map.value;
     let lineArray;
 
-    for (let i = 0 ; i < data.result.lane.length; i++) {
-      for (let j = 0 ; j < data.result.lane[i].section.length; j++) {
+    for (let i = 0; i < data.result.lane.length; i++) {
+      for (let j = 0; j < data.result.lane[i].section.length; j++) {
         lineArray = null;
         lineArray = new Array();
-        for (let k = 0; k < data.result.lane[i].section[j].graphPos.length; k++ ){
-            lineArray.push(new kakao.maps.LatLng(data.result.lane[i].section[j].graphPos[k].y, data.result.lane[i].section[j].graphPos[k].x));
+        for (let k = 0; k < data.result.lane[i].section[j].graphPos.length; k++) {
+          lineArray.push(
+            new kakao.maps.LatLng(
+              data.result.lane[i].section[j].graphPos[k].y,
+              data.result.lane[i].section[j].graphPos[k].x
+            )
+          );
         }
 
         let polyline;
         //지하철결과, 버스결과의 경우 노선에 따른 라인색상 지정하는 부분 (1~9호선 색상 추가)
         if (data.result.lane[i].type === 1) {
-            polyline = new kakao.maps.Polyline({
-                map: mapInstance,
-                path: lineArray,
-                strokeWeight : 5,
-                strokeOpacity : 0.8,
-                strokeColor: '#0D347F',
-                strokeStyle: "solid",
-            });
+          polyline = new kakao.maps.Polyline({
+            map: mapInstance,
+            path: lineArray,
+            strokeWeight: 6,
+            strokeOpacity: 0.8,
+            strokeColor: "#0D347F",
+            strokeStyle: "solid",
+          });
         } else if (data.result.lane[i].type === 2) {
-            polyline = new kakao.maps.Polyline({
-                map: mapInstance,
-                path: lineArray,
-                strokeWeight : 5,
-                strokeOpacity : 0.8,
-                strokeColor: '#3B9F37',
-                strokeStyle: "solid",
-            });
+          polyline = new kakao.maps.Polyline({
+            map: mapInstance,
+            path: lineArray,
+            strokeWeight: 6,
+            strokeOpacity: 0.8,
+            strokeColor: "#3B9F37",
+            strokeStyle: "solid",
+          });
         } else if (data.result.lane[i].type === 3) {
-            polyline = new kakao.maps.Polyline({
-                map: mapInstance,
-                path: lineArray,
-                strokeWeight : 5,
-                strokeOpacity : 0.8,
-                strokeColor: '#fc4c02',
-                strokeStyle: "solid",
-            });
+          polyline = new kakao.maps.Polyline({
+            map: mapInstance,
+            path: lineArray,
+            strokeWeight: 6,
+            strokeOpacity: 0.8,
+            strokeColor: "#fc4c02",
+            strokeStyle: "solid",
+          });
         } else if (data.result.lane[i].type == 4) {
-            polyline = new kakao.maps.Polyline({
-                map: mapInstance,
-                path: lineArray,
-                strokeWeight : 5,
-                strokeOpacity : 0.8,
-                strokeColor: '#3165A8',
-                strokeStyle: "solid",
-            });
+          polyline = new kakao.maps.Polyline({
+            map: mapInstance,
+            path: lineArray,
+            strokeWeight: 6,
+            strokeOpacity: 0.8,
+            strokeColor: "#3165A8",
+            strokeStyle: "solid",
+          });
         } else if (data.result.lane[i].type == 5) {
-            polyline = new kakao.maps.Polyline({
-                map: mapInstance,
-                path: lineArray,
-                strokeWeight : 5,
-                strokeOpacity : 0.8,
-                strokeColor: '#a05eb5',
-                strokeStyle: "solid",
-            });
+          polyline = new kakao.maps.Polyline({
+            map: mapInstance,
+            path: lineArray,
+            strokeWeight: 6,
+            strokeOpacity: 0.8,
+            strokeColor: "#a05eb5",
+            strokeStyle: "solid",
+          });
         } else if (data.result.lane[i].type == 6) {
-            polyline = new kakao.maps.Polyline({
-                map: mapInstance,
-                path: lineArray,
-                strokeWeight : 5,
-                strokeOpacity : 0.8,
-                strokeColor: '#904D23',
-                strokeStyle: "solid",
-            });
+          polyline = new kakao.maps.Polyline({
+            map: mapInstance,
+            path: lineArray,
+            strokeWeight: 6,
+            strokeOpacity: 0.8,
+            strokeColor: "#904D23",
+            strokeStyle: "solid",
+          });
         } else if (data.result.lane[i].type == 7) {
-            polyline = new kakao.maps.Polyline({
-                map: mapInstance,
-                path: lineArray,
-                strokeWeight : 5,
-                strokeOpacity : 0.8,
-                strokeColor: '#5B692E',
-                strokeStyle: "solid",
-            });
+          polyline = new kakao.maps.Polyline({
+            map: mapInstance,
+            path: lineArray,
+            strokeWeight: 6,
+            strokeOpacity: 0.8,
+            strokeColor: "#5B692E",
+            strokeStyle: "solid",
+          });
         } else if (data.result.lane[i].type == 8) {
-            polyline = new kakao.maps.Polyline({
-                map: mapInstance,
-                path: lineArray,
-                strokeWeight : 5,
-                strokeOpacity : 0.8,
-                strokeColor: '#e31c79',
-                strokeStyle: "solid",
-            });
+          polyline = new kakao.maps.Polyline({
+            map: mapInstance,
+            path: lineArray,
+            strokeWeight: 6,
+            strokeOpacity: 0.8,
+            strokeColor: "#e31c79",
+            strokeStyle: "solid",
+          });
         } else if (data.result.lane[i].type == 9) {
-            polyline = new kakao.maps.Polyline({
-                map: mapInstance,
-                path: lineArray,
-                strokeWeight : 5,
-                strokeOpacity : 0.8,
-                strokeColor: '#B39627',
-                strokeStyle: "solid",
-            });
-        } else { // 버스의 경우
-            polyline = new kakao.maps.Polyline({
-                map: mapInstance,
-                path: lineArray,
-                strokeWeight : 5,
-                strokeOpacity : 0.8,
-                strokeColor: '#3673dd',
-                strokeStyle: "solid",
-            });
+          polyline = new kakao.maps.Polyline({
+            map: mapInstance,
+            path: lineArray,
+            strokeWeight: 6,
+            strokeOpacity: 0.8,
+            strokeColor: "#B39627",
+            strokeStyle: "solid",
+          });
+        } else {
+          // 버스의 경우
+          polyline = new kakao.maps.Polyline({
+            map: mapInstance,
+            path: lineArray,
+            strokeWeight: 6,
+            strokeOpacity: 0.8,
+            strokeColor: "#3673dd",
+            strokeStyle: "solid",
+          });
         }
 
         polyline.setMap(mapInstance);
         polylines.value.push(polyline);
       }
     }
-  }
+  };
 
   // 대중교통 길찾기 경로내의 도보 경로를 구하는 함수
   const searchSubRoutes = (resultObj, sx, sy, ex, ey) => {
@@ -660,21 +669,29 @@
     for (let i = 0; i < resultObj.result.path[0].subPath.length; i++) {
       let trafficType = resultObj.result.path[0].subPath[i].trafficType;
       if (trafficType === 1 || trafficType === 2) {
-          insertSEArray(resultObj.result.path[0].subPath[i].startX, resultObj.result.path[0].subPath[i].startY, 1);
-          insertSEArray(resultObj.result.path[0].subPath[i].endX, resultObj.result.path[0].subPath[i].endY, 0);
+        insertSEArray(
+          resultObj.result.path[0].subPath[i].startX,
+          resultObj.result.path[0].subPath[i].startY,
+          1
+        );
+        insertSEArray(
+          resultObj.result.path[0].subPath[i].endX,
+          resultObj.result.path[0].subPath[i].endY,
+          0
+        );
       }
     }
     insertSEArray(ex, ey, 1);
 
     //약간의 좌표 오차 어떻게 처리할 지 생각하기
-    for(var i = 0; i < startArrIdx.value; i++) {
-      if(i > 1) {
+    for (var i = 0; i < startArrIdx.value; i++) {
+      if (i > 1) {
         searchWalkRoute(sxArr.value[i], syArr.value[i], exArr.value[i], eyArr.value[i], 2);
       } else {
         searchWalkRoute(sxArr.value[i], syArr.value[i], exArr.value[i], eyArr.value[i], 1);
       }
     }
-  }
+  };
 
   // 보행자 길찾기 경로 탐색 함수
   function searchWalkRoute(sx, sy, ex, ey, option) {
@@ -683,14 +700,14 @@
 
     getWalkPlanRoute(
       {
-        "startX" : sx,
-        "startY" : sy,
-        "endX" : ex,
-        "endY" : ey,
-        "reqCoordType" : "WGS84GEO",
-        "resCoordType" : "EPSG3857",
-        "startName" : "출발지",
-        "endName" : "도착지"
+        startX: sx,
+        startY: sy,
+        endX: ex,
+        endY: ey,
+        reqCoordType: "WGS84GEO",
+        resCoordType: "EPSG3857",
+        startName: "출발지",
+        endName: "도착지",
       },
       ({ data }) => {
         console.log("보도 경로 불러오기 성공!");
@@ -701,11 +718,12 @@
           var geometry = resultData[i].geometry;
 
           if (geometry.type == "LineString") {
-            for ( var j in geometry.coordinates) {
+            for (var j in geometry.coordinates) {
               // 경로들의 결과값(구간)들을 포인트 객체로 변환
               var latlng = new kakao.maps.Point(
-                  geometry.coordinates[j][0],
-                  geometry.coordinates[j][1]);
+                geometry.coordinates[j][0],
+                geometry.coordinates[j][1]
+              );
               // 포인트 객체를 받아 좌표값으로 변환
               var convertPoint = new Tmapv2.Projection.convertEPSG3857ToWGS84GEO(latlng);
               // 포인트객체의 정보로 좌표값 변환 객체로 저장
@@ -722,7 +740,7 @@
         console.log("보도 경로 불러오는 중 에러 발생!");
         console.log(error);
       }
-    )
+    );
   }
 
   // 도보 경로를 그리는 함수
@@ -730,11 +748,11 @@
     let polyline;
 
     polyline = new kakao.maps.Polyline({
-        path : arrPoint,
-        strokeColor : "#585858",
-        strokeWeight : 5,
-        strokeOpacity : 0.8,
-        map: map.value
+      path: arrPoint,
+      strokeColor: "#585858",
+      strokeWeight: 6,
+      strokeOpacity: 0.8,
+      map: map.value,
     });
 
     polyline.setMap(map.value);
@@ -743,27 +761,27 @@
 
   // 도보 출발, 도착지점 배열에 삽입하는 함수
   function insertSEArray(x, y, select) {
-      if(select == 0) {
-          sxArr.value[startArrIdx.value] = x;
-          syArr.value[startArrIdx.value] = y;
-          startArrIdx.value++;
-      } else if(select == 1) {
-          exArr.value[endArrIdx.value] = x;
-          eyArr.value[endArrIdx.value] = y;
-          endArrIdx.value++;
-      } else {
-          console.log('insertSEArray Error');
-      }
+    if (select == 0) {
+      sxArr.value[startArrIdx.value] = x;
+      syArr.value[startArrIdx.value] = y;
+      startArrIdx.value++;
+    } else if (select == 1) {
+      exArr.value[endArrIdx.value] = x;
+      eyArr.value[endArrIdx.value] = y;
+      endArrIdx.value++;
+    } else {
+      console.log("insertSEArray Error");
+    }
   }
 
   // 도보 출발, 도착지점 배열을 초기화하는 함수
   function clearSEArray() {
-      sxArr.value = [];
-      syArr.value = [];
-      exArr.value = [];
-      eyArr.value = [];
-      startArrIdx.value = 0;
-      endArrIdx.value = 0;
+    sxArr.value = [];
+    syArr.value = [];
+    exArr.value = [];
+    eyArr.value = [];
+    startArrIdx.value = 0;
+    endArrIdx.value = 0;
   }
 
   // 지도 중심을 변경하는 함수
