@@ -278,14 +278,18 @@
   // 마커와 폴리라인을 저장할 배열
   const markers = ref([]);
   const polylines = ref([]);
+  const infoWindows = ref([]);
 
-  // 마커와 폴리라인을 제거하는 함수
+  // 마커와 폴리라인, 인포윈도우을 제거하는 함수
   const clearMap = () => {
     markers.value.forEach((marker) => marker.setMap(null));
     markers.value = [];
 
     polylines.value.forEach((polyline) => polyline.setMap(null));
     polylines.value = [];
+
+    infoWindows.value.forEach((infoWindow) => infoWindow.setMap(null));
+    infoWindows.value = [];
   };
 
   // 마커를 생성하고 지도 위에 숫자 마커를 표시하는 함수
@@ -337,7 +341,6 @@
       return;
     }
     let items = dayPlan.items.filter((item) => item.type === "PLACE");
-    console.log(items);
 
     if (items.length < 2) {
       window.alert("경로를 만들기 전에 장소를 적어도 2개 추가해주세요!");
@@ -391,7 +394,11 @@
         const { result_code, summary, sections } = response.data.routes[0];
 
         if (sections.length > 0) {
+          let distanceTmp = "";
+          let durationTmp = "";
+
           sections.forEach((section, index) => {
+
             const { distance, duration, guides: arrays, roads } = section;
 
             const detailRoads = [];
@@ -416,10 +423,12 @@
             });
 
             const mapInstance = map.value;
-
+            
+            let addedMarker = "";
+            let lastAddedMarker = "";
             if (guidePositions.length > 0) {
               const { title, position } = guidePositions[0];
-              addNumberMarker(mapInstance, position, index, title);
+              addedMarker = addNumberMarker(mapInstance, position, index, title);
             }
 
             if (index === sections.length - 1 && guidePositions.length > 1) {
@@ -427,8 +436,8 @@
               const { title: titleLast, position: positionLast } =
                 guidePositions[guidePositions.length - 1];
 
-              addNumberMarker(mapInstance, positionFirst, index, titleFirst);
-              addNumberMarker(mapInstance, positionLast, index + 1, titleLast);
+              addedMarker = addNumberMarker(mapInstance, positionFirst, index, titleFirst);
+              lastAddedMarker = addNumberMarker(mapInstance, positionLast, index + 1, titleLast);
             }
 
             const polyline = new kakao.maps.Polyline({
@@ -441,6 +450,77 @@
 
             polyline.setMap(mapInstance);
             polylines.value.push(polyline);
+            
+            if (sections.length == 1) {
+              let kmDistance = (distance / 1000).toFixed(1);
+              let durationHours = Math.floor(duration / 3600);
+              let durationMinutes = Math.floor((duration % 3600) / 60);
+              let formattedDuration = durationHours > 0 ? `${durationHours}시간 ${durationMinutes}분` : `${durationMinutes}분`;
+
+              let iwContent = `<div style="padding:5px; border-radius: 5px; font-size: 14px;">
+                  이동거리: ${kmDistance}km
+                  <br>
+                  소요시간: ${formattedDuration}</div>`, 
+                  iwPosition = new kakao.maps.LatLng(items[index + 1].latitude, items[index + 1].longitude); // 인포윈도우 표시 위치
+
+              // 인포윈도우를 생성
+              let infowindow = new kakao.maps.InfoWindow({
+                  position: iwPosition, 
+                  content: iwContent 
+              });
+              infowindow.open(mapInstance, lastAddedMarker);
+              infoWindows.value.push(infowindow);
+            } else {
+                if (index === 0) {
+                    distanceTmp = distance;
+                    durationTmp = duration;
+                } else {
+                    let kmDistanceTmp = (distanceTmp / 1000).toFixed(1);
+                    let durationHoursTmp = Math.floor(durationTmp / 3600);
+                    let durationMinutesTmp = Math.floor((durationTmp % 3600) / 60);
+                    let formattedDurationTmp = durationHoursTmp > 0 ? `${durationHoursTmp}시간 ${durationMinutesTmp}분` : `${durationMinutesTmp}분`;
+
+                    let iwContent = `<div style="padding:5px; border-radius: 5px; font-size: 14px;">
+                        이동거리: ${kmDistanceTmp}km
+                        <br>
+                        소요시간: ${formattedDurationTmp}</div>`, 
+                        iwPosition = new kakao.maps.LatLng(items[index + 1].latitude, items[index + 1].longitude); // 인포윈도우 표시 위치
+
+                    // 인포윈도우를 생성
+                    let infowindow = new kakao.maps.InfoWindow({
+                        position: iwPosition, 
+                        content: iwContent 
+                    });
+
+                    infowindow.open(mapInstance, addedMarker);
+                    infoWindows.value.push(infowindow);
+
+                    distanceTmp = distance;
+                    durationTmp = duration;
+
+                    if (index === sections.length - 1) {
+                        let kmDistance = (distance / 1000).toFixed(1);
+                        let durationHours = Math.floor(duration / 3600);
+                        let durationMinutes = Math.floor((duration % 3600) / 60);
+                        let formattedDuration = durationHours > 0 ? `${durationHours}시간 ${durationMinutes}분` : `${durationMinutes}분`;
+
+                        let iwContent = `<div style="padding:5px; border-radius: 5px; font-size: 14px;">
+                            이동거리: ${kmDistance}km
+                            <br>
+                            소요시간: ${formattedDuration}</div>`, 
+                            iwPosition = new kakao.maps.LatLng(items[index + 1].latitude, items[index + 1].longitude); // 인포윈도우 표시 위치
+
+                        // 인포윈도우를 생성
+                        let infowindow = new kakao.maps.InfoWindow({
+                            position: iwPosition, 
+                            content: iwContent 
+                        });
+                        infowindow.open(mapInstance, lastAddedMarker);
+                        infoWindows.value.push(infowindow);
+                    }
+                }
+            }
+
           });
         }
 
@@ -470,7 +550,6 @@
       return;
     }
     let items = dayPlan.items.filter((item) => item.type === "PLACE");
-    console.log(items);
 
     if (items.length < 2) {
       window.alert("경로를 만들기 전에 장소를 적어도 2개 추가해주세요!");
@@ -483,29 +562,37 @@
       return;
     }
 
+    addNumberMarker(
+      map.value,
+      new kakao.maps.LatLng(items[0].latitude, items[0].longitude),
+      0,
+      ""
+    );
+
     for (let i = 0; i < items.length - 1; i++) {
       searchPubTransRoute(
         items[i].longitude,
         items[i].latitude,
         items[i + 1].longitude,
-        items[i + 1].latitude
+        items[i + 1].latitude,
+        i
       );
     }
 
-    for (let i = 0; i < items.length; i++) {
-      addNumberMarker(
-        map.value,
-        new kakao.maps.LatLng(items[i].latitude, items[i].longitude),
-        i,
-        ""
-      );
-    }
+    // for (let i = 0; i < items.length; i++) {
+    //   addNumberMarker(
+    //     map.value,
+    //     new kakao.maps.LatLng(items[0].latitude, items[0].longitude),
+    //     i,
+    //     ""
+    //   );
+    // }
 
     centerMap(items[0].latitude, items[0].longitude);
   };
 
   // 대중교통 길찾기 지도에 표시하는 함수
-  const searchPubTransRoute = (sx, sy, ex, ey) => {
+  const searchPubTransRoute = (sx, sy, ex, ey, index) => {
     getPublicPlanRoute(
       {
         sx: sx,
@@ -516,6 +603,33 @@
       ({ data }) => {
         console.log("대중교통 길찾기 API 호출 성공!");
         console.log(data);
+
+        let marker = addNumberMarker(
+          map.value,
+          new kakao.maps.LatLng(ey, ex),
+          index + 1,
+          ""
+        );
+
+        let kmDistance = (data.result.path[0].info.totalDistance / 1000).toFixed(1);
+        let durationHours = Math.floor(data.result.path[0].info.totalTime / 60);
+        let durationMinutes = data.result.path[0].info.totalTime;
+        let formattedDuration = durationHours > 0 ? `${durationHours}시간 ${durationMinutes}분` : `${durationMinutes}분`;
+
+        let iwContent = `<div style="padding:5px; border-radius: 5px; font-size: 14px;">
+            이동거리: ${kmDistance}km
+            <br>
+            소요시간: ${formattedDuration}</div>`, 
+            iwPosition = new kakao.maps.LatLng(ey, ex); // 인포윈도우 표시 위치
+
+        // 인포윈도우를 생성
+        let infowindow = new kakao.maps.InfoWindow({
+            position: iwPosition, 
+            content: iwContent 
+        });
+        infowindow.open(map.value, marker);
+        infoWindows.value.push(infowindow);
+
         callPublicRouteGraphicData(data.result.path[0].info.mapObj);
         searchSubRoutes(data, sx, sy, ex, ey);
       },
@@ -665,6 +779,8 @@
   const searchSubRoutes = (resultObj, sx, sy, ex, ey) => {
     clearSEArray();
 
+    console.log("경로 체크:", resultObj);
+
     insertSEArray(sx, sy, 0);
     for (let i = 0; i < resultObj.result.path[0].subPath.length; i++) {
       let trafficType = resultObj.result.path[0].subPath[i].trafficType;
@@ -696,7 +812,6 @@
   // 보행자 길찾기 경로 탐색 함수
   function searchWalkRoute(sx, sy, ex, ey, option) {
     let drawInfoArr = [];
-    console.log(sx, " ", sy, " ", ex, " ", ey);
 
     getWalkPlanRoute(
       {
@@ -711,7 +826,6 @@
       },
       ({ data }) => {
         console.log("보도 경로 불러오기 성공!");
-        console.log(data);
         let resultData = data.features;
 
         for (let i in resultData) {
