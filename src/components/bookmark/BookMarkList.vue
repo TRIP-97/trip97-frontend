@@ -2,13 +2,11 @@
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { selectFavorites } from "@/api/favorite";
-import StarterKit from "@tiptap/starter-kit";
 
 import PageNavigation from "../common/PageNavigation.vue";
 import BookMarkListItem from "./item/BookMarkListItem.vue";
 import VSelect from "../common/VSelect.vue";
 
-import { useEditor, EditorContent } from "@tiptap/vue-3";
 import { useMemberStore } from "@/stores/member";
 import { storeToRefs } from "pinia";
 
@@ -49,14 +47,13 @@ const setFilter = (filter) => {
   getFavoriteList();
 };
 
-const onPageCount = (val) => {
+const onPageChange = (val) => {
   currentPage.value = val;
   param.value.pgno = val;
   getFavoriteList();
 };
 
 async function getFavoriteList() {
-
   console.log(param.value);
 
   selectFavorites(

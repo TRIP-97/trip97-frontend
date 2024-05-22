@@ -185,6 +185,7 @@ const router = createRouter({
           path: "write",
           name: "boardWrite",
           component: () => import("../components/board/BoardWrite.vue"),
+          redirect: { name: "boardList" },
         },
         {
           path: "modify/:id",

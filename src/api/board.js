@@ -3,8 +3,8 @@ import { localAxios } from "@/util/http-commons";
 const local = localAxios();
 
 // 자유게시판 전체 게시물 불러오기
-function listBoard(success, fail) {
-  local.get(`/board`).then(success).catch(fail);
+function listBoard(param, success, fail) {
+  local.get(`/board`, { params: param }).then(success).catch(fail);
 }
 
 // 자유게시판 게시물 상세보기
@@ -23,20 +23,24 @@ function registBoard(token, board) {
 }
 
 // 이미지 업로드
-function uploadImage(file, success, fail) {
+function uploadImage(file) {
   const formData = new FormData();
   formData.append("file", file);
 
-  local
-    .post(`/board/upload`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+  return local.post(`/board/upload`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  })
+    .then(response => {
+      console.log("Response from server:", response.data); // 서버 응답 확인
+      return response.data; // 서버에서 반환하는 URL 필드에 맞게 수정
     })
-    .then(success)
-    .catch(fail);
+    .catch(error => {
+      console.error('Error uploading image:', error);
+      throw error;
+    });
 }
-
 // 자유게시판 게시물 삭제
 function deleteBoard(boardId, success, fail) {
   local.delete(`/board/${boardId}`).then(success).catch(fail);
