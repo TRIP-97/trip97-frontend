@@ -35,7 +35,7 @@
     checkGroupMember(
       param,
       ({ data }) => {
-        if (data == 1) {
+        if (data === 1) {
           isGroupMember.value = true;
         }
       },
@@ -309,8 +309,8 @@
   }
 
   .list-button-section .request-btn {
-    background-color: #8280dd;
-    border-color: #8280dd;
+    background-color: #757ef7;
+    border-color: #757ef7;
     color: white;
   }
 

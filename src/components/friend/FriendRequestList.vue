@@ -77,7 +77,12 @@
           <img v-else src="@/assets/images/profile.png" class="profile-image" />
           <div class="member-text">
             <h2 class="nickname">{{ friendRequest.friendNickname }}</h2>
-            <p v-if="friendRequest.friendIntroduction !== null && friendRequest.friendIntroduction !== ''" class="introduction">
+            <p
+              v-if="
+                friendRequest.friendIntroduction !== null && friendRequest.friendIntroduction !== ''
+              "
+              class="introduction"
+            >
               자기소개를 아직 작성하지 않았어요.
             </p>
             <p v-else class="introduction">{{ friendRequest.friendIntroduction }}</p>
@@ -130,7 +135,7 @@
   }
 
   .request {
-    background-color: aliceblue;
+    background-color: rgb(238, 225, 241);
     margin: 10px;
     padding: 15px;
     border-radius: 8px;
@@ -163,7 +168,7 @@
   }
 
   .member-info h2 {
-    color: #007bff;
+    color: #b05ce0;
     margin-bottom: 3px;
   }
 
@@ -176,11 +181,11 @@
   }
 
   .accept-btn {
-    background-color: #ace0f9;
+    background-color: #d4acf9;
   }
 
   .accept-btn:hover {
-    background-color: #7ac0e5;
+    background-color: #bd94e2;
   }
 
   .refuse-btn {
