@@ -1,76 +1,81 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { listHotPlace } from "@/api/hotplace.js";
+  import { ref, onMounted } from "vue";
+  import { useRouter } from "vue-router";
+  import { listHotPlace } from "@/api/hotplace.js";
+  import { useMemberStore } from "@/stores/member";
+  import { storeToRefs } from "pinia";
 
-import HotPlaceListItem from "./item/HotPlaceListItem.vue";
-import PageNavigation from "../common/PageNavigation.vue";
-import VSelect from "../common/VSelect.vue";
+  import HotPlaceListItem from "./item/HotPlaceListItem.vue";
+  import PageNavigation from "../common/PageNavigation.vue";
+  import VSelect from "../common/VSelect.vue";
 
-const router = useRouter();
+  const router = useRouter();
 
-const hotPlaces = ref([]);
-const currentPage = ref(1);
-const totalPage = ref(0);
-const { VITE_HOTPLACE_LIST_SIZE } = import.meta.env;
+  const hotPlaces = ref([]);
+  const currentPage = ref(1);
+  const totalPage = ref(0);
+  const { VITE_HOTPLACE_LIST_SIZE } = import.meta.env;
 
-const param = ref({
-  pgno: currentPage.value,
-  spp: VITE_HOTPLACE_LIST_SIZE,
-  key: "",
-  word: "",
-  filter: "createdDate",
-});
+  const memberStore = useMemberStore();
+  const { isLogin } = storeToRefs(memberStore);
 
-const selectOption = ref([
-  { text: "검색조건", value: "" },
-  { text: "제목", value: "title" },
-  { text: "내용", value: "content" },
-  { text: "위치", value: "location" },
-  { text: "닉네임", value: "member_nickname" },
-]);
-
-const changeKey = (val) => {
-  console.log("HotPlaceList에서 선택한 조건 : " + val);
-  param.value.key = val;
-};
-
-const setFilter = (filter) => {
-  param.value.filter = filter;
-  getHotPlaceList();
-};
-
-// 핫플레이스 목록 조회
-async function getHotPlaceList() {
-  listHotPlace(
-    param.value,
-    ({ data }) => {
-      hotPlaces.value = data.hotPlaces;
-      currentPage.value = data.currentPage;
-      totalPage.value = data.totalPageCount;
-    },
-    (error) => {
-      console.log("HotPlaceList 불러오는 중 에러 발생!");
-      console.dir(error);
-    }
-  );
-}
-
-const onPageChange = (val) => {
-  currentPage.value = val;
-  param.value.pgno = val;
-  getHotPlaceList();
-};
-
-function goWriteForm() {
-  router.push({
-    name: "hotPlaceWrite",
+  const param = ref({
+    pgno: currentPage.value,
+    spp: VITE_HOTPLACE_LIST_SIZE,
+    key: "",
+    word: "",
+    filter: "createdDate",
   });
-}
 
-onMounted(() => {
-  getHotPlaceList();
-});
+  const selectOption = ref([
+    { text: "검색조건", value: "" },
+    { text: "제목", value: "title" },
+    { text: "내용", value: "content" },
+    { text: "위치", value: "location" },
+    { text: "닉네임", value: "member_nickname" },
+  ]);
+
+  const changeKey = (val) => {
+    console.log("HotPlaceList에서 선택한 조건 : " + val);
+    param.value.key = val;
+  };
+
+  const setFilter = (filter) => {
+    param.value.filter = filter;
+    getHotPlaceList();
+  };
+
+  // 핫플레이스 목록 조회
+  async function getHotPlaceList() {
+    listHotPlace(
+      param.value,
+      ({ data }) => {
+        hotPlaces.value = data.hotPlaces;
+        currentPage.value = data.currentPage;
+        totalPage.value = data.totalPageCount;
+      },
+      (error) => {
+        console.log("HotPlaceList 불러오는 중 에러 발생!");
+        console.dir(error);
+      }
+    );
+  }
+
+  const onPageChange = (val) => {
+    currentPage.value = val;
+    param.value.pgno = val;
+    getHotPlaceList();
+  };
+
+  function goWriteForm() {
+    router.push({
+      name: "hotPlaceWrite",
+    });
+  }
+
+  onMounted(() => {
+    getHotPlaceList();
+  });
 </script>
 
 <template>
@@ -120,7 +125,9 @@ onMounted(() => {
         </div>
       </div>
       <div class="row mt-3 justify-content-end">
-        <button class="btn btn-primary write-btn" @click="goWriteForm">글 작성</button>
+        <button v-if="isLogin" class="btn btn-primary write-btn" @click="goWriteForm">
+          글 작성
+        </button>
       </div>
       <PageNavigation
         :current-page="currentPage"
@@ -132,53 +139,53 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.filter-search-container {
-  display: flex;
-  justify-content: space-between;
-}
+  .filter-search-container {
+    display: flex;
+    justify-content: space-between;
+  }
 
-.filters {
-  display: flex;
-  gap: 10px;
-}
+  .filters {
+    display: flex;
+    gap: 10px;
+  }
 
-.filter-option {
-  font-size: 14px;
-  font-family: NanumSquareRound;
-  padding: 8px 16px;
-  background-color: #ebebeb;
-  color: rgb(4, 4, 4);
-  border-radius: 8px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  cursor: pointer;
-}
+  .filter-option {
+    font-size: 14px;
+    font-family: NanumSquareRound;
+    padding: 8px 16px;
+    background-color: #ebebeb;
+    color: rgb(4, 4, 4);
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+  }
 
-.filter-selected {
-  background-color: black;
-  color: white;
-}
+  .filter-selected {
+    background-color: black;
+    color: white;
+  }
 
-.search-form {
-  display: flex;
-  gap: 10px;
-}
+  .search-form {
+    display: flex;
+    gap: 10px;
+  }
 
-.search-form button {
-  background-color: #8280dd;
-  color: white;
-  border: none;
-}
+  .search-form button {
+    background-color: #8280dd;
+    color: white;
+    border: none;
+  }
 
-.search-form button:hover {
-  background-color: #6b6ab8;
-}
+  .search-form button:hover {
+    background-color: #6b6ab8;
+  }
 
-.write-btn {
-  width: fit-content;
-  background-color: #8280dd;
-  border: 1px solid #8280dd;
-  margin-top: 20px;
-  margin-bottom: 30px;
-  margin-right: 30px;
-}
+  .write-btn {
+    width: fit-content;
+    background-color: #8280dd;
+    border: 1px solid #8280dd;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    margin-right: 30px;
+  }
 </style>

@@ -1,238 +1,242 @@
 <script setup>
-import { ref, onMounted, toRefs } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import {
-  detailHotPlace,
-  deleteHotPlace,
-  listHotPlaceComment,
-  registHotPlaceComment,
-  checkHotPlaceLiked,
-  updateLike,
-} from "@/api/hotplace";
-import { useMemberStore } from "@/stores/member";
-import { storeToRefs } from "pinia";
-import HotPlaceCommentItem from "./item/HotPlaceCommentItem.vue";
+  import { ref, onMounted, toRefs } from "vue";
+  import { useRoute, useRouter } from "vue-router";
+  import {
+    detailHotPlace,
+    deleteHotPlace,
+    listHotPlaceComment,
+    registHotPlaceComment,
+    checkHotPlaceLiked,
+    updateLike,
+  } from "@/api/hotplace";
+  import { useMemberStore } from "@/stores/member";
+  import { storeToRefs } from "pinia";
+  import HotPlaceCommentItem from "./item/HotPlaceCommentItem.vue";
 
-const route = useRoute();
-const router = useRouter();
+  const route = useRoute();
+  const router = useRouter();
 
-const memberStore = useMemberStore();
-const { userInfo } = storeToRefs(memberStore);
+  const memberStore = useMemberStore();
+  const { userInfo, isLogin } = storeToRefs(memberStore);
 
-const hotPlaceId = ref(route.params.id);
-const hotPlace = ref("");
-const memberId = ref("");
-const comments = ref([]);
-const commentContent = ref("");
-const isWriter = ref(false);
-const isLiked = ref(false);
+  const hotPlaceId = ref(route.params.id);
+  const hotPlace = ref("");
+  const memberId = ref("");
+  const comments = ref([]);
+  const commentContent = ref("");
+  const isWriter = ref(false);
+  const isLiked = ref(false);
 
-// 게시글 작성자인지 확인하는 함수
-const checkIsWriter = () => {
-  if (hotPlace.value.writerId === memberId.value) {
-    isWriter.value = true;
-  }
-};
-
-// 핫플레이스 게시글 조회하는 함수
-async function getHotPlace() {
-  detailHotPlace(
-    hotPlaceId.value,
-    (response) => {
-      hotPlace.value = response.data;
-      console.log("핫플레이스 게시글 로딩 성공!", hotPlace.value);
-
-      hotPlace.value.startDate = formatVisitedDate(hotPlace.value.startDate);
-      hotPlace.value.endDate = formatVisitedDate(hotPlace.value.endDate);
-
-      checkIsWriter();
-      getComments();
-    },
-    (error) => {
-      console.log("HotPlace 게시글 불러오는 중 에러 발생!");
-      console.dir(error);
+  // 게시글 작성자인지 확인하는 함수
+  const checkIsWriter = () => {
+    if (hotPlace.value.writerId === memberId.value) {
+      isWriter.value = true;
     }
-  );
-}
+  };
 
-// 날짜 포맷 변경 함수
-function formatVisitedDate(dateString) {
-  const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
-}
+  // 핫플레이스 게시글 조회하는 함수
+  async function getHotPlace() {
+    detailHotPlace(
+      hotPlaceId.value,
+      (response) => {
+        hotPlace.value = response.data;
+        console.log("핫플레이스 게시글 로딩 성공!");
 
-// 핫플레이스 좋아요 여부 확인하는 함수
-function checkLike() {
-  checkHotPlaceLiked(
-    {
-      memberId: memberId.value,
-      hotPlaceId: hotPlaceId.value,
-    },
-    (response) => {
-      isLiked.value = response.data;
-    },
-    (error) => {
-      console.log("HotPlace 좋아요 여부 불러오는 중 에러 발생!");
-      console.dir(error);
-    }
-  );
-}
+        hotPlace.value.startDate = formatVisitedDate(hotPlace.value.startDate);
+        hotPlace.value.endDate = formatVisitedDate(hotPlace.value.endDate);
 
-// 핫플레이스 좋아요하는 함수
-function addLike() {
-  if (isLiked.value) {
-    window.alert("이미 좋아요한 게시물입니다!");
-  } else {
-    console.log("좋아요추가 체크");
-    updateLike(
-      {
-        memberId: memberId.value,
-        hotPlaceId: hotPlaceId.value,
-      },
-      () => {
-        isLiked.value = true;
-        getHotPlace();
+        checkIsWriter();
+        getComments();
       },
       (error) => {
-        console.log("HotPlace 좋아요하는 중 에러 발생!");
+        console.log("HotPlace 게시글 불러오는 중 에러 발생!");
         console.dir(error);
       }
     );
   }
-}
 
-// 댓글 목록 조회하는 함수
-const getComments = () => {
-  listHotPlaceComment(
-    hotPlace.value.id,
-    (response) => {
-      comments.value = response.data;
-    },
-    (error) => {
-      console.error("댓글 조회 실패!", error);
+  // 날짜 포맷 변경 함수
+  function formatVisitedDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
+  }
+
+  // 핫플레이스 좋아요 여부 확인하는 함수
+  function checkLike() {
+    if (isLogin.value) {
+      checkHotPlaceLiked(
+        {
+          memberId: memberId.value,
+          hotPlaceId: hotPlaceId.value,
+        },
+        (response) => {
+          isLiked.value = response.data;
+        },
+        (error) => {
+          console.log("HotPlace 좋아요 여부 불러오는 중 에러 발생!");
+          console.dir(error);
+        }
+      );
     }
-  );
-};
+  }
 
-// 댓글 작성하는 함수
-const registComment = () => {
-  const comment = ref({
-    writerId: memberId.value,
-    boardId: hotPlaceId.value,
-    content: commentContent.value,
-  });
-
-  registHotPlaceComment(
-    comment.value,
-    () => {
-      getComments();
-      commentContent.value = "";
-    },
-    (error) => {
-      console.error("댓글 작성 실패!", error);
+  // 핫플레이스 좋아요하는 함수
+  function addLike() {
+    if (!isLogin.value) {
+      window.alert("로그인을 해주세요!");
+    } else if (isLiked.value) {
+      window.alert("이미 좋아요한 게시물입니다!");
+    } else {
+      console.log("좋아요추가 체크");
+      updateLike(
+        {
+          memberId: memberId.value,
+          hotPlaceId: hotPlaceId.value,
+        },
+        () => {
+          isLiked.value = true;
+          getHotPlace();
+        },
+        (error) => {
+          console.log("HotPlace 좋아요하는 중 에러 발생!");
+          console.dir(error);
+        }
+      );
     }
-  );
-};
+  }
 
-// 핫플레이스 목록으로 이동하는 함수
-function goHotPlaceList() {
-  router.push({ name: "hotPlaceList" });
-}
-
-// 핫플레이스 수정 화면으로 이동하는 함수
-function goHotPlaceModify() {
-  router.push({
-    name: "hotPlaceModify",
-    params: { id: hotPlace.value.id },
-  });
-}
-
-// 핫플레이스 삭제하는 함수
-function removeHotPlace() {
-  deleteHotPlace(
-    hotPlaceId.value,
-    () => {
-      router.replace({
-        name: "hotPlaceList",
-      });
-    },
-    (error) => {
-      console.log("HotPlace 게시글 삭제하는 중 에러 발생!");
-      console.dir(error);
-    }
-  );
-}
-
-// KAKAO MAP API 시작
-const map = toRefs(null);
-
-var marker;
-
-// 맵 생성시 마커를 추가하는 함수
-function addMarker() {
-  let latitude = hotPlace.value.latitude;
-  let longitude = hotPlace.value.longitude;
-  let position = new kakao.maps.LatLng(latitude, longitude);
-
-  marker = new kakao.maps.Marker({
-    position: position,
-    map: map.value,
-  });
-
-  map.value.setCenter(position);
-}
-
-const initMap = () => {
-  const container = document.getElementById("map");
-  const options = {
-    center: new kakao.maps.LatLng(36.35659864, 127.30901502),
-    level: 7,
+  // 댓글 목록 조회하는 함수
+  const getComments = () => {
+    listHotPlaceComment(
+      hotPlace.value.id,
+      (response) => {
+        comments.value = response.data;
+      },
+      (error) => {
+        console.error("댓글 조회 실패!", error);
+      }
+    );
   };
 
-  map.value = new kakao.maps.Map(container, options);
-  // 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
-  let mapTypeControl;
-  mapTypeControl = new kakao.maps.MapTypeControl();
-  // 지도에 컨트롤을 추가해야 지도위에 표시됩니다
-  // kakao.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOPRIGHT는 오른쪽 위를 의미합니다
-  map.value.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
-
-  // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
-  let zoomControl = new kakao.maps.ZoomControl();
-  map.value.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
-
-  // 마커를 추가합니다.
-  addMarker();
-};
-
-onMounted(() => {
-  /* global kakao */
-  if (userInfo.value !== null) {
-    memberId.value = userInfo.value.id;
-  }
-  getHotPlace();
-  checkLike();
-
-  if (window.kakao && window.kakao.maps && hotPlace.value !== "") {
-    initMap();
-  } else {
-    const script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src =
-      "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=f866a7adcb3307f7c3c406e2ec39d7d0&libraries=services,clusterer,drawing";
-    script.addEventListener("load", () => {
-      kakao.maps.load(() => {
-        // 카카오맵 API가 로딩이 완료된 후 지도의 기본적인 세팅을 시작해야 한다.
-        initMap();
-      });
+  // 댓글 작성하는 함수
+  const registComment = () => {
+    const comment = ref({
+      writerId: memberId.value,
+      boardId: hotPlaceId.value,
+      content: commentContent.value,
     });
-    document.head.appendChild(script);
+
+    registHotPlaceComment(
+      comment.value,
+      () => {
+        getComments();
+        commentContent.value = "";
+      },
+      (error) => {
+        console.error("댓글 작성 실패!", error);
+      }
+    );
+  };
+
+  // 핫플레이스 목록으로 이동하는 함수
+  function goHotPlaceList() {
+    router.push({ name: "hotPlaceList" });
   }
-});
-// KAKAO MAP API 끝
+
+  // 핫플레이스 수정 화면으로 이동하는 함수
+  function goHotPlaceModify() {
+    router.push({
+      name: "hotPlaceModify",
+      params: { id: hotPlace.value.id },
+    });
+  }
+
+  // 핫플레이스 삭제하는 함수
+  function removeHotPlace() {
+    deleteHotPlace(
+      hotPlaceId.value,
+      () => {
+        router.replace({
+          name: "hotPlaceList",
+        });
+      },
+      (error) => {
+        console.log("HotPlace 게시글 삭제하는 중 에러 발생!");
+        console.dir(error);
+      }
+    );
+  }
+
+  // KAKAO MAP API 시작
+  const map = toRefs(null);
+
+  var marker;
+
+  // 맵 생성시 마커를 추가하는 함수
+  function addMarker() {
+    let latitude = hotPlace.value.latitude;
+    let longitude = hotPlace.value.longitude;
+    let position = new kakao.maps.LatLng(latitude, longitude);
+
+    marker = new kakao.maps.Marker({
+      position: position,
+      map: map.value,
+    });
+
+    map.value.setCenter(position);
+  }
+
+  const initMap = () => {
+    const container = document.getElementById("map");
+    const options = {
+      center: new kakao.maps.LatLng(36.35659864, 127.30901502),
+      level: 7,
+    };
+
+    map.value = new kakao.maps.Map(container, options);
+    // 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
+    let mapTypeControl;
+    mapTypeControl = new kakao.maps.MapTypeControl();
+    // 지도에 컨트롤을 추가해야 지도위에 표시됩니다
+    // kakao.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOPRIGHT는 오른쪽 위를 의미합니다
+    map.value.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+
+    // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
+    let zoomControl = new kakao.maps.ZoomControl();
+    map.value.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+
+    // 마커를 추가합니다.
+    addMarker();
+  };
+
+  onMounted(() => {
+    /* global kakao */
+    if (userInfo.value !== null) {
+      memberId.value = userInfo.value.id;
+    }
+    getHotPlace();
+    checkLike();
+
+    if (window.kakao && window.kakao.maps && hotPlace.value !== "") {
+      initMap();
+    } else {
+      const script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src =
+        "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=f866a7adcb3307f7c3c406e2ec39d7d0&libraries=services,clusterer,drawing";
+      script.addEventListener("load", () => {
+        kakao.maps.load(() => {
+          // 카카오맵 API가 로딩이 완료된 후 지도의 기본적인 세팅을 시작해야 한다.
+          initMap();
+        });
+      });
+      document.head.appendChild(script);
+    }
+  });
+  // KAKAO MAP API 끝
 </script>
 
 <template>
@@ -373,213 +377,213 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.map {
-  width: auto;
-  height: 540px;
-  margin-top: 15px;
-  border: 1px solid;
-  border-radius: 10px;
-}
+  .map {
+    width: auto;
+    height: 540px;
+    margin-top: 15px;
+    border: 1px solid;
+    border-radius: 10px;
+  }
 
-.map-area {
-  border-radius: 15px;
-  box-shadow: 2px 2px 2px 2px rgba(200, 200, 200, 0.8);
-  background-color: rgb(255, 255, 255, 0.6);
-}
+  .map-area {
+    border-radius: 15px;
+    box-shadow: 2px 2px 2px 2px rgba(200, 200, 200, 0.8);
+    background-color: rgb(255, 255, 255, 0.6);
+  }
 
-.container {
-  max-width: 1200px;
-}
+  .container {
+    max-width: 1200px;
+  }
 
-.title,
-.schedule-label,
-.content-label,
-.comment-label {
-  font-family: NanumSquareRoundExtraBold;
-}
+  .title,
+  .schedule-label,
+  .content-label,
+  .comment-label {
+    font-family: NanumSquareRoundExtraBold;
+  }
 
-.schedule-label,
-.content-label {
-  font-size: 20px;
-  margin-top: 50px;
-}
+  .schedule-label,
+  .content-label {
+    font-size: 20px;
+    margin-top: 50px;
+  }
 
-.comment-label {
-  font-size: 20px;
-  margin-top: 30px;
-}
+  .comment-label {
+    font-size: 20px;
+    margin-top: 30px;
+  }
 
-.content {
-  color: #3e4143;
-}
+  .content {
+    color: #3e4143;
+  }
 
-.info-text {
-  font-size: 0.9rem;
-  color: #6c757d;
-}
+  .info-text {
+    font-size: 0.9rem;
+    color: #6c757d;
+  }
 
-.custom-vr {
-  display: inline;
-  border-left: 1px solid lightgray;
-  align-self: center;
-}
+  .custom-vr {
+    display: inline;
+    border-left: 1px solid lightgray;
+    align-self: center;
+  }
 
-.stat-text {
-  margin-right: 5px;
-}
+  .stat-text {
+    margin-right: 5px;
+  }
 
-.date-text {
-  text-align: right;
-}
+  .date-text {
+    text-align: right;
+  }
 
-.edit-actions {
-  color: #6c757d;
-  font-size: 0.8rem;
-}
+  .edit-actions {
+    color: #6c757d;
+    font-size: 0.8rem;
+  }
 
-.action-text {
-  cursor: pointer;
-}
+  .action-text {
+    cursor: pointer;
+  }
 
-.schedule-box {
-  color: gray;
-  background-color: #f8f9fa;
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+  .schedule-box {
+    color: gray;
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-.image-list {
-  margin-top: 50px;
-  margin-bottom: 50px;
-}
+  .image-list {
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
 
-.like-button-section {
-  display: flex;
-  justify-content: center;
-  margin: 20px 0;
-}
+  .like-button-section {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+  }
 
-.btn.like-button {
-  display: inline-flex;
-  align-items: center;
-  padding: 10px 20px;
-  border: 1px solid lightpink;
-  background-color: rgb(255, 255, 255);
-  color: rgba(222, 70, 70, 0.868);
-  font-size: 24px;
-  border-radius: 10px;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+  .btn.like-button {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    border: 1px solid lightpink;
+    background-color: rgb(255, 255, 255);
+    color: rgba(222, 70, 70, 0.868);
+    font-size: 24px;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-.btn.like-button:hover {
-  background-color: #ffebeb;
-}
+  .btn.like-button:hover {
+    background-color: #ffebeb;
+  }
 
-.list-button-section {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
+  .list-button-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
 
-.list-button-section .btn-primary {
-  background-color: #8280dd;
-  border-color: #8280dd;
-  color: white;
-}
+  .list-button-section .btn-primary {
+    background-color: #8280dd;
+    border-color: #8280dd;
+    color: white;
+  }
 
-hr {
-  width: 100%;
-  border: 0;
-  height: 1px;
-  background-color: #575555;
-  margin-top: 5px;
-}
+  hr {
+    width: 100%;
+    border: 0;
+    height: 1px;
+    background-color: #575555;
+    margin-top: 5px;
+  }
 
-.input-group .form-control {
-  border-right: 0;
-  font-size: 13px;
-}
+  .input-group .form-control {
+    border-right: 0;
+    font-size: 13px;
+  }
 
-.input-group .input-group-append .btn {
-  background-color: transparent;
-  color: #8280dd;
-  border: 0;
-}
+  .input-group .input-group-append .btn {
+    background-color: transparent;
+    color: #8280dd;
+    border: 0;
+  }
 
-.input-group {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
+  .input-group {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
 
-.comment-write-btn {
-  color: #8280dd;
-  font-size: 15px;
-}
+  .comment-write-btn {
+    color: #8280dd;
+    font-size: 15px;
+  }
 
-.traveler-info-label {
-  font-family: NanumSquareRoundExtraBold;
-  font-size: 19px;
-  color: #333;
-  margin-top: 50px;
-}
+  .traveler-info-label {
+    font-family: NanumSquareRoundExtraBold;
+    font-size: 19px;
+    color: #333;
+    margin-top: 50px;
+  }
 
-.author-info-box {
-  background-color: #f1f1f1;
-  padding: 1px 15px 1px 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+  .author-info-box {
+    background-color: #f1f1f1;
+    padding: 1px 15px 1px 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-img.rounded-circle {
-  margin-right: 15px;
-}
+  img.rounded-circle {
+    margin-right: 15px;
+  }
 
-.profile-image {
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-}
+  .profile-image {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+  }
 
-.writer-nickname {
-  font-family: NanumSquareRound;
-  margin-top: 13px;
-  font-size: 16px;
-}
+  .writer-nickname {
+    font-family: NanumSquareRound;
+    margin-top: 13px;
+    font-size: 16px;
+  }
 
-.writer-introduction {
-  font-family: NanumSquareRound;
-  font-size: 13px;
-  color: gray;
-}
+  .writer-introduction {
+    font-family: NanumSquareRound;
+    font-size: 13px;
+    color: gray;
+  }
 
-.location-info-label {
-  font-family: NanumSquareRoundExtraBold;
-  font-size: 19px;
-  margin-top: 50px;
-}
+  .location-info-label {
+    font-family: NanumSquareRoundExtraBold;
+    font-size: 19px;
+    margin-top: 50px;
+  }
 
-.location-info-box {
-  background-image: linear-gradient(to bottom, #fafafa, #cfcfcf, #e0e0e0);
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+  .location-info-box {
+    background-image: linear-gradient(to bottom, #fafafa, #cfcfcf, #e0e0e0);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-.visited-places {
-  font-size: 16px;
-  color: #333;
-}
+  .visited-places {
+    font-size: 16px;
+    color: #333;
+  }
 
-.city-name {
-  font-size: 14px;
-  color: #777777;
-}
+  .city-name {
+    font-size: 14px;
+    color: #777777;
+  }
 
-.side-map {
-  width: 100%;
-  border: 2px solid white;
-  border-radius: 8px;
-}
+  .side-map {
+    width: 100%;
+    border: 2px solid white;
+    border-radius: 8px;
+  }
 </style>

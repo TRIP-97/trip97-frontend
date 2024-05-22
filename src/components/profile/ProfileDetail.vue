@@ -1,20 +1,20 @@
 <script setup>
-import { useRouter } from "vue-router";
-import { useMemberStore } from "@/stores/member";
-import { storeToRefs } from "pinia";
+  import { useRouter } from "vue-router";
+  import { useMemberStore } from "@/stores/member";
+  import { storeToRefs } from "pinia";
 
-const router = useRouter();
+  const router = useRouter();
 
-const memberStore = useMemberStore();
-const { userInfo } = storeToRefs(memberStore);
+  const memberStore = useMemberStore();
+  const { userInfo } = storeToRefs(memberStore);
 
-console.log(userInfo.value);
+  console.log(userInfo.value);
 
-const editMember = () => {
-  router.push({
-    name: "profileModify",
-  });
-};
+  const editMember = () => {
+    router.push({
+      name: "profileModify",
+    });
+  };
 </script>
 
 <template>
@@ -42,45 +42,52 @@ const editMember = () => {
 </template>
 
 <style scoped>
-.member-info-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 50px;
-}
+  .member-info-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+  }
 
-.member-info {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  width: 300px;
-}
+  .member-info {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
+  }
 
-.member-profile-image {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 20px;
-}
+  .member-profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+  }
 
-.member-details div {
-  margin-bottom: 10px;
-}
+  .member-details {
+    text-align: left; /* 텍스트를 왼쪽 정렬 */
+    margin-top: 10px;
+  }
 
-.edit-button {
-  background-color: #8280dd;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
+  .member-details div {
+    margin-bottom: 10px;
+  }
 
-.edit-button:hover {
-  background-color: #6968b3;
-}
+  .edit-button {
+    background-color: #8280dd;
+    color: white;
+    border: none;
+    padding: 8px 16px; /* 버튼 크기를 약간 줄임 */
+    font-size: 14px; /* 글씨 크기를 약간 줄임 */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 20px; /* 위쪽 마진을 추가 */
+  }
+
+  .edit-button:hover {
+    background-color: #6968b3;
+  }
 </style>

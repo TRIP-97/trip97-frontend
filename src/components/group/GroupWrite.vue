@@ -47,7 +47,7 @@
     for (let i = 0; i < files.value.length; i++) {
       groupData.append("upfile", files.value[i]);
     }
-    
+
     try {
       token.value = sessionStorage.getItem("accessToken");
       const response = await registGroup(token.value, groupData);
@@ -235,5 +235,8 @@
 
   .write-btn {
     margin-top: 10px;
+    background-color: #8280dd;
+    border: 1px solid #8280dd;
+    color: white;
   }
 </style>

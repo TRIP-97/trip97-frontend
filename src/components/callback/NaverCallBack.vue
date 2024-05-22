@@ -10,15 +10,13 @@ onMounted(() => {
     authorizationCode: queryParams.get("code"),
     state: queryParams.get("state"),
   });
-  console.log(query.value.authorizationCode);
 
   if (query.value.authorizationCode && query.value.state) {
     naverLogin(
       query.value,
       (response) => {
-        console.log(response);
         sessionStorage.setItem("accessToken", response.data.accessToken);
-        console.log("로그인 성공:", response.data);
+        console.log("로그인 성공!");
         router.replace({ name: "main" });
         document.dispatchEvent(new CustomEvent("login-event"));
       },

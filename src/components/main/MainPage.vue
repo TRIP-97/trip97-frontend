@@ -1,32 +1,85 @@
 <script setup>
-  import { ref, onMounted } from "vue";
+  import { ref, watch, onMounted } from "vue";
   import { useRouter } from "vue-router";
   import { useMemberStore } from "@/stores/member";
   import { storeToRefs } from "pinia";
   import { Carousel, Slide, Navigation } from "vue3-carousel";
-  import "vue3-carousel/dist/carousel.css";
-  import testImage from "@/assets/images/HotPlacePageLogo.jpg";
-  import HotAttractionModal from "@/components/attraction/item/HotAttractionModal.vue";
-
-  const memberStore = useMemberStore();
-  const { userInfo, isLogin } = storeToRefs(memberStore);
-
   import { listFriend } from "@/api/friend";
   import { getHotAttractions } from "@/api/attraction";
   import { getHotBoards } from "@/api/board";
+  import { listMyGroup } from "@/api/group";
+  import { detailHotPlace } from "@/api/hotplace";
+  import HotAttractionModal from "@/components/attraction/item/HotAttractionModal.vue";
+  import "vue3-carousel/dist/carousel.css";
+
+  const memberStore = useMemberStore();
+  const { userInfo, isLogin } = storeToRefs(memberStore);
+  const { VITE_GROUP_LIST_SIZE } = import.meta.env;
 
   const router = useRouter();
+  const group = ref("");
   const friends = ref([]);
   const attractions = ref([]);
   const boards = ref([]);
+  const hotplaces = ref([]);
   const isModalActive = ref(false);
   const selectHotAttractionId = ref("");
 
+  const paramForGroup = ref({
+    pgno: 1,
+    spp: VITE_GROUP_LIST_SIZE,
+    key: "",
+    word: "",
+    memberId: isLogin.value ? userInfo.value.id : 0,
+  });
+
+  // 로그인 여부에 따라 그룹 카드 구성을 바꾸는 watch문
+  watch(
+    () => isLogin.value,
+    (newValue) => {
+      paramForGroup.value.memberId = newValue ? userInfo.value.id : 0;
+      getGroupList();
+    }
+  );
+
+  // 그룹 목록 조회
+  async function getGroupList() {
+    listMyGroup(
+      paramForGroup.value,
+      ({ data }) => {
+        group.value = data.groups[0];
+        console.log("내 그룹 불러오기 성공!");
+      },
+      (error) => {
+        console.log("GroupList 불러오는 중 에러 발생!");
+        console.dir(error);
+      }
+    );
+  }
+
+  // 친구 목록 조회
+  async function getFriends() {
+    if (isLogin.value) {
+      console.log(userInfo.value.id);
+      listFriend(
+        userInfo.value.id,
+        (response) => {
+          friends.value = response.data;
+          console.log("내 친구 목록 불러오기 성공!");
+        },
+        (error) => {
+          console.log("친구목록 조회 실패");
+          console.log(error);
+        }
+      );
+    }
+  }
+
+  // 인기 관광지 조회
   async function getAttractions() {
     getHotAttractions(
       (response) => {
         attractions.value = response.data;
-        console.log(attractions.value);
       },
       (error) => {
         console.log("인기 관광지 조회 실패");
@@ -35,11 +88,11 @@
     );
   }
 
+  // 인기 커뮤니티 게시글 조회
   async function getBoards() {
     getHotBoards(
       (response) => {
         boards.value = response.data;
-        console.log("boards.value");
       },
       (error) => {
         console.log("인기 게시물 조회 실패");
@@ -48,17 +101,16 @@
     );
   }
 
-  async function getFriends() {
-    if (isLogin.value) {
-      console.log(userInfo.value.id);
-      listFriend(
-        userInfo.value.id,
-        (response) => {
-          friends.value = response.data;
-          console.log(friends.value);
+  // 운영자 추천 핫플레이스 게시글 조회
+  async function getHotPlaces() {
+    for (let i = 20; i < 30; i++) {
+      detailHotPlace(
+        i,
+        ({ data }) => {
+          hotplaces.value.push(data);
         },
         (error) => {
-          console.log("친구목록 조회 실패");
+          console.log("메인 화면에서 운영자 추천 핫플레이스 리스트 불러오는 중 에러 발생!");
           console.log(error);
         }
       );
@@ -70,99 +122,6 @@
       name: "profile",
     });
   }
-
-  const hotplaces = ref([
-    {
-      id: 1,
-      location: "서울",
-      title: "남산타워에서의 일출",
-      writerNickname: "홍길동",
-      createdAt: "2024-05-01",
-      image: testImage,
-      likes: 11,
-    },
-    {
-      id: 2,
-      location: "제주",
-      title: "제주도 여행 후기",
-      writerNickname: "김철수",
-      createdAt: "2024-05-02",
-      image: testImage,
-      likes: 11,
-    },
-    {
-      id: 3,
-      location: "부산",
-      title: "부산 해운대 맛집 탐방",
-      writerNickname: "이영희",
-      createdAt: "2024-05-03",
-      image: testImage,
-      likes: 11,
-    },
-    {
-      id: 4,
-      location: "서울",
-      title: "서울의 숨겨진 명소",
-      writerNickname: "박민수",
-      createdAt: "2024-05-04",
-      image: testImage,
-      likes: 11,
-    },
-    {
-      id: 5,
-      location: "서울",
-      title: "경복궁 야경 투어",
-      writerNickname: "최지우",
-      createdAt: "2024-05-05",
-      image: testImage,
-      likes: 11,
-    },
-    {
-      id: 6,
-      location: "인천",
-      title: "인천공항 탐방기",
-      writerNickname: "이철수",
-      createdAt: "2024-05-06",
-      image: testImage,
-      likes: 11,
-    },
-    {
-      id: 7,
-      location: "서울",
-      title: "서울대공원 동물원 탐방",
-      writerNickname: "김민희",
-      createdAt: "2024-05-07",
-      image: testImage,
-      likes: 11,
-    },
-    {
-      id: 8,
-      location: "서울",
-      title: "동대문 쇼핑 탐방",
-      writerNickname: "박영수",
-      createdAt: "2024-05-08",
-      image: testImage,
-      likes: 11,
-    },
-    {
-      id: 9,
-      location: "서울",
-      title: "창덕궁의 아름다움",
-      writerNickname: "최영희",
-      createdAt: "2024-05-09",
-      image: testImage,
-      likes: 11,
-    },
-    {
-      id: 10,
-      location: "서울",
-      title: "한강공원의 평화로움",
-      writerNickname: "김철민",
-      createdAt: "2024-05-10",
-      image: testImage,
-      likes: 11,
-    },
-  ]);
 
   // 로그인하기 버튼 클릭시 로그인 화면으로 이동하는 함수
   const moveToLoginPage = () => {
@@ -182,6 +141,14 @@
     }
   };
 
+  // 로그인한 멤버의 모임이 있을 때, 모임 카드 클릭시 해당 모임 화면으로 이동하는 함수
+  const moveToMyGroupPage = (groupId) => {
+    router.push({
+      name: "groupDetail",
+      params: { id: groupId },
+    });
+  };
+
   // 커뮤니티 카드를 누르면 커뮤니티 화면으로 이동하는 함수
   const moveToCommunityPage = () => {
     router.push({
@@ -189,7 +156,7 @@
     });
   };
 
-  // 핫플레이스 카드를 누르면 핫플레이스 화면으로 이동하는 함수
+  // 핫플레이스 카드를 누르면 핫플레이스 리스트 화면으로 이동하는 함수
   const moveToHotPlacePage = () => {
     router.push({
       name: "hotPlace",
@@ -202,10 +169,20 @@
     isModalActive.value = true;
   };
 
+  // 운영자 추천 핫플레이스 카드를 클릭시 핫플레이스 게시글 화면로 이동하면 함수
+  const moveToHotPlaceDetailPage = (hotPlaceId) => {
+    router.push({
+      name: "hotPlaceDetail",
+      params: { id: hotPlaceId },
+    });
+  };
+
   onMounted(() => {
+    getGroupList();
     getFriends();
     getAttractions();
     getBoards();
+    getHotPlaces();
   });
 </script>
 
@@ -234,7 +211,11 @@
             </div>
             <button class="btn login-btn" @click="moveToLoginPage">로그인하기</button>
           </div>
-          <div class="col-lg-7 my-group-area d-flex justify-content-center align-items-center">
+
+          <div
+            v-if="group === null || group === '' || group === undefined"
+            class="col-lg-7 my-group-area d-flex justify-content-center align-items-center"
+          >
             <div class="group-default-message">
               <h7>예정된 여행 모임이 없어요.</h7>
               <br />
@@ -242,7 +223,23 @@
             </div>
             <button @click="moveToGroupPage" class="btn create-group-btn">+</button>
           </div>
+
+          <div
+            v-else
+            class="col-lg-7 my-group-area my-group-page-area d-flex justify-content-evenly align-items-center"
+            @click="moveToMyGroupPage(group.id)"
+          >
+            <div class="group-default-message">
+              <h7>{{ group.name }}</h7>
+              <br />
+              <br />
+              <i class="fa-solid fa-location-dot group-location-icon"></i>
+              <h7>{{ group.location }}</h7>
+            </div>
+            <img :src="group.fileInfos[0].url" class="move-my-group-image" />
+          </div>
         </div>
+
         <div class="friends-area">
           <div class="friends-header d-flex align-items-center">
             <span class="red-dot"></span>
@@ -367,8 +364,8 @@
 
       <carousel :items-to-show="3" class="hotplace-slider">
         <slide v-for="hotplace in hotplaces" :key="hotplace.id">
-          <div class="card hotplace-card">
-            <img :src="hotplace.image" class="card-image" alt="" />
+          <div class="card hotplace-card" @click="moveToHotPlaceDetailPage(hotplace.id)">
+            <img :src="hotplace.fileInfos[0].url" class="card-image" alt="" />
             <div class="card-body">
               <div class="location">
                 <div>
@@ -377,7 +374,7 @@
                 </div>
                 <div class="like">
                   <i class="fa-solid fa-heart"></i>
-                  <span>{{ hotplace.likes }}</span>
+                  <span>{{ hotplace.likeCount }}</span>
                 </div>
               </div>
               <p class="title">{{ hotplace.title }}</p>
@@ -479,6 +476,21 @@
     font-size: 30px;
     color: #3431bc;
     border: 1px dotted #3431bc;
+  }
+
+  .group-location-icon {
+    color: #3431bc;
+    margin-right: 5px;
+  }
+
+  .move-my-group-image {
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+  }
+
+  .my-group-page-area {
+    cursor: pointer;
   }
 
   .friends-area {
@@ -765,15 +777,6 @@
     font-size: 16px;
   }
 
-  /* .hotplace-card {
-    width: 300px;
-    height: 350px;
-    border-radius: 20px;
-    text-align: center;
-    overflow: hidden;
-    box-shadow: 2px 2px 2px 2px rgba(128, 128, 128, 0.4);
-  } */
-
   .hotplace-card {
     width: 300px;
     border-radius: 20px;
@@ -781,6 +784,7 @@
     box-shadow: 2px 2px 2px 2px rgba(128, 128, 128, 0.4);
     position: relative;
     margin-bottom: 20px;
+    cursor: pointer;
   }
 
   .card-image {
