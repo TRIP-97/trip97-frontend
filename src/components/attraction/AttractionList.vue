@@ -230,29 +230,30 @@ function removeBookMark(value){
 
 // 북마크 여부 확인
 async function isBookmark(attractionId) {
-  console.log("??", attractionId);
-  selectFavorite(
-    sessionStorage.getItem("accessToken"),
-    attractionId,
-    userInfo.value.id,
-    (res) => {
-      if(res.data.attractionId===attractionId){
-        isBookMarkTF.value = true;
-      }else{
-        isBookMarkTF.value = false;
+  if (userInfo.value !== null) {
+    selectFavorite(
+      sessionStorage.getItem("accessToken"),
+      attractionId,
+      userInfo.value.id,
+      (res) => {
+        if(res.data.attractionId===attractionId){
+          isBookMarkTF.value = true;
+        }else{
+          isBookMarkTF.value = false;
+        }
+        if (isBookMarkTF.value === true) {
+          bookMarkSrc.value = onBookmark;
+        } else {
+          bookMarkSrc.value = offBookmark;
+        }
+        console.log(bookMarkSrc.value);
+      },
+      (error) => {
+        console.log("북마크 불러오는 중 실패");
+        console.dir(error);
       }
-      if (isBookMarkTF.value === true) {
-        bookMarkSrc.value = onBookmark;
-      } else {
-        bookMarkSrc.value = offBookmark;
-      }
-      console.log(bookMarkSrc.value);
-    },
-    (error) => {
-      console.log("북마크 불러오는 중 실패");
-      console.dir(error);
-    }
-  );
+    );
+  }
 }
 
 // 자식 컴포넌트에 보낼 파라미터 값 
@@ -264,7 +265,7 @@ const showAttractionDetail = (attractionId,contentTypeId) => {
     section.value.scrollIntoView({behavior : 'smooth'});
     selectedAttractionId.value = attractionId;
     selectedAttractionContent.value = categories.value.find((category) => category.code === parseInt(contentTypeId))?.name;
-    if (userInfo.value.id!=null) {
+    if (userInfo.value !== null) {
       isBookmark(attractionId);
     } else {
       bookMarkSrc.value = offBookmark;

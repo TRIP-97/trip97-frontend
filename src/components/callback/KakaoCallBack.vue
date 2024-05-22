@@ -9,15 +9,12 @@ onMounted(() => {
   const query = ref({
     authorizationCode: queryParams.get("code"),
   });
-  console.log(query.value.authorizationCode);
-
   if (query.value.authorizationCode) {
     kakaoLogin(
       query.value,
       (response) => {
-        console.log(response);
         sessionStorage.setItem("accessToken", response.data.accessToken);
-        console.log("로그인 성공:", response.data);
+        console.log("로그인 성공!");
         router.replace({ name: "main" });
         document.dispatchEvent(new CustomEvent("login-event"));
       },

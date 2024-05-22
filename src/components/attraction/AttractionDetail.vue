@@ -42,7 +42,7 @@
     <div class="reviewContainer">
       <div class="header d-flex justify-content-between">
         <h1>리뷰</h1>
-        <button class="add-review-btn" @click="addReview">리뷰 작성하기 +</button>
+        <button v-if="isLogin" class="add-review-btn" @click="addReview">리뷰 작성하기 +</button>
       </div>
 
       <div class="review-list" v-for="review in reviews" :key="review.id">
@@ -83,7 +83,12 @@
   import { defineProps, defineEmits } from "vue";
   import { getReviews, registerReview, updateReview, removeReview } from "@/api/review.js";
   import AttractionCommentModal from "@/components/attraction/AttractionCommentModal.vue";
+  import { storeToRefs } from "pinia";
+  import { useMemberStore } from "@/stores/member";
   import "bootstrap/dist/css/bootstrap.min.css";
+
+  const memberStore = useMemberStore();
+  const { isLogin, userInfo } = storeToRefs(memberStore);
 
   const props = defineProps({
     attractionId: [String, Number],
@@ -124,11 +129,12 @@
     getReviews(
       attraction.value.id,
       ({ data }) => {
-        reviews.value = data.map((review) => ({
-          ...review,
-          createdAt: formatDate(review.createdAt),
-        }));
-        console.log(data);
+        if (data !== "") {
+          reviews.value = data.map((review) => ({
+            ...review,
+            createdAt: formatDate(review.createdAt),
+          }));
+        }
       },
       (error) => {
         console.log("리뷰 목록 불러오는 중 에러 발생!");

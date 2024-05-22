@@ -51,7 +51,7 @@
     for (let i = 0; i < files.value.length; i++) {
       hotPlaceData.append("upfile", files.value[i]);
     }
-    
+
     try {
       token.value = sessionStorage.getItem("accessToken");
       const response = await registHotPlace(token.value, hotPlaceData);
@@ -288,5 +288,8 @@
 
   .write-btn {
     margin-top: 10px;
+    background-color: #8280dd;
+    border: 1px solid #8280dd;
+    color: white;
   }
 </style>
