@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, watch, onMounted } from "vue";
+  import { ref, watch, onMounted, computed } from "vue";
   import { useRouter } from "vue-router";
   import { useMemberStore } from "@/stores/member";
   import { storeToRefs } from "pinia";
@@ -74,6 +74,11 @@
       );
     }
   }
+
+  // 친구 목록에 보여줄 인원수 조정하는 함수
+  const itemsToShow = computed(() => {
+    return friends.value.length > 5 ? 5 : friends.value.length;
+  });
 
   // 인기 관광지 조회
   async function getAttractions() {
@@ -250,7 +255,7 @@
           </div>
           <div class="friends-list">
             <carousel
-              :items-to-show="5"
+              :items-to-show="itemsToShow"
               :wrap-around="true"
               :transition="1000"
               :autoplay="300"
@@ -263,7 +268,7 @@
                     src="@/assets/images/profile.png"
                     class="profile-image"
                   />
-                  <img v-else :src="friend.profileImage" class="profile_image" />
+                  <img v-else :src="friend.profileImage" class="profile-image" />
                   <p>{{ friend.nickname }}</p>
                 </div>
               </slide>
@@ -485,8 +490,8 @@
 
   .move-my-group-image {
     border-radius: 50%;
-    width: 60px;
-    height: 60px;
+    width: 100px;
+    height: 100px;
   }
 
   .my-group-page-area {

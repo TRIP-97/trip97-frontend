@@ -1,67 +1,67 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
-import { getWaitingByFriendGroupsForMember, acceptRequest, refuseRequest } from "@/api/group.js";
-import { useMemberStore } from "@/stores/member";
-import { storeToRefs } from "pinia";
+  import { ref, onMounted } from "vue";
+  import { useRoute } from "vue-router";
+  import { getWaitingByFriendGroupsForMember, acceptRequest, refuseRequest } from "@/api/group.js";
+  import { useMemberStore } from "@/stores/member";
+  import { storeToRefs } from "pinia";
 
-const route = useRoute();
+  const route = useRoute();
 
-const memberStore = useMemberStore();
-const { userInfo } = storeToRefs(memberStore);
+  const memberStore = useMemberStore();
+  const { userInfo } = storeToRefs(memberStore);
 
-const groupRequests = ref([]);
+  const groupRequests = ref([]);
 
-// 내 모임 신청들을 가져오는 함수
-const getListWaitingRequest = () => {
-  getWaitingByFriendGroupsForMember(
-    userInfo.value.id,
-    ({ data }) => {
-      groupRequests.value = data;
-      console.log(data);
-    },
-    (error) => {
-      console.log("내 모임 신청 목록 조회 중 에러 발생!");
-      console.dir(error);
-    }
-  );
-};
+  // 내 모임 신청들을 가져오는 함수
+  const getListWaitingRequest = () => {
+    getWaitingByFriendGroupsForMember(
+      userInfo.value.id,
+      ({ data }) => {
+        groupRequests.value = data;
+        console.log(data);
+      },
+      (error) => {
+        console.log("내 모임 신청 목록 조회 중 에러 발생!");
+        console.dir(error);
+      }
+    );
+  };
 
-// 참가 신청을 수락하는 함수
-const acceptRequestFunc = (groupId) => {
-  acceptRequest(
-    groupId,
-    userInfo.value.id,
-    () => {
-      getListWaitingRequest();
-      console.log("모임 참가 신청 수락!");
-    },
-    (error) => {
-      console.log("모임 참가 신청 수락중 에러 발생!");
-      console.dir(error);
-    }
-  );
-};
+  // 참가 신청을 수락하는 함수
+  const acceptRequestFunc = (groupId) => {
+    acceptRequest(
+      groupId,
+      userInfo.value.id,
+      () => {
+        getListWaitingRequest();
+        console.log("모임 참가 신청 수락!");
+      },
+      (error) => {
+        console.log("모임 참가 신청 수락중 에러 발생!");
+        console.dir(error);
+      }
+    );
+  };
 
-// 참가 신청을 거절하는 함수
-const refuseRequestFunc = (groupId) => {
-  refuseRequest(
-    groupId,
-    userInfo.value.id,
-    () => {
-      getListWaitingRequest();
-      console.log("모임 참가 신청 거절!");
-    },
-    (error) => {
-      console.log("모임 참가 신청 거절중 에러 발생!");
-      console.dir(error);
-    }
-  );
-};
+  // 참가 신청을 거절하는 함수
+  const refuseRequestFunc = (groupId) => {
+    refuseRequest(
+      groupId,
+      userInfo.value.id,
+      () => {
+        getListWaitingRequest();
+        console.log("모임 참가 신청 거절!");
+      },
+      (error) => {
+        console.log("모임 참가 신청 거절중 에러 발생!");
+        console.dir(error);
+      }
+    );
+  };
 
-onMounted(() => {
-  getListWaitingRequest();
-});
+  onMounted(() => {
+    getListWaitingRequest();
+  });
 </script>
 
 <template>
@@ -100,85 +100,85 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.requests {
-  min-height: 500px;
-  color: #333;
-  padding: 20px;
-  border: 1px solid rgb(201, 201, 201);
-  border-radius: 10px;
-  box-shadow: 5px 5px 5px #ebebeb;
-}
+  .requests {
+    min-height: 500px;
+    color: #333;
+    padding: 20px;
+    border: 1px solid rgb(201, 201, 201);
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px #ebebeb;
+  }
 
-.center-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+  .center-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-.empty-request {
-  color: #888; /* 회색 텍스트 */
-  font-size: 16px;
-}
+  .empty-request {
+    color: #888; /* 회색 텍스트 */
+    font-size: 16px;
+  }
 
-.request {
-  background-color: aliceblue;
-  margin: 10px;
-  padding: 15px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-}
+  .request {
+    background-color: aliceblue;
+    margin: 10px;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+  }
 
-.member-info {
-  display: flex;
-  align-items: center;
-}
+  .member-info {
+    display: flex;
+    align-items: center;
+  }
 
-.profile-image {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 15px;
-  transform: translateY(-5px);
-}
+  .profile-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+    transform: translateY(-5px);
+  }
 
-.member-text {
-  transform: translateY(5px);
-}
+  .member-text {
+    transform: translateY(5px);
+  }
 
-.member-info h2,
-.member-info p {
-  font-size: 14px;
-  color: #666;
-}
+  .member-info h2,
+  .member-info p {
+    font-size: 14px;
+    color: #666;
+  }
 
-.member-info h2 {
-  color: #8280dd;
-  margin-bottom: 3px;
-}
+  .member-info h2 {
+    color: #8280dd;
+    margin-bottom: 3px;
+  }
 
-.btn {
-  padding: 5px 10px;
-  border: none;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
+  .btn {
+    padding: 5px 10px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
 
-.accept-btn {
-  background-color: #8280dd;
-}
+  .accept-btn {
+    background-color: #8280dd;
+  }
 
-.accept-btn:hover {
-  background-color: #6f6ec0;
-}
+  .accept-btn:hover {
+    background-color: #6f6ec0;
+  }
 
-.refuse-btn {
-  background-color: #8280dd;
-}
+  .refuse-btn {
+    background-color: #8fa0da;
+  }
 
-.refuse-btn:hover {
-  background-color: #6f6ec0;
-}
+  .refuse-btn:hover {
+    background-color: #768dda;
+  }
 </style>
