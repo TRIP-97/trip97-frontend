@@ -6,6 +6,12 @@ import { useEditor, EditorContent } from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 
+import { useMemberStore } from "@/stores/member";
+import { storeToRefs } from "pinia";
+
+const memberStore = useMemberStore();
+const { userInfo } = storeToRefs(memberStore);
+
 import axios from "axios";
 
 const route = useRoute();
@@ -35,7 +41,7 @@ const editor = useEditor({
     }),
   ],
   content: "",
-  editable: true,
+  editable: false, // 읽기 전용 모드로 설정
 });
 
 async function getBoard() {
@@ -108,30 +114,59 @@ const moveDelete = () => {
 
 onMounted(() => {
   getBoard();
+  console.log(userInfo.value);
 });
 </script>
 
 <template>
   <div class="body d-flex flex-column align-items-center">
     <div class="content d-flex flex-column justify-content-center">
-      <h2>{{ board.id }}. {{ board.title }}</h2>
-      <p>번호 : {{ board.id }}</p>
-      <h2>내용</h2>
+      <div class="d-flex flex-row titleBox">
+        <p class="mb-0" style="font-size: 16px; margin-top: 10px; margin-right: 10px">
+          {{ board.id }}.
+        </p>
+        <h2 class="mb-0">{{ board.title }}</h2>
+      </div>
+      <hr />
+      <div class="d-flex flex-row">
+        <img :src="board.profileImage" style="width: 32px; height: 30px" />
+        <p style="font-size: 15px; margin-left: 10px; margin-top: 5px">
+          작성자 : {{ board.writerNickname }}
+        </p>
+      </div>
       <div class="editor">
         <EditorContent :editor="editor" class="custom-editor" />
       </div>
     </div>
-    <div class="btn">
+    <div class="btn d-flex flex-row justify-content-center">
       <button @click="moveList">목록</button>
-      <button @click="moveModify">수정</button>
-      <button @click="moveDelete">삭제</button>
+      <div v-if="userInfo && board.writerId === userInfo.id">
+        <button @click="moveModify">수정</button>
+        <button @click="moveDelete">삭제</button>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+hr {
+  margin: 10px;
+}
+
+.titleBox {
+  margin-bottom: 0px;
+}
+
+.editor {
+  padding: 20px;
+  border: 1px solid rgb(177, 177, 177);
+  border-radius: 15px;
+  min-height: 250px;
+  margin-top: 20px;
+}
+
 .content {
-  width: 500px;
+  width: 800px;
   background-color: white;
   border-radius: 15px;
   padding: 50px;

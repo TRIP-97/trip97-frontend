@@ -9,7 +9,7 @@
       </div>
       <div class="btn">
         <input type="file" @change="handleFileSelection" multiple />
-        <button @click="saveHandler">글쓰기</button>
+        <button class="writeBtn" @click="saveHandler">글쓰기</button>
       </div>
     </div>
   </div>
@@ -139,7 +139,7 @@ const replaceBase64WithUrl = async (contentJson, file, url) => {
 
 <style scoped>
 .title {
-  width: 640px;
+  width: 700px;
   border: 1px solid black;
   margin: 10px;
   height: 30px;
@@ -152,19 +152,41 @@ const replaceBase64WithUrl = async (contentJson, file, url) => {
 
 .body {
   background-color: white;
+  width: 800px;
   border-radius: 20px;
-  padding: 15px;
+  padding: 20px;
+  padding-left: 40px;
 }
 
 .editor-container {
   border: 1px solid black;
   margin: 10px;
+  width: 700px;
   height: 500px;
   display: flex;
   flex-direction: column;
 }
 
+.btn {
+  display: flex;
+  justify-content: space-between;
+}
+
+.writeBtn {
+  margin-right: 10px;
+  width: 80px;
+  height: 38px;
+  background-color: #8280dd;
+  color: white;
+  border-radius: 5px;
+}
+
+.writeBtn:hover {
+  background-color: #6b6ab8;
+}
+
 #editor-container .custom-editor {
+  width: 700px;
   min-height: 500px;
   max-height: 500px;
   padding: 10px;

@@ -125,7 +125,7 @@
         <div class="child" ref="section">
           <transition name="slide">
             <div v-if="selectedAttractionId" class="attraction-detail-container">
-              <img 
+              <img v-if="userInfo"
               class="bookmark" 
               :src="bookMarkSrc" 
               @click="openModal"

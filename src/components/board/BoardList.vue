@@ -7,6 +7,12 @@ import axios from "axios";
 import PageNavigation from "../common/PageNavigation.vue";
 import VSelect from "../common/VSelect.vue";
 
+import { useMemberStore } from "@/stores/member";
+import { storeToRefs } from "pinia";
+
+const memberStore = useMemberStore();
+const { userInfo } = storeToRefs(memberStore);
+
 const router = useRouter();
 
 const boards = ref([]);
@@ -173,7 +179,7 @@ watch([currentPage, param], () => {
       @pageChange="onPageChange"
     ></PageNavigation>
   </div>
-  <div class="btnBox">
+  <div v-if="userInfo" class="btnBox">
     <button class="writeBox" @click="goWrite">글작성</button>
   </div>
 </template>
@@ -186,12 +192,12 @@ table.board-list td {
 }
 
 .filter-search-container {
-  display: flex;
-  justify-content: space-between;
+  width: 98%;
 }
 
 .filters {
   display: flex;
+  justify-content: left;
   gap: 10px;
 }
 
@@ -211,8 +217,17 @@ table.board-list td {
   color: white;
 }
 
+.input-group {
+  width: 500px;
+}
+
+.form-control {
+  width: 300px;
+}
+
 .search-form {
   display: flex;
+  justify-content: center;
   gap: 10px;
 }
 
