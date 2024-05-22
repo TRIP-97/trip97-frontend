@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, defineProps } from "vue";
+  import { ref, defineProps, watch } from "vue";
   import { useMemberStore } from "@/stores/member";
   import { storeToRefs } from "pinia";
 
@@ -11,6 +11,13 @@
     onSave: Function,
     attractionId: Number,
   });
+
+  watch(
+  () => props.attractionId,
+  (newAttractionId) => {
+    review.value.attractionId = newAttractionId;
+  }
+);
 
   const emit = defineEmits(["close"]);
 
@@ -26,6 +33,7 @@
   };
 
   const saveReview = () => {
+    console.log("리뷰아이디",review.value.attractionId);
     props.onSave(review.value);
 
     closeModal();

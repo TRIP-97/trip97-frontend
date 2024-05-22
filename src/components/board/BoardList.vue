@@ -1,9 +1,8 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter  } from "vue-router";
 import { listBoard } from "@/api/board.js";
 
-import axios from "axios";
 import PageNavigation from "../common/PageNavigation.vue";
 import VSelect from "../common/VSelect.vue";
 
@@ -13,6 +12,7 @@ import { storeToRefs } from "pinia";
 const memberStore = useMemberStore();
 const { userInfo } = storeToRefs(memberStore);
 
+const route = useRoute();
 const router = useRouter();
 
 const boards = ref([]);
@@ -97,10 +97,12 @@ function goWrite() {
   });
 }
 
+// 컴포넌트가 마운트될 때 데이터 불러오기
 onMounted(() => {
   getBoardList();
 });
 
+// 검색 조건 또는 페이지가 변경될 때 데이터를 다시 불러오기
 watch([currentPage, param], () => {
   getBoardList();
 });

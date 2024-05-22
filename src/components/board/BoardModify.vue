@@ -9,7 +9,7 @@
       </div>
       <div class="btn">
         <input type="file" @change="handleFileSelection" multiple />
-        <button class="writeBtn" @click="saveHandler">글쓰기</button>
+        <button class="writeBtn" @click="saveHandler">수정하기</button>
       </div>
     </div>
   </div>
@@ -33,6 +33,7 @@ const memberStore = useMemberStore();
 const { userInfo } = storeToRefs(memberStore);
 
 const route = useRoute();
+const router = useRouter();
 const board = ref("");
 
 const no = route.params.id;
@@ -65,6 +66,7 @@ async function getBoard() {
     no,
     (response) => {
       board.value = response.data;
+      title.value = board.value.title;
 
       // JSON 형태의 콘텐츠를 TipTap 에디터에 설정
       if (board.value.content) {
@@ -148,7 +150,7 @@ const saveHandler = async () => {
   }
 
   const board = {
-    writerId: userInfo.value.id,
+    id: no,
     title: title.value,
     content: JSON.stringify(contentJson),
     writerNickname: userInfo.value.nickname,
@@ -162,6 +164,8 @@ const saveHandler = async () => {
   } catch (error) {
     console.error("Error saving content:", error);
   }
+
+  moveList();
 };
 
 // base64 이미지를 실제 업로드된 URL로 교체하는 함수
@@ -183,6 +187,11 @@ const replaceBase64WithUrl = async (contentJson, file, url) => {
 
   return contentJson;
 };
+
+const moveList = () => {
+  router.push({ name: "boardList" });
+};
+
 </script>
 
 <style scoped>
@@ -190,7 +199,8 @@ const replaceBase64WithUrl = async (contentJson, file, url) => {
   width: 700px;
   border: 1px solid black;
   margin: 10px;
-  height: 30px;
+  height: 40px;
+  padding-left : 10px;
 }
 
 .writeContent {

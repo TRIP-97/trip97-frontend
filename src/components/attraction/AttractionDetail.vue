@@ -14,7 +14,8 @@
           <button @click="close" class="closeBtn">Close</button>
         </div>
         <div class="d-flex flex-direction-row">
-          <div v-if="attraction.rating !== undefined && attraction.rating !== null">
+          <div class="d-flex flex-direction-row" v-if="attraction.rating !== undefined && attraction.rating !== null">
+              <p class="mb-0 mr-2" style="font-size:24px;">{{attraction.rating}}</p>
             <img
               v-for="n in Math.round(attraction.rating)"
               :key="'star' + n"
@@ -30,7 +31,7 @@
               alt="No Star"
             />
           </div>
-          <p class="reviewCount ml-5">리뷰 {{ attraction.reviewCount }}</p>
+          <p class="reviewCount mt-0 ml-3 ">리뷰 {{ attraction.reviewCount }}</p>
         </div>
         <p class="address">{{ attraction.address }}</p>
         <p class="overview">{{ attraction.overview }}</p>
@@ -68,7 +69,7 @@
       </div>
 
       <AttractionCommentModal
-        :attractionId="attractionId"
+        :attractionId="Id"
         :isActive="isModalActive"
         @close="isModalActive = false"
         :onSave="saveReview"
@@ -98,6 +99,7 @@
   const attraction = ref({});
   const reviews = ref([]);
   const isModalActive = ref(false);
+  const Id = ref("");
 
   async function getAttract(id) {
     getAttractionId(
@@ -105,7 +107,10 @@
       // 125266,
       (response) => {
         attraction.value = response.data;
-        console.log(props.attractionContent);
+        console.log("childObject",props.attractionContent);
+        Id.value = props.attractionId;
+        console.log(Id.value);
+        console.log("값변경",attraction.value.rating);
         getReviewList();
       },
       (error) => {
@@ -134,6 +139,8 @@
             ...review,
             createdAt: formatDate(review.createdAt),
           }));
+        }else{
+          reviews.value = [];
         }
       },
       (error) => {
@@ -171,17 +178,24 @@
   );
 
   watch(
-    () => props.attractionId,
-    (newId) => {
-      getAttract(newId);
+    () => attraction.value.rating,
+    (newRating) => {
+      console.log("변경");
+        const RatingChange = {
+          Id : props.attractionId,
+          rating : attraction.value.rating
+        };
+        console.log("변경된별점",attraction.value.rating);
+        emits('sendRating', RatingChange);
     }
-  );
+  )
 
   onMounted(() => {
     getAttract(props.attractionId);
   });
 
-  const emits = defineEmits(["close"]);
+  const emits = defineEmits(["close","sendRating"]);
+
   const close = () => {
     emits("close");
   };

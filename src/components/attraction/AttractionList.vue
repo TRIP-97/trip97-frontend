@@ -132,7 +132,7 @@
               @mouseover="toggleBookmark(true)"
               @mouseout="toggleBookmark(false)"
               />
-              <AttarctionDetail :attraction-id="selectedAttractionId" :attraction-content="selectedAttractionContent" @close="closeAttractionDetail"/>
+              <AttarctionDetail :attraction-id="selectedAttractionId" :attraction-content="selectedAttractionContent" @close="closeAttractionDetail" @sendRating="changeRating"/>
             </div>
           </transition>
         </div>
@@ -191,6 +191,26 @@ const openModal = () => {
   isModalVisible.value = true;
 };
 
+const changeRating = (value) => {
+  console.log("리뷰수정", value);
+  const attractionIndex = attractions.value.findIndex(attraction => attraction.id === value.Id);
+  if (attractionIndex !== -1) {
+    // Vue의 반응성을 유지하기 위해 배열을 수정
+    attractions.value[attractionIndex] = {
+      ...attractions.value[attractionIndex],
+      rating: value.rating
+    };
+    
+    if (content.value.code === 0) {
+      removeAllList();
+      removeAllMarkers();
+    }
+    if (attractions.value.length > 0) {
+      addMarkerAndPrevious();
+    }
+  }
+};
+
 // 북마크 이미지 hover 모션
 const toggleBookmark = (isHovered) => {
   if (bookMarkSrc.value === onBookmark) {
@@ -226,7 +246,7 @@ function removeBookMark(value){
         bookMarkSrc.value = offBookmark;
       }
 
-}
+    }
 
 // 북마크 여부 확인
 async function isBookmark(attractionId) {
@@ -262,8 +282,10 @@ const showAttractionDetail = (attractionId,contentTypeId) => {
   if (selectedAttractionId.value === attractionId) {
     selectedAttractionId.value = null;
   } else {
+    closeAttractionDetail();
     section.value.scrollIntoView({behavior : 'smooth'});
     selectedAttractionId.value = attractionId;
+    console.log("selectedAttractionId : ",selectedAttractionId.value);
     selectedAttractionContent.value = categories.value.find((category) => category.code === parseInt(contentTypeId))?.name;
     if (userInfo.value !== null) {
       isBookmark(attractionId);

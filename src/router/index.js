@@ -247,7 +247,12 @@ router.beforeEach((to, from) => {
   if (to.name !== from.name) {
     document.dispatchEvent(new CustomEvent("route-changed"));
   }
+  if (to.name === 'boardList'){
+    document.dispatchEvent(new CustomEvent("reget-List"));
+  }
 });
+
+
 
 export default router;
 

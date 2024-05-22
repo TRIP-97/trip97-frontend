@@ -47,8 +47,13 @@ function deleteBoard(boardId, success, fail) {
 }
 
 // 자유게시판 게시물 수정
-function modifyBoard(board, success, fail) {
-  local.put(`/board/${board.id}`, JSON.stringify(board).then(success).catch(fail));
+function modifyBoard(token, board) {
+  local.put(`/board/${board.id}`, JSON.stringify(board), {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 }
 
 // 인기 게시글 조회

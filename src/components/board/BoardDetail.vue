@@ -56,15 +56,26 @@ async function getBoard() {
 
         // 이미지 경로를 웹 접근 가능한 URL로 변환
         convertLocalImagePaths(content);
-
         editor.value.commands.setContent(content);
       }
+
+      board.value.createdAt = formatVisitedDate(board.value.createdAt);
+
     },
     (error) => {
       console.log("Board 불러오는 중 에러 발생");
       console.dir(error);
     }
   );
+}
+
+// 날짜 포맷 변경 함수
+function formatVisitedDate(dateString) {
+  const [datePart, timePart] = dateString.split("T");
+  const [year, month, day] = datePart.split("-");
+  const [hour, minute] = timePart.split(":");
+
+  return `${year}.${month}.${day} ${hour}:${minute}`;
 }
 
 function convertLocalImagePaths(content) {
@@ -120,19 +131,24 @@ onMounted(() => {
 
 <template>
   <div class="body d-flex flex-column align-items-center">
+  <div class="boardBody">
     <div class="content d-flex flex-column justify-content-center">
       <div class="d-flex flex-row titleBox">
-        <p class="mb-0" style="font-size: 16px; margin-top: 10px; margin-right: 10px">
-          {{ board.id }}.
-        </p>
-        <h2 class="mb-0">{{ board.title }}</h2>
+        <h2 class="title ml-3 mb-3">{{ board.title }}</h2>
+        <p class="createDate"> {{ board.createdAt }} </p>
       </div>
       <hr />
       <div class="d-flex flex-row">
-        <img :src="board.profileImage" style="width: 32px; height: 30px" />
-        <p style="font-size: 15px; margin-left: 10px; margin-top: 5px">
-          작성자 : {{ board.writerNickname }}
+        <div class="writerBox d-flex flex-row">
+        <img :src="board.profileImage" class="profileImage"/>
+        <p style="font-size: 15px; margin-left: 8px; margin-top: 9px">
+          {{ board.writerNickname }}
         </p>
+        </div>
+        <div class="viewContainer">
+          <p>조회수 : {{ board.viewCount }}</p>
+          <p class="ml-2">댓글 수: </p>
+        </div>
       </div>
       <div class="editor">
         <EditorContent :editor="editor" class="custom-editor" />
@@ -145,16 +161,62 @@ onMounted(() => {
         <button @click="moveDelete">삭제</button>
       </div>
     </div>
+    <div>
+      <hr class="commentHr" />
+      <div class="commentBox">
+        <input type="text" class="commentInput" placeholder="댓글을 입력해주세요."></input>
+        <button class="inputBtn" @click="addComment">입력</button>
+      </div>
+    </div>
+  </div>
   </div>
 </template>
 
 <style scoped>
-hr {
-  margin: 10px;
+
+.boardBody {
+  width: 800px;
+  background-color: white;
+  border-radius: 15px;
+}
+
+.commentHr {
+  width : 780px;
+  margin-top : 0px;
+  margin-left : 5px;
+  margin-bottom: 10px;
+}
+
+.profileImage {
+  border-radius: 12px;
+  width : 40px;
+  height : 40px;
+}
+
+.writerBox {
+  margin-top : 2px;
 }
 
 .titleBox {
   margin-bottom: 0px;
+}
+
+.viewContainer {
+  margin-top : 7px;
+  margin-left : auto;
+  display : flex;
+  flex-direction: row;
+}
+
+.createDate {
+  margin-left : auto;
+  margin-top : 10px;
+  margin-bottom : 0px;
+}
+
+.writeBox {
+  display : flex;
+  justify-content: center;
 }
 
 .editor {
@@ -162,7 +224,7 @@ hr {
   border: 1px solid rgb(177, 177, 177);
   border-radius: 15px;
   min-height: 250px;
-  margin-top: 20px;
+  margin-top: 8px;
 }
 
 .content {
@@ -173,11 +235,34 @@ hr {
 }
 
 .btn button {
-  background-color: white;
   width: 60px;
-  height: 40px;
-  border-radius: 15px;
   margin: 3px;
   font-size: 20px;
 }
+
+.commentBox {
+  background-color: white;
+  border-radius: 15px;
+  width : 800px;
+  min-height : 500px;
+}
+
+.commentInput {
+  border : 1px solid black;
+  width : 650px;
+  height : 40px;
+  margin-top : 40px;
+  margin-left : 20px;
+  padding-left : 10px;
+}
+
+.inputBtn {
+  width : 100px;
+  height : 40px;
+  margin-left : 10px;
+  background-color: #8280dd;
+  color : white;
+  border-radius: 15px;
+}
+
 </style>

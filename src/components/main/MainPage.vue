@@ -1,18 +1,4 @@
 <script setup>
-<<<<<<< HEAD
-import { ref, watch, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { useMemberStore } from "@/stores/member";
-import { storeToRefs } from "pinia";
-import { Carousel, Slide, Navigation } from "vue3-carousel";
-import { listFriend } from "@/api/friend";
-import { getHotAttractions } from "@/api/attraction";
-import { getHotBoards } from "@/api/board";
-import { listMyGroup } from "@/api/group";
-import { detailHotPlace } from "@/api/hotplace";
-import HotAttractionModal from "@/components/attraction/item/HotAttractionModal.vue";
-import "vue3-carousel/dist/carousel.css";
-=======
   import { ref, watch, onMounted, computed } from "vue";
   import { useRouter } from "vue-router";
   import { useMemberStore } from "@/stores/member";
@@ -25,7 +11,6 @@ import "vue3-carousel/dist/carousel.css";
   import { detailHotPlace } from "@/api/hotplace";
   import HotAttractionModal from "@/components/attraction/item/HotAttractionModal.vue";
   import "vue3-carousel/dist/carousel.css";
->>>>>>> origin
 
 const memberStore = useMemberStore();
 const { userInfo, isLogin } = storeToRefs(memberStore);
@@ -141,47 +126,7 @@ async function getHotPlaces() {
         hotplaces.value.push(data);
       },
       (error) => {
-<<<<<<< HEAD
         console.log("메인 화면에서 운영자 추천 핫플레이스 리스트 불러오는 중 에러 발생!");
-=======
-        console.log("GroupList 불러오는 중 에러 발생!");
-        console.dir(error);
-      }
-    );
-  }
-
-  // 친구 목록 조회
-  async function getFriends() {
-    if (isLogin.value) {
-      console.log(userInfo.value.id);
-      listFriend(
-        userInfo.value.id,
-        (response) => {
-          friends.value = response.data;
-          console.log("내 친구 목록 불러오기 성공!");
-        },
-        (error) => {
-          console.log("친구목록 조회 실패");
-          console.log(error);
-        }
-      );
-    }
-  }
-
-  // 친구 목록에 보여줄 인원수 조정하는 함수
-  const itemsToShow = computed(() => {
-    return friends.value.length > 5 ? 5 : friends.value.length;
-  });
-
-  // 인기 관광지 조회
-  async function getAttractions() {
-    getHotAttractions(
-      (response) => {
-        attractions.value = response.data;
-      },
-      (error) => {
-        console.log("인기 관광지 조회 실패");
->>>>>>> origin
         console.log(error);
       }
     );
@@ -485,7 +430,7 @@ onMounted(() => {
 }
 
 .my-info-area {
-  margin-top: 200px;
+  margin-top: 120px;
   border-radius: 10px;
 }
 
@@ -639,7 +584,7 @@ onMounted(() => {
 }
 
 .move-page-area {
-  margin-top: 200px;
+  margin-top: 120px;
   border-radius: 10px;
   height: 400px;
 }
