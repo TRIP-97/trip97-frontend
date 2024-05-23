@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import { useRoute, useRouter  } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { listBoard } from "@/api/board.js";
 
 import PageNavigation from "../common/PageNavigation.vue";
@@ -53,7 +53,7 @@ const onPageChange = (val) => {
   getBoardList();
 };
 
-async function getBoardList() {
+function getBoardList() {
   listBoard(
     param.value,
     ({ data }) => {

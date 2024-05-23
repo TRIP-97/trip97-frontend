@@ -34,7 +34,7 @@ const { userInfo } = storeToRefs(memberStore);
 
 const route = useRoute();
 const router = useRouter();
-const board = ref("");
+const board = ref([]);
 
 const no = route.params.id;
 
@@ -130,6 +130,20 @@ const handleFileSelection = (event) => {
   selectedFiles.value = files; // 선택된 파일을 배열에 저장
 };
 
+function editBoard() {
+  console.log("게시판", board.value);
+  modifyBoard(
+    sessionStorage.getItem("accessToken"),
+    board.value,
+    (success) => {
+      console.log("success");
+    },
+    (error) => {
+      console.log("수정실패!");
+    }
+  );
+}
+
 const saveHandler = async () => {
   // 에디터 콘텐츠를 JSON으로 변환
   let contentJson = editor.value.getJSON();
@@ -149,23 +163,17 @@ const saveHandler = async () => {
     }
   }
 
-  const board = {
-    id: no,
-    title: title.value,
-    content: JSON.stringify(contentJson),
-    writerNickname: userInfo.value.nickname,
-  };
-
-  console.log(board);
+  board.value.title = title.value;
+  board.value.content = JSON.stringify(contentJson);
+  board.value.id = no;
 
   try {
-    await modifyBoard(sessionStorage.getItem("accessToken"), board);
+    editBoard();
+    moveList();
     console.log("Content saved successfully");
   } catch (error) {
     console.error("Error saving content:", error);
   }
-
-  moveList();
 };
 
 // base64 이미지를 실제 업로드된 URL로 교체하는 함수
@@ -189,9 +197,8 @@ const replaceBase64WithUrl = async (contentJson, file, url) => {
 };
 
 const moveList = () => {
-  router.push({ name: "boardList" });
+  router.push({ name: "boardDetail", params: { id: no } });
 };
-
 </script>
 
 <style scoped>
@@ -200,7 +207,7 @@ const moveList = () => {
   border: 1px solid black;
   margin: 10px;
   height: 40px;
-  padding-left : 10px;
+  padding-left: 10px;
 }
 
 .writeContent {

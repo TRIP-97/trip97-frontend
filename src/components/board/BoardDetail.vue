@@ -50,7 +50,7 @@ const editor = useEditor({
   editable: false, // 읽기 전용 모드로 설정
 });
 
-async function getBoard() {
+function getBoard() {
   detailBoard(
     no,
     (response) => {
@@ -73,29 +73,41 @@ async function getBoard() {
     }
   );
 }
+function removeBoard() {
+  deleteBoard(
+    no,
+    (response) => {
+      router.push({ name: "boardList" });
+    },
+    (error) => {
+      console.log("error");
+    }
+  );
+}
 
 const loading = ref(true); // 로딩 상태 변수 추가
 
 const comments = ref([]);
+
 const comment = ref({
   id: null,
   boardId: no,
-  writerId: userInfo.value.id,
+  writerId: "",
   content: "",
-  writerNickname: userInfo.value.nickname,
-  writerProfileImage: userInfo.value.profileImage,
+  writerNickname: "",
+  writerProfileImage: "",
 });
 const editCommentInfo = ref({
   id: null,
   boardId: no,
-  writerId: userInfo.value.id,
+  writerId: "",
   content: "",
-  writerNickname: userInfo.value.nickname,
-  writerProfileImage: userInfo.value.profileImage,
+  writerNickname: "",
+  writerProfileImage: "",
 });
 
 // 댓글 불러오기
-async function getComment() {
+function getComment() {
   loading.value = true;
   console.log("들어오긴함?");
   getBoardComment(
@@ -111,7 +123,10 @@ async function getComment() {
   );
 }
 
-async function editComment() {
+function editComment() {
+  comment.value.writerId = userInfo.value.id;
+  comment.value.writerNickname = userInfo.value.nickname;
+  comment.value.writerProfileImage = userInfo.value.profileImage;
   updateBoardComment(
     sessionStorage.getItem("accessToken"),
     editCommentInfo.value,
@@ -122,8 +137,8 @@ async function editComment() {
   );
 }
 
-async function deleteComment() {
-  await deleteBoardComment(
+function deleteComment() {
+  deleteBoardComment(
     sessionStorage.getItem("accessToken"),
     no,
     comment.value.id,
@@ -136,6 +151,9 @@ async function deleteComment() {
 
 function writeComment() {
   console.log("댓글정보 ", comment.value);
+  comment.value.writerId = userInfo.value.id;
+  comment.value.writerNickname = userInfo.value.nickname;
+  comment.value.writerProfileImage = userInfo.value.profileImage;
   registBoardComment(
     sessionStorage.getItem("accessToken"),
     comment.value,
@@ -196,11 +214,6 @@ function convertLocalImagePaths(content) {
   traverseNodes(content);
 }
 
-async function removeBoard() {
-  await deleteBoard(no);
-  router.push({ name: "boardList" });
-}
-
 const moveList = () => {
   router.push({ name: "boardList" });
 };
@@ -237,8 +250,8 @@ onMounted(() => {
             </p>
           </div>
           <div class="viewContainer">
-            <p>조회수 : {{ board.viewCount }}</p>
-            <p class="ml-2">댓글 수:</p>
+            <p>조회수 {{ board.viewCount }}</p>
+            <p class="ml-2">댓글 {{ comments.length }}</p>
           </div>
         </div>
         <div class="editor">
@@ -254,51 +267,49 @@ onMounted(() => {
       </div>
       <div>
         <hr class="commentHr" />
-        <div v-if="userInfo" class="commentBox">
+        <div class="commentBox">
           <input
+            v-if="userInfo"
             type="text"
             class="commentInput"
             placeholder="댓글을 입력해주세요."
             v-model="comment.content"
             @keyup.enter="writeCommentClick"
           />
-          <button class="inputBtn" @click="writeCommentClick">입력</button>
-          <div v-if="loading">Loading...</div>
-          <div v-else>
-            <div class="commentList" v-for="commentChild in comments" :key="commentChild.id">
-              <div class="d-flex flex-column">
-                <div class="d-flex flex-row">
-                  <img :src="commentChild.writerProfileImage" class="commentProfileImage" />
-                  <p class="commentNickname">{{ commentChild.writerNickname }}</p>
-                  <div class="commentBtn" v-if="commentChild.writerId === userInfo.id">
-                    <button
-                      v-if="state !== `editing${commentChild.id}`"
-                      @click="editOpenCommentClick(commentChild.id)"
-                    >
-                      수정
-                    </button>
-                    <button
-                      class="editEndBtn"
-                      v-if="state === `editing${commentChild.id}`"
-                      @click="editCommentClick(commentChild.id)"
-                      @keyup.enter="editCommentClick(commentChild.id)"
-                    >
-                      수정 완료
-                    </button>
-                    <button @click="deleteCommentClick(commentChild.id)">삭제</button>
-                  </div>
+          <button v-if="userInfo" class="inputBtn" @click="writeCommentClick">입력</button>
+          <div class="commentList" v-for="commentChild in comments" :key="commentChild.id">
+            <div class="d-flex flex-column">
+              <div class="d-flex flex-row">
+                <img :src="commentChild.writerProfileImage" class="commentProfileImage" />
+                <p class="commentNickname">{{ commentChild.writerNickname }}</p>
+                <div class="commentBtn" v-if="userInfo && commentChild.writerId === userInfo.id">
+                  <button
+                    v-if="state !== `editing${commentChild.id}`"
+                    @click="editOpenCommentClick(commentChild.id)"
+                  >
+                    수정
+                  </button>
+                  <button
+                    class="editEndBtn"
+                    v-if="state === `editing${commentChild.id}`"
+                    @click="editCommentClick(commentChild.id)"
+                    @keyup.enter="editCommentClick(commentChild.id)"
+                  >
+                    수정 완료
+                  </button>
+                  <button @click="deleteCommentClick(commentChild.id)">삭제</button>
                 </div>
-                <p class="commentContent" v-if="state !== `editing${commentChild.id}`">
-                  {{ commentChild.content }}
-                </p>
-                <input
-                  type="text"
-                  v-if="state === `editing${commentChild.id}`"
-                  v-model="editCommentInfo.content"
-                  class="editContent"
-                  @keyup.enter="editCommentClick(commentChild.id)"
-                />
               </div>
+              <p class="commentContent" v-if="state !== `editing${commentChild.id}`">
+                {{ commentChild.content }}
+              </p>
+              <input
+                type="text"
+                v-if="state === `editing${commentChild.id}`"
+                v-model="editCommentInfo.content"
+                class="editContent"
+                @keyup.enter="editCommentClick(commentChild.id)"
+              />
             </div>
           </div>
         </div>

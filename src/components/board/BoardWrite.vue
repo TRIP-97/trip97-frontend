@@ -29,6 +29,7 @@ const title = ref("");
 const selectedFiles = ref([]); // 선택된 파일을 저장하는 배열
 
 const router = useRouter();
+const board = ref([]);
 
 const memberStore = useMemberStore();
 const { userInfo } = storeToRefs(memberStore);
@@ -102,23 +103,26 @@ const saveHandler = async () => {
     }
   }
 
-  const board = {
+  board.value = {
+    id: null,
     writerId: userInfo.value.id,
     title: title.value,
     content: JSON.stringify(contentJson),
     writerNickname: userInfo.value.nickname,
   };
 
-  console.log(board);
+  console.log(board.value);
 
-  try {
-    await registBoard(sessionStorage.getItem("accessToken"), board);
-    console.log("Content saved successfully");
-  } catch (error) {
-    console.error("Error saving content:", error);
-  }
-
-  moveList();
+  registBoard(
+    sessionStorage.getItem("accessToken"),
+    board.value,
+    (success) => {
+      board.value.id = success.data;
+      console.log("가볼까~", board.value.id);
+      moveList(board.value.id);
+    },
+    (error) => {}
+  );
 };
 
 // base64 이미지를 실제 업로드된 URL로 교체하는 함수
@@ -141,13 +145,12 @@ const replaceBase64WithUrl = async (contentJson, file, url) => {
   return contentJson;
 };
 
-
-
-const moveList = () => {
-  router.push({ name: "boardList" });
+const moveList = (no) => {
+  router.push({
+    name: "boardDetail",
+    params: { id: no },
+  });
 };
-
-
 </script>
 
 <style scoped>

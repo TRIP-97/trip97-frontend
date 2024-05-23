@@ -13,13 +13,13 @@ function detailBoard(boardId, success, fail) {
 }
 
 // 자유게시판 게시물 작성
-function registBoard(token, board) {
+function registBoard(token, board, success, fail) {
   local.post(`/board`, JSON.stringify(board), {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-  });
+  }).then(success).catch(fail);
 }
 
 // 이미지 업로드
@@ -47,13 +47,13 @@ function deleteBoard(boardId, success, fail) {
 }
 
 // 자유게시판 게시물 수정
-function modifyBoard(token, board) {
+function modifyBoard(token, board, success, fail) {
   local.put(`/board/${board.id}`, JSON.stringify(board), {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-  });
+  }).then(success).catch(fail);
 }
 
 
