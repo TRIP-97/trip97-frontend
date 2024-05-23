@@ -66,6 +66,12 @@
                 :src="place.attraction.firstImage"
                 alt="Place Image"
               />
+              <img
+                class="infoImg"
+                v-else
+                src="@/assets/images/no_image.png"
+                alt="Place Image"
+              />
             </div>
           </li>
         </ul>
