@@ -14,8 +14,11 @@
           <button @click="close" class="closeBtn">Close</button>
         </div>
         <div class="d-flex flex-direction-row">
-          <div class="d-flex flex-direction-row" v-if="attraction.rating !== undefined && attraction.rating !== null">
-              <p class="mb-0 mr-2" style="font-size:24px;">{{attraction.rating}}</p>
+          <div
+            class="d-flex flex-direction-row"
+            v-if="attraction.rating !== undefined && attraction.rating !== null"
+          >
+            <p class="mb-0 mr-2" style="font-size: 24px">{{ attraction.rating }}</p>
             <img
               v-for="n in Math.round(attraction.rating)"
               :key="'star' + n"
@@ -31,7 +34,7 @@
               alt="No Star"
             />
           </div>
-          <p class="reviewCount mt-0 ml-3 ">리뷰 {{ attraction.reviewCount }}</p>
+          <p class="reviewCount mt-0 ml-3">리뷰 {{ attraction.reviewCount }}</p>
         </div>
         <p class="address">{{ attraction.address }}</p>
         <p class="overview">{{ attraction.overview }}</p>
@@ -79,216 +82,216 @@
 </template>
 
 <script setup>
-  import { onMounted, watch, ref } from "vue";
-  import { getAttractionId } from "@/api/attraction.js";
-  import { defineProps, defineEmits } from "vue";
-  import { getReviews, registerReview, updateReview, removeReview } from "@/api/review.js";
-  import AttractionCommentModal from "@/components/attraction/AttractionCommentModal.vue";
-  import { storeToRefs } from "pinia";
-  import { useMemberStore } from "@/stores/member";
-  import "bootstrap/dist/css/bootstrap.min.css";
+import { onMounted, watch, ref } from "vue";
+import { getAttractionId } from "@/api/attraction.js";
+import { defineProps, defineEmits } from "vue";
+import { getReviews, registerReview, updateReview, removeReview } from "@/api/review.js";
+import AttractionCommentModal from "@/components/attraction/AttractionCommentModal.vue";
+import { storeToRefs } from "pinia";
+import { useMemberStore } from "@/stores/member";
+import "bootstrap/dist/css/bootstrap.min.css";
 
-  const memberStore = useMemberStore();
-  const { isLogin, userInfo } = storeToRefs(memberStore);
+const memberStore = useMemberStore();
+const { isLogin, userInfo } = storeToRefs(memberStore);
 
-  const props = defineProps({
-    attractionId: [String, Number],
-    attractionContent: String,
-  });
+const props = defineProps({
+  attractionId: [String, Number],
+  attractionContent: String,
+});
 
-  const attraction = ref({});
-  const reviews = ref([]);
-  const isModalActive = ref(false);
-  const Id = ref("");
+const attraction = ref({});
+const reviews = ref([]);
+const isModalActive = ref(false);
+const Id = ref("");
 
-  async function getAttract(id) {
-    getAttractionId(
-      id,
-      // 125266,
-      (response) => {
-        attraction.value = response.data;
-        console.log("childObject",props.attractionContent);
-        Id.value = props.attractionId;
-        console.log(Id.value);
-        console.log("값변경",attraction.value.rating);
-        getReviewList();
-      },
-      (error) => {
-        console.log("관광지 불러오는 중 에러 발생");
-        console.dir(error);
-      }
-    );
-  }
-
-  // 날짜 포맷 변경 함수
-  function formatDate(dateString) {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    return `${year}.${month.toString().padStart(2, "0")}.${day.toString().padStart(2, "0")}`;
-  }
-
-  // 관광지의 리뷰 목록을 조회하는 함수
-  const getReviewList = () => {
-    getReviews(
-      attraction.value.id,
-      ({ data }) => {
-        if (data !== "") {
-          reviews.value = data.map((review) => ({
-            ...review,
-            createdAt: formatDate(review.createdAt),
-          }));
-        }else{
-          reviews.value = [];
-        }
-      },
-      (error) => {
-        console.log("리뷰 목록 불러오는 중 에러 발생!");
-        console.dir(error);
-      }
-    );
-  };
-
-  // 리뷰 모달창 여부를 바꾸는 함수
-  const addReview = () => {
-    isModalActive.value = true;
-  };
-
-  // 리뷰를 저장하는 함수
-  const saveReview = (newReview) => {
-    registerReview(
-      newReview,
-      () => {
-        getAttract(props.attractionId);
-        getReviewList();
-      },
-      (error) => {
-        console.log("리뷰 저장 중 에러 발생!");
-        console.dir(error);
-      }
-    );
-  };
-
-  watch(
-    () => props.attractionId,
-    (newId) => {
-      getAttract(newId);
+async function getAttract(id) {
+  getAttractionId(
+    id,
+    // 125266,
+    (response) => {
+      attraction.value = response.data;
+      console.log("childObject", props.attractionContent);
+      Id.value = props.attractionId;
+      console.log(Id.value);
+      console.log("값변경", attraction.value.rating);
+      getReviewList();
+    },
+    (error) => {
+      console.log("관광지 불러오는 중 에러 발생");
+      console.dir(error);
     }
   );
+}
 
-  watch(
-    () => attraction.value.rating,
-    (newRating) => {
-      console.log("변경");
-        const RatingChange = {
-          Id : props.attractionId,
-          rating : attraction.value.rating
-        };
-        console.log("변경된별점",attraction.value.rating);
-        emits('sendRating', RatingChange);
+// 날짜 포맷 변경 함수
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${year}.${month.toString().padStart(2, "0")}.${day.toString().padStart(2, "0")}`;
+}
+
+// 관광지의 리뷰 목록을 조회하는 함수
+const getReviewList = () => {
+  getReviews(
+    attraction.value.id,
+    ({ data }) => {
+      if (data !== "") {
+        reviews.value = data.map((review) => ({
+          ...review,
+          createdAt: formatDate(review.createdAt),
+        }));
+      } else {
+        reviews.value = [];
+      }
+    },
+    (error) => {
+      console.log("리뷰 목록 불러오는 중 에러 발생!");
+      console.dir(error);
     }
-  )
+  );
+};
 
-  onMounted(() => {
-    getAttract(props.attractionId);
-  });
+// 리뷰 모달창 여부를 바꾸는 함수
+const addReview = () => {
+  isModalActive.value = true;
+};
 
-  const emits = defineEmits(["close","sendRating"]);
+// 리뷰를 저장하는 함수
+const saveReview = (newReview) => {
+  registerReview(
+    newReview,
+    () => {
+      getAttract(props.attractionId);
+      getReviewList();
+    },
+    (error) => {
+      console.log("리뷰 저장 중 에러 발생!");
+      console.dir(error);
+    }
+  );
+};
 
-  const close = () => {
-    emits("close");
-  };
+watch(
+  () => props.attractionId,
+  (newId) => {
+    getAttract(newId);
+  }
+);
+
+watch(
+  () => attraction.value.rating,
+  (newRating) => {
+    console.log("변경");
+    const RatingChange = {
+      Id: props.attractionId,
+      rating: attraction.value.rating,
+    };
+    console.log("변경된별점", attraction.value.rating);
+    emits("sendRating", RatingChange);
+  }
+);
+
+onMounted(() => {
+  getAttract(props.attractionId);
+});
+
+const emits = defineEmits(["close", "sendRating"]);
+
+const close = () => {
+  emits("close");
+};
 </script>
 
 <style scoped>
-  @import "@/assets/css/attraction/attractionDetail.css";
+@import "@/assets/css/attraction/attractionDetail.css";
 
-  .childBox { 
-    width: 97%;
-    overflow-y: scroll;
-  }
+.childBox {
+  width: 97%;
+  overflow-y: scroll;
+}
 
-  /* 스크롤바 숨기기 - 크롬, 사파리, 엣지 */
-  .childBox::-webkit-scrollbar {
-    display: none;
-  }
+/* 스크롤바 숨기기 - 크롬, 사파리, 엣지 */
+.childBox::-webkit-scrollbar {
+  display: none;
+}
 
-  /* 파이어폭스 */
-  .childBox {
-    -ms-overflow-style: none; /* 인터넷 익스플로러 10+ */
-    scrollbar-width: none; /* 파이어폭스 */
-  }
+/* 파이어폭스 */
+.childBox {
+  -ms-overflow-style: none; /* 인터넷 익스플로러 10+ */
+  scrollbar-width: none; /* 파이어폭스 */
+}
 
-  .reviewContainer {
-    margin-top: 20px;
-    height: 320px;
-  }
+.reviewContainer {
+  margin-top: 20px;
+  height: 320px;
+}
 
-  .reviewContainer h3 {
-    font-size: 1.2em;
-  }
+.reviewContainer h3 {
+  font-size: 1.2em;
+}
 
-  .add-review-btn {
-    height: 40px;
-    background-color: #9d9cd6;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    margin-right: 30px;
-  }
+.add-review-btn {
+  height: 40px;
+  background-color: #9d9cd6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin-right: 30px;
+}
 
-  .add-review-btn:hover {
-    background-color: #7271bb;
-    color: white;
-  }
+.add-review-btn:hover {
+  background-color: #7271bb;
+  color: white;
+}
 
-  .review-list {
-    margin-top: 10px;
-  }
+.review-list {
+  margin-top: 10px;
+}
 
-  .review-name {
-    font-size: 20px;
-    margin-top: 5px;
-    margin-bottom: 0px;
-  }
+.review-name {
+  font-size: 20px;
+  margin-top: 5px;
+  margin-bottom: 0px;
+}
 
-  .review-content {
-    margin-bottom: 3px;
-  }
+.review-content {
+  margin-bottom: 3px;
+}
 
-  .review-createAt {
-    margin-bottom: 3px;
-  }
+.review-createAt {
+  margin-bottom: 3px;
+}
 
-  .rating {
-    color: #57559b;
-  }
+.rating {
+  color: #57559b;
+}
 
-  .review-info {
-    padding: 20px;
-    background-color: #e4e3ff;
-    border-radius: 10px;
-    width: 99%;
-    display: flex;
-    flex-direction: column;
-  }
+.review-info {
+  padding: 20px;
+  background-color: #e4e3ff;
+  border-radius: 10px;
+  width: 99%;
+  display: flex;
+  flex-direction: column;
+}
 
-  .ml-3 {
-    margin-left: 1rem; /* profileImage와 review-name 사이의 간격을 위해 추가 */
-  }
+.ml-3 {
+  margin-left: 1rem; /* profileImage와 review-name 사이의 간격을 위해 추가 */
+}
 
-  .mb-2 {
-    margin-bottom: 0.5rem; /* 프로필 이미지와 별점 사이의 간격을 위해 추가 */
-  }
+.mb-2 {
+  margin-bottom: 0.5rem; /* 프로필 이미지와 별점 사이의 간격을 위해 추가 */
+}
 
-  .writer-profile-image {
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-  }
+.writer-profile-image {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+}
 </style>
