@@ -204,7 +204,7 @@
 <style scoped>
   @import "@/assets/css/attraction/attractionDetail.css";
 
-  .childBox {
+  .childBox { 
     width: 97%;
     overflow-y: scroll;
   }

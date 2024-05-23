@@ -1,6 +1,7 @@
 <script setup>
 import { ref, defineProps, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { removeFavorite } from "@/api/favorite";
 import HotAttractionModal from "@/components/attraction/item/HotAttractionModal.vue";
 
 const router = useRouter();
@@ -27,11 +28,35 @@ function formatVisitedDate(dateString) {
   return `${year}/${month.toString().padStart(2, "0")}/${day.toString().padStart(2, "0")}`;
 }
 
+async function removeBookmark() {
+  removeFavorite(
+    sessionStorage.getItem("accessToken"),
+    bookmark.value.attractionId,
+    bookmark.value.memberId,
+    (success) => {
+      console.log("삭제 성공");
+      closeChild();
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+}
+
+const emit = defineEmits(["closeChildBox"]);
+const closeChild = () => {
+  emit("closeChildBox", false);
+};
+
 // 즐겨찾기 관광지 클릭시 모달창을 활성화시키는 함수
 const viewFavoritePlaceModal = (attractionId) => {
   selectFavoriteAttractionId.value = attractionId;
   isModalActive.value = true;
 };
+
+function deleteBookmark() {
+  removeBookmark();
+}
 </script>
 
 <template>
@@ -47,6 +72,13 @@ const viewFavoritePlaceModal = (attractionId) => {
             <p class="travel-date-label mb-0">즐겨찾기 등록 날짜</p>
           </div>
           <p class="travel-date">{{ bookmark.createdAt }}</p>
+        </div>
+        <div>
+          <i
+            class="fa-solid fa-trash-can ml-2"
+            style="font-size: 17px"
+            @click.stop="deleteBookmark"
+          ></i>
         </div>
       </div>
       <div class="position-relative bookmark-image-area">

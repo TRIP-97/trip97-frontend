@@ -53,7 +53,7 @@ const onPageChange = (val) => {
   getFavoriteList();
 };
 
-async function getFavoriteList() {
+function getFavoriteList() {
   console.log(param.value);
 
   selectFavorites(
@@ -70,6 +70,11 @@ async function getFavoriteList() {
       console.log(error);
     }
   );
+}
+
+function closeBookMark() {
+  getFavoriteList();
+  console.log(attractions.value);
 }
 
 onMounted(() => {
@@ -112,7 +117,7 @@ onMounted(() => {
       </div>
       <div class="row">
         <div class="col-md-3" v-for="attraction in attractions" :key="attraction.id">
-          <BookMarkListItem :bookmark-item="attraction" />
+          <BookMarkListItem :bookmark-item="attraction" @closeChildBox="closeBookMark" />
         </div>
       </div>
       <PageNavigation
