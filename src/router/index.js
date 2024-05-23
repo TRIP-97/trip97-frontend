@@ -185,7 +185,6 @@ const router = createRouter({
           path: "write",
           name: "boardWrite",
           component: () => import("../components/board/BoardWrite.vue"),
-          redirect: { name: "boardList" },
         },
         {
           path: "modify/:id",
@@ -248,7 +247,12 @@ router.beforeEach((to, from) => {
   if (to.name !== from.name) {
     document.dispatchEvent(new CustomEvent("route-changed"));
   }
+  if (to.name === 'boardList'){
+    document.dispatchEvent(new CustomEvent("reget-List"));
+  }
 });
+
+
 
 export default router;
 
