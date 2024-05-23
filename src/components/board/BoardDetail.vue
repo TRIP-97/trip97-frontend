@@ -56,6 +56,8 @@ function getBoard() {
     (response) => {
       board.value = response.data;
 
+      console.log("게시물 디테일", board.value);
+
       // JSON 형태의 콘텐츠를 TipTap 에디터에 설정
       if (board.value.content) {
         const content = JSON.parse(board.value.content);
