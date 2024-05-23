@@ -75,6 +75,11 @@
     }
   }
 
+  // 친구 목록에 보여줄 인원수 조정하는 함수
+  const itemsToShow = computed(() => {
+    return friends.value.length > 5 ? 5 : friends.value.length;
+  });
+
   // 인기 관광지 조회
   async function getAttractions() {
     getHotAttractions(

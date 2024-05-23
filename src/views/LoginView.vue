@@ -29,7 +29,7 @@ function generateRandomString(length) {
 
 const naverLogin = () => {
   stateValue.value = generateRandomString(40);
-  const redirect_uri = "http://localhost:5173/naver/callback";
+  const redirect_uri = "http://192.168.120.61:5173/naver/callback";
   const clientId = "HVfS8Bx6TTsiC8oIVVib";
   const auth_url = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirect_uri}&state=${stateValue.value}`;
 
