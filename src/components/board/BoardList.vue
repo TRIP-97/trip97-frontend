@@ -1,12 +1,18 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { listBoard } from "@/api/board.js";
 
-import axios from "axios";
 import PageNavigation from "../common/PageNavigation.vue";
 import VSelect from "../common/VSelect.vue";
 
+import { useMemberStore } from "@/stores/member";
+import { storeToRefs } from "pinia";
+
+const memberStore = useMemberStore();
+const { userInfo } = storeToRefs(memberStore);
+
+const route = useRoute();
 const router = useRouter();
 
 const boards = ref([]);
@@ -47,7 +53,7 @@ const onPageChange = (val) => {
   getBoardList();
 };
 
-async function getBoardList() {
+function getBoardList() {
   listBoard(
     param.value,
     ({ data }) => {
@@ -91,10 +97,12 @@ function goWrite() {
   });
 }
 
+// 컴포넌트가 마운트될 때 데이터 불러오기
 onMounted(() => {
   getBoardList();
 });
 
+// 검색 조건 또는 페이지가 변경될 때 데이터를 다시 불러오기
 watch([currentPage, param], () => {
   getBoardList();
 });
@@ -173,7 +181,7 @@ watch([currentPage, param], () => {
       @pageChange="onPageChange"
     ></PageNavigation>
   </div>
-  <div class="btnBox">
+  <div v-if="userInfo" class="btnBox">
     <button class="writeBox" @click="goWrite">글작성</button>
   </div>
 </template>
@@ -186,12 +194,12 @@ table.board-list td {
 }
 
 .filter-search-container {
-  display: flex;
-  justify-content: space-between;
+  width: 98%;
 }
 
 .filters {
   display: flex;
+  justify-content: left;
   gap: 10px;
 }
 
@@ -211,8 +219,17 @@ table.board-list td {
   color: white;
 }
 
+.input-group {
+  width: 500px;
+}
+
+.form-control {
+  width: 300px;
+}
+
 .search-form {
   display: flex;
+  justify-content: center;
   gap: 10px;
 }
 

@@ -13,13 +13,13 @@ function detailBoard(boardId, success, fail) {
 }
 
 // 자유게시판 게시물 작성
-function registBoard(token, board) {
+function registBoard(token, board, success, fail) {
   local.post(`/board`, JSON.stringify(board), {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-  });
+  }).then(success).catch(fail);
 }
 
 // 이미지 업로드
@@ -47,8 +47,49 @@ function deleteBoard(boardId, success, fail) {
 }
 
 // 자유게시판 게시물 수정
-function modifyBoard(board, success, fail) {
-  local.put(`/board/${board.id}`, JSON.stringify(board).then(success).catch(fail));
+function modifyBoard(token, board, success, fail) {
+  local.put(`/board/${board.id}`, JSON.stringify(board), {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  }).then(success).catch(fail);
+}
+
+
+// 자유게시판 댓글 불러오기
+function getBoardComment(boardId, success, fail) {
+  local.get(`board/comment/${boardId}`).then(success).catch(fail);
+}
+
+// 자유게시판 댓글 작성
+function registBoardComment(token, comment, success, fail) {
+  local.post(`/board/comment`, JSON.stringify(comment), {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  }).then(success).catch(fail);
+}
+
+// 자유게시판 댓글 수정
+function updateBoardComment(token, comment, success, fail) {
+  local.put(`/board/comment/${comment.id}`, JSON.stringify(comment), {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  }).then(success).catch(fail);
+}
+
+// 자유게시판 댓글 삭제
+function deleteBoardComment(token, boardId, commentId, success, fail) {
+  local.delete(`/board/comment/${commentId}/${boardId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  }).then(success).catch(fail);
 }
 
 // 인기 게시글 조회
@@ -56,4 +97,8 @@ function getHotBoards(success, fail) {
   local.get(`/board/hot`).then(success).catch(fail);
 }
 
-export { listBoard, detailBoard, registBoard, uploadImage, deleteBoard, modifyBoard, getHotBoards };
+export {
+  listBoard, detailBoard, registBoard, uploadImage, deleteBoard,
+  modifyBoard, getHotBoards, getBoardComment, registBoardComment, updateBoardComment, deleteBoardComment
+};
+
