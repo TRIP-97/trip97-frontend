@@ -136,6 +136,7 @@ function editBoard() {
     sessionStorage.getItem("accessToken"),
     board.value,
     (success) => {
+      router.push({ name: "boardDetail", params: { id: no } });
       console.log("success");
     },
     (error) => {
@@ -169,8 +170,6 @@ const saveHandler = async () => {
 
   try {
     editBoard();
-    moveList();
-    console.log("Content saved successfully");
   } catch (error) {
     console.error("Error saving content:", error);
   }
@@ -194,10 +193,6 @@ const replaceBase64WithUrl = async (contentJson, file, url) => {
   }
 
   return contentJson;
-};
-
-const moveList = () => {
-  router.push({ name: "boardDetail", params: { id: no } });
 };
 </script>
 
